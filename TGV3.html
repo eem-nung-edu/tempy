@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Визначення браузера Telegram v3</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .check-card {
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid;
+            position: relative;
+        }
+        .check-card.true {
+            background-color: #e9f5ea;
+            border-color: #4caf50;
+        }
+        .check-card.false {
+            background-color: #fdecea;
+            border-color: #f44336;
+        }
+        .check-card .status {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .check-card .status::before {
+            content: '✓ ';
+            color: #4caf50;
+        }
+        .check-card.false .status::before {
+            content: '✗ ';
+            color: #f44336;
+        }
+        .check-card .description {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 5px;
+        }
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 5px 10px 0;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .final-result {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .final-result.positive {
+            background-color: #d4edda;
+            color: #155724;
+        }
+         .final-result.negative {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Визначення браузера Telegram (v3)</h1>
+        <p>Ця сторінка аналізує властивості браузера, щоб визначити, чи відкрита вона у вбудованому переглядачі Telegram.</p>
+
+        <div id="final-result"></div>
+
+        <button onclick="runChecks()">Запустити перевірку</button>
+        <button onclick="toggleDebug()">Показати детальну інформацію</button>
+
+        <h2>Результати перевірок:</h2>
+        <div id="results-container" class="results-grid"></div>
+
+        <div id="debug-section" style="display:none;">
+            <h2>Debug інформація:</h2>
+            <div id="debug-info" class="debug-info"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- ДОПОМІЖНА ФУНКЦІЯ ДЛЯ ПЕРЕВІРКИ FULLSCREEN ---
+        function isFullscreenPossible() {
+            return !!(
+                document.fullscreenEnabled ||
+                document.webkitFullscreenEnabled ||
+                document.mozFullScreenEnabled ||
+                document.msFullscreenEnabled
+            );
+        }
+
+        function runChecks() {
+            const resultsContainer = document.getElementById('results-container');
+            resultsContainer.innerHTML = '';
+            
+            const checks = {
+                // Прямі методи (надійні для Web Apps)
+                userAgent: {
+                    description: 'Перевірка "Telegram" в User Agent. (Надійно, але рідко)',
+                    test: () => /Telegram/i.test(navigator.userAgent)
+                },
+                webAppObject: {
+                    description: 'Існування `window.Telegram.WebApp`. (Надійно, тільки для Web Apps)',
+                    test: () => !!(window.Telegram && window.Telegram.WebApp)
+                },
+                urlParams: {
+                    description: 'URL містить `tgWebApp...` параметри. (Надійно, тільки для Web Apps)',
+                    test: () => new URLSearchParams(window.location.search).has('tgWebAppData')
+                },
+
+                // Додаткові методи (для звичайних посилань)
+                noPaymentRequest: {
+                    description: 'Відсутність Payment API. (Надійний індикатор)',
+                    test: () => typeof window.PaymentRequest === 'undefined'
+                },
+                // Новий тест
+                noFullscreenAPI: {
+                    description: 'Відсутність Fullscreen API. (Надійний індикатор, часто заблоковано у WebView)',
+                    test: () => !isFullscreenPossible()
+                },
+                historyLength: {
+                    description: 'Довжина історії сесії <= 2. (Показово, але ненадійно окремо)',
+                    test: () => window.history.length <= 2
+                },
+                 viewportHeuristic: {
+                    description: 'Співвідношення висоти viewport до екрана < 0.9. (Ненадійно, може спрацювати в Chrome)',
+                    test: () => (window.innerHeight / screen.height) < 0.9 && window.innerWidth === screen.width
+                },
+                noWindowOpener: {
+                    description: '`window.opener` відсутня. (Ненадійно, залежить від способу відкриття)',
+                    test: () => !window.opener
+                }
+            };
+            
+            const results = {};
+            for (const key in checks) {
+                results[key] = checks[key].test();
+            }
+
+            // Рендеринг результатів
+            for (const key in results) {
+                const result = results[key];
+                const card = document.createElement('div');
+                card.className = `check-card ${result}`;
+                card.innerHTML = `
+                    <div class="status">${key}: ${result}</div>
+                    <div class="description">${checks[key].description}</div>
+                `;
+                resultsContainer.appendChild(card);
+            }
+
+
+            
+            const finalResultDiv = document.getElementById('final-result');
+            const isWebApp = results.webAppObject || results.urlParams || results.userAgent;
+            
+           
+            const isHeuristicMatch = results.noPaymentRequest && results.noFullscreenAPI && results.historyLength;
+
+            if (isWebApp) {
+                 finalResultDiv.className = 'final-result positive';
+                 finalResultDiv.innerHTML = '<b>Вердикт:</b> Сторінка відкрита як <b>Telegram Web App</b>.';
+            } else if (isHeuristicMatch) {
+                 finalResultDiv.className = 'final-result positive';
+                 finalResultDiv.innerHTML = '<b>Вердикт:</b> Висока ймовірність, що це вбудований браузер <b>Telegram</b> (на основі комбінації евристичних даних).';
+            } else {
+                 finalResultDiv.className = 'final-result negative';
+                 finalResultDiv.innerHTML = '<b>Вердикт:</b> Схоже, це <b>звичайний мобільний браузер</b> (Chrome, Safari тощо).';
+            }
+
+            // Заповнення debug інформації
+            const debugInfo = document.getElementById('debug-info');
+            debugInfo.textContent = `
+User Agent: ${navigator.userAgent}
+URL: ${window.location.href}
+URL параметри: ${window.location.search || '[]'}
+window.Telegram: ${window.Telegram ? JSON.stringify(Object.keys(window.Telegram)) : 'undefined'}
+Історія сесії (length): ${window.history.length}
+window.opener: ${window.opener === null ? 'null' : 'exists'}
+Розміри (innerWidth/innerHeight): ${window.innerWidth} / ${window.innerHeight}
+Екран (width/height): ${screen.width} / ${screen.height}
+Співвідношення висоти: ${(window.innerHeight / screen.height).toFixed(3)}
+Підтримка PaymentRequest: ${typeof window.PaymentRequest}
+Підтримка Fullscreen API: ${isFullscreenPossible()}
+            `;
+        }
+
+        function toggleDebug() {
+            const debugSection = document.getElementById('debug-section');
+            debugSection.style.display = debugSection.style.display === 'none' ? 'block' : 'none';
+        }
+
+        window.addEventListener('load', runChecks);
+    </script>
+</body>
+</html>

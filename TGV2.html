@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детекція браузера Telegram</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .test-functions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .function-test {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Детекція вбудованого браузера Telegram</h1>
+        
+        <div id="main-result"></div>
+        
+        <button onclick="runFullDetection()">Запустити повну перевірку</button>
+        <button onclick="testBrowserFeatures()">Тестувати функції браузера</button>
+        
+        <div id="detection-results"></div>
+        
+        <div class="test-functions">
+            <h3>Тестування функцій браузера:</h3>
+            <div id="feature-tests"></div>
+        </div>
+        
+        <div id="debug-section" style="display: none;">
+            <h3>Детальна діагностика:</h3>
+            <div id="debug-info"></div>
+        </div>
+        
+        <button onclick="toggleDebug()">Показати/Сховати діагностику</button>
+    </div>
+
+    <script>
+        // Розширена функція детекції Telegram браузера
+        function detectTelegramBrowser() {
+            const userAgent = navigator.userAgent || '';
+            const vendor = navigator.vendor || '';
+            const platform = navigator.platform || '';
+            
+            const detection = {
+                isTelegram: false,
+                confidence: 0,
+                methods: {},
+                browserInfo: {
+                    userAgent,
+                    vendor,
+                    platform,
+                    languages: navigator.languages || [],
+                    cookieEnabled: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack,
+                    maxTouchPoints: navigator.maxTouchPoints || 0
+                }
+            };
+
+            // Метод 1: Прямий User Agent
+            detection.methods.directUA = /telegram/i.test(userAgent);
+            if (detection.methods.directUA) detection.confidence += 80;
+
+            // Метод 2: Неявні ознаки в User Agent
+            detection.methods.indirectUA = {
+                // Telegram часто маскується під Chrome
+                fakeChrome: /Chrome\/\d+\.\d+\.\d+\.\d+.*Mobile.*Safari/i.test(userAgent) && !/Edge|OPR|Edg/i.test(userAgent),
+                // Відсутність типових мобільних браузерів
+                notTypicalMobile: !/Samsung|Huawei|Xiaomi|OnePlus|LG|Motorola/i.test(userAgent),
+                // Особливі версії Chrome
+                suspiciousChrome: /Chrome\/9[0-9]\./i.test(userAgent) && /Mobile/i.test(userAgent),
+                // Відсутність деталей про пристрій
+                genericDevice: /Mobile.*Safari/i.test(userAgent) && !/iPhone|iPad|Android/i.test(userAgent)
+            };
+            
+            const indirectMatches = Object.values(detection.methods.indirectUA).filter(Boolean).length;
+            if (indirectMatches >= 2) detection.confidence += 30;
+
+            // Метод 3: Аналіз можливостей браузера
+            detection.methods.browserCapabilities = {
+                // Telegram браузер часто має обмежені можливості
+                noWebGL: !checkWebGLSupport(),
+                noWebRTC: !checkWebRTCSupport(),
+                noServiceWorker: !('serviceWorker' in navigator),
+                noNotifications: !('Notification' in window),
+                noWebSpeech: !('speechSynthesis' in window),
+                noWebAssembly: typeof WebAssembly === 'undefined',
+                noIndexedDB: !('indexedDB' in window),
+                noWebSockets: typeof WebSocket === 'undefined'
+            };
+            
+            const disabledFeatures = Object.values(detection.methods.browserCapabilities).filter(Boolean).length;
+            if (disabledFeatures >= 3) detection.confidence += 25;
+
+            // Метод 4: Аналіз навігації та історії
+            detection.methods.navigationRestrictions = {
+                // Telegram може обмежувати навігацію
+                historyLength: window.history.length <= 1,
+                noOpener: !window.opener,
+                restrictedReferrer: !document.referrer || document.referrer.includes('telegram'),
+                noBackButton: !window.history.back
+            };
+            
+            const navRestrictions = Object.values(detection.methods.navigationRestrictions).filter(Boolean).length;
+            if (navRestrictions >= 2) detection.confidence += 20;
+
+            // Метод 5: Тестування заборонених API
+            detection.methods.restrictedAPIs = {
+                noLocalStorage: !testLocalStorage(),
+                noSessionStorage: !testSessionStorage(),
+                noClipboard: !testClipboardAPI(),
+                noCamera: !testCameraAPI(),
+                noMicrophone: !testMicrophoneAPI(),
+                noGeolocation: !testGeolocationAPI(),
+                noFullscreen: !testFullscreenAPI()
+            };
+            
+            const restrictedAPIs = Object.values(detection.methods.restrictedAPIs).filter(Boolean).length;
+            if (restrictedAPIs >= 3) detection.confidence += 40;
+
+            // Метод 6: Аналіз розміру екрану та viewport
+            detection.methods.screenAnalysis = {
+                suspiciousViewport: window.innerWidth === screen.width && window.innerHeight < screen.height,
+                noScreenOrientation: !screen.orientation,
+                staticViewport: !testViewportChanges()
+            };
+            
+            const screenIssues = Object.values(detection.methods.screenAnalysis).filter(Boolean).length;
+            if (screenIssues >= 2) detection.confidence += 15;
+
+            // Метод 7: Тестування специфічних для Telegram об'єктів
+            detection.methods.telegramSpecific = {
+                hasTelegramObject: typeof window.Telegram !== 'undefined',
+                hasTelegramWebApp: !!(window.Telegram && window.Telegram.WebApp),
+                hasTelegramWebviewProxy: typeof window.TelegramWebviewProxy !== 'undefined',
+                telegramURLParams: checkTelegramURLParams()
+            };
+            
+            if (detection.methods.telegramSpecific.hasTelegramObject) detection.confidence += 90;
+            if (detection.methods.telegramSpecific.hasTelegramWebApp) detection.confidence += 95;
+
+            // Фінальне рішення
+            detection.isTelegram = detection.confidence >= 50;
+            
+            return detection;
+        }
+
+        // Допоміжні функції тестування
+        function checkWebGLSupport() {
+            try {
+                const canvas = document.createElement('canvas');
+                return !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function checkWebRTCSupport() {
+            return !!(window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection);
+        }
+
+        function testLocalStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function testSessionStorage() {
+            try {
+                sessionStorage.setItem('test', 'test');
+                sessionStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function testClipboardAPI() {
+            return !!(navigator.clipboard && navigator.clipboard.writeText);
+        }
+
+        function testCameraAPI() {
+            return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+        }
+
+        function testMicrophoneAPI() {
+            return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+        }
+
+        function testGeolocationAPI() {
+            return !!navigator.geolocation;
+        }
+
+        function testFullscreenAPI() {
+            return !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+        }
+
+        function testViewportChanges() {
+            // Простий тест на можливість зміни viewport
+            const initialWidth = window.innerWidth;
+            return true; 
+        }
+
+        function checkTelegramURLParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.has('tgWebAppData') || 
+                   urlParams.has('tgWebAppVersion') || 
+                   urlParams.has('tgWebAppPlatform') ||
+                   document.referrer.includes('telegram');
+        }
+
+        function runFullDetection() {
+            const detection = detectTelegramBrowser();
+            
+            // Основний результат
+            const mainResult = document.getElementById('main-result');
+            if (detection.isTelegram) {
+                mainResult.innerHTML = `
+                    <div class="result success">
+                        <h3>🔍 Telegram браузер детектований!</h3>
+                        <p><strong>Рівень впевненості:</strong> ${detection.confidence}%</p>
+                        <p><em>Рекомендується відключити проблемні функції</em></p>
+                    </div>
+                `;
+            } else {
+                mainResult.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Telegram браузер НЕ детектований</h3>
+                        <p><strong>Рівень впевненості:</strong> ${detection.confidence}%</p>
+                        <p><em>Всі функції повинні працювати нормально</em></p>
+                    </div>
+                `;
+            }
+
+            // Детальні результати
+            const resultsDiv = document.getElementById('detection-results');
+            let html = '<h4>Результати детекції:</h4>';
+            
+            Object.entries(detection.methods).forEach(([method, results]) => {
+                html += `<div class="result info"><strong>${method}:</strong><br>`;
+                if (typeof results === 'object') {
+                    Object.entries(results).forEach(([check, result]) => {
+                        const icon = result ? '✓' : '✗';
+                        html += `${icon} ${check}: ${result}<br>`;
+                    });
+                } else {
+                    const icon = results ? '✓' : '✗';
+                    html += `${icon} ${method}: ${results}`;
+                }
+                html += '</div>';
+            });
+            
+            resultsDiv.innerHTML = html;
+
+            // Встановлюємо глобальну змінну
+            window.isTelegramBrowser = detection.isTelegram;
+            window.telegramDetectionData = detection;
+        }
+
+        function testBrowserFeatures() {
+            const tests = [
+                { name: 'localStorage', test: testLocalStorage },
+                { name: 'sessionStorage', test: testSessionStorage },
+                { name: 'WebGL', test: checkWebGLSupport },
+                { name: 'WebRTC', test: checkWebRTCSupport },
+                { name: 'Clipboard API', test: testClipboardAPI },
+                { name: 'Camera API', test: testCameraAPI },
+                { name: 'Geolocation', test: testGeolocationAPI },
+                { name: 'Fullscreen API', test: testFullscreenAPI },
+                { name: 'Service Worker', test: () => 'serviceWorker' in navigator },
+                { name: 'Notifications', test: () => 'Notification' in window },
+                { name: 'WebAssembly', test: () => typeof WebAssembly !== 'undefined' },
+                { name: 'IndexedDB', test: () => 'indexedDB' in window }
+            ];
+
+            const testsDiv = document.getElementById('feature-tests');
+            let html = '';
+
+            tests.forEach(({ name, test }) => {
+                const result = test();
+                const className = result ? 'success' : 'error';
+                const icon = result ? '✅' : '❌';
+                html += `<div class="function-test result ${className}">${icon} ${name}: ${result ? 'Працює' : 'Не працює'}</div>`;
+            });
+
+            testsDiv.innerHTML = html;
+        }
+
+        function toggleDebug() {
+            const debugSection = document.getElementById('debug-section');
+            if (debugSection.style.display === 'none') {
+                const detection = detectTelegramBrowser();
+                const debugInfo = document.getElementById('debug-info');
+                debugInfo.innerHTML = `<div class="debug-info">${JSON.stringify(detection, null, 2)}</div>`;
+                debugSection.style.display = 'block';
+            } else {
+                debugSection.style.display = 'none';
+            }
+        }
+
+        // Автоматичний запуск при завантаженні
+        window.addEventListener('load', function() {
+            runFullDetection();
+            testBrowserFeatures();
+        });
+
+        // Експорт функції для використання в коді
+        window.detectTelegramBrowser = detectTelegramBrowser;
+    </script>
+</body>
+</html>
