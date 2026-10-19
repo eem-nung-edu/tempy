@@ -1,118 +1,1201 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- Фазор: збережіть як kirgof.html. Потрібен інтернет лише для KaTeX; сервер обчислень не використовується. -->
 <html lang="uk">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Фазор — комплексні системи Кірхгофа</title>
-<meta name="description" content="Конструктор рівнянь Кірхгофа, контурних струмів і вузлових напруг із комплексними числами та покроковим розв’язанням.">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css" crossorigin="anonymous">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.js" crossorigin="anonymous" onload="window.dispatchEvent(new Event('mathready'))" onerror="window.dispatchEvent(new Event('mathfailed'))"></script>
-<style>
-:root{--bg:#f4f6f8;--paper:#fff;--ink:#172735;--muted:#627383;--line:#dde5eb;--blue:#1765d1;--bluewash:#edf4ff;--green:#087f62;--red:#b73143;--mono:ui-monospace,SFMono-Regular,Consolas,monospace}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #88b8ff;outline-offset:3px}button{border:1px solid var(--line);border-radius:9px;padding:8px 14px;background:white;color:var(--ink)}button:hover{border-color:#95b4db;background:#f6faff}.primary{background:var(--blue);color:white;border-color:var(--blue)}.primary:hover{background:#1157ba;color:white}header{background:var(--ink);color:white}header .wrap{padding-top:27px;padding-bottom:26px;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-size:26px;font-weight:750;letter-spacing:-1px}.brand span{color:#8cbfff}.tag{font:12px var(--mono);color:#b0c0ce;letter-spacing:1.8px}.wrap{max-width:1200px;margin:auto;padding:28px 30px}h1{font-size:30px;line-height:1.25;letter-spacing:-.8px;margin:2px 0 10px}h2{font-size:19px;line-height:1.3;margin:0}h3{font-size:16px;margin:20px 0 8px}p{margin:6px 0 14px}.muted{color:var(--muted)}.intro{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:24px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.8px;color:var(--blue);text-transform:uppercase;margin-bottom:8px}.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:20px}.settings{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:18px}.settings label{display:flex;flex-direction:column;font-size:12px;font-weight:650;gap:6px}select{width:100%;padding:9px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink)}.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:22px 0}.tabs button{border:0;border-radius:8px 8px 0 0;padding:12px 20px;background:transparent;color:var(--muted);font-weight:650}.tabs button[aria-selected=true]{color:var(--blue);background:var(--bluewash);box-shadow:inset 0 -3px var(--blue)}[hidden]{display:none!important}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}.step{display:inline-grid;place-items:center;border-radius:6px;width:26px;height:26px;font-size:13px;margin-right:8px;color:var(--blue);background:var(--bluewash)}.badge{font-size:12px;border-radius:99px;padding:4px 10px;background:#eef2f5;color:var(--muted);white-space:nowrap}.badge.ok{background:#e7f6ef;color:var(--green)}.badge.bad{background:#fff0f1;color:var(--red)}.tokens{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}.tokens button{font:12px var(--mono);padding:4px 9px}.editor-shell{border:1px solid #cbd6df;border-radius:10px;background:#fbfcfe;overflow:hidden}.editor-row{display:flex;position:relative}.gutter{width:40px;flex-shrink:0;padding:14px 9px;background:#f0f3f7;color:#97a5b2;text-align:right;font:14px/28px var(--mono);overflow:hidden;white-space:pre;user-select:none}.edit-stack{position:relative;flex:1;min-width:0}#highlight,#equations{margin:0;border:0;border-radius:0;padding:14px 16px;font:14px/28px var(--mono);letter-spacing:0;white-space:pre;tab-size:2;overflow:auto;width:100%;height:230px}#highlight{position:absolute;inset:0;pointer-events:none;color:transparent;background:transparent;overflow:hidden}#highlight mark{background:#ffe0e4;color:transparent;border-bottom:2px solid var(--red)}#equations{position:relative;display:block;resize:vertical;background:transparent;color:var(--ink);caret-color:var(--blue);min-height:145px;max-height:600px}#equations::selection{background:#adceff80}.editor-foot{border-top:1px solid var(--line);padding:8px 14px;display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}.notice{padding:12px 15px;border-radius:8px;background:#f0f4f8;color:var(--muted);font-size:13px}.notice.error{background:#fff0f2;color:var(--red)}.notice.success{background:#eaf7f1;color:var(--green)}#errors:empty{display:none}.err-item{display:block;width:100%;border:0;text-align:left;padding:6px 0;background:none;color:var(--red);font-size:13px}.math-block{padding:16px;overflow-x:auto;border-radius:9px;background:#fafbfd;margin-top:12px}.math{white-space:pre-wrap;font-family:var(--mono);overflow-x:auto}.katex-display{margin:.6em 0!important}.eq-row{display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding:17px 0;min-width:0}.eq-row:last-child{border:0}.eq-num{flex:0 0 23px;color:#93a3b0;font:12px var(--mono)}.eq-content{display:flex;flex:1;align-items:center;flex-wrap:wrap;gap:7px;font-family:var(--mono)}.param{display:inline-flex;flex-direction:column;gap:4px;padding:8px 10px;background:#f1f6ff;border:1px solid #d9e7fa;border-radius:8px;font:12px system-ui}.param.e{background:#f0f8f4;border-color:#d5eadf}.param-title{color:var(--blue);font-weight:750;display:flex;justify-content:space-between;gap:18px}.param.e .param-title{color:var(--green)}.param-fields{display:flex;align-items:center;gap:5px}.param label{font-size:10px;color:var(--muted);display:flex;flex-direction:column;gap:2px}.param input{width:82px;border:1px solid #c4d4e6;border-radius:5px;padding:5px 6px;color:var(--ink);background:white;font:13px var(--mono)}.param input[aria-invalid=true]{border-color:var(--red);background:#fff3f4}.param .unit{font-size:10px;color:var(--muted)}.field-sign{font-size:12px;margin-top:13px}.empty{padding:45px 15px;text-align:center;color:var(--muted)}.empty .empty-symbol{font:38px Georgia,serif;color:#aebecd;margin-bottom:8px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:12px;margin-top:18px}.result-card{border:1px solid var(--line);border-radius:10px;padding:17px;background:#fcfdff}.result-card .name{font-size:12px;color:var(--blue);font-weight:750}.result-card .value{font:20px/1.5 var(--mono);margin:9px 0;overflow-wrap:anywhere}.result-card .polar{font:13px/1.7 var(--mono);color:var(--muted)}.table-scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:10px 13px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-weight:550}.success-text{color:var(--green)}.fail-text{color:var(--red)}.solution-step{border-top:1px solid var(--line);padding:14px 0}.solution-step summary{cursor:pointer;font-weight:600}.fraction{display:inline-flex;flex-direction:column;align-items:center;gap:4px;vertical-align:middle}.fraction>.numerator{border-bottom:1px solid var(--ink);padding-bottom:5px}.fraction>span{display:flex;align-items:center;flex-wrap:wrap;gap:5px}details.help{font-size:13px;color:var(--muted)}details.help summary{cursor:pointer;color:var(--ink);font-weight:600}.help code{color:var(--blue);background:var(--bluewash);padding:2px 4px;border-radius:4px}.actions{display:flex;gap:8px;flex-wrap:wrap}.footer{display:flex;justify-content:space-between;gap:15px;color:var(--muted);font-size:12px;padding:12px 0 26px}.tiny{font-size:12px}.precision{display:flex;align-items:center;gap:8px;font-size:12px}.precision select{width:65px}.live-note{font-size:12px;color:var(--green)}@media(max-width:720px){.wrap{padding:20px 15px}header .wrap{padding-top:18px;padding-bottom:18px}.tag{display:none}h1{font-size:25px}.intro{align-items:flex-start;flex-direction:column;gap:8px}.card{padding:17px}.settings{grid-template-columns:1fr 1fr;gap:12px}.settings label:first-child{grid-column:1/-1}.tabs button{padding:11px 12px;font-size:13px}.section-head{flex-wrap:wrap}.param input{width:71px}.editor-foot{flex-direction:column;gap:0}.eq-row{gap:5px}#equations,#highlight{font-size:12px;padding-left:10px}.footer{flex-direction:column}.result-grid{grid-template-columns:1fr}}@media print{header,.settings,.tabs,.intro .actions,#input-panel,.footer,.precision{display:none!important}body{background:white}.wrap{max-width:none;padding:0}.card{break-inside:avoid;border:0}#results-panel,#solution-panel{display:block!important}.solution-step{break-inside:avoid}details>div{display:block}.math-block{overflow:visible}}
-</style>
-</head>
-<body>
-<header><div class="wrap"><div class="brand">∿ Фазор<span>.</span></div><div class="tag">ЕЛЕКТРОТЕХНІКА / КОМПЛЕКСНІ СИСТЕМИ</div></div></header>
-<main class="wrap">
-<div class="intro"><div><div class="eyebrow">Від рівняння до розв’язку</div><h1>Системи Кірхгофа</h1><p class="muted">Складіть рівняння. Введіть параметри. Отримайте розв’язок із перевіркою.</p></div><div class="actions"><button id="example">Завантажити приклад</button><button id="clear">Очистити</button></div></div>
-<div class="card settings">
-<label>Метод<select id="method"><option value="branch">Рівняння Кірхгофа · I₁, I₂…</option><option value="mesh">Контурні струми · I₁₁, I₂₂…</option><option value="node">Вузлові напруги · U₁, U₂…</option></select></label>
-<label>Невідомих<select id="count"></select></label><label>Доступних опорів Z<select id="zcount"></select></label><label>Джерел напруги E<select id="ecount"></select></label>
-</div>
-<nav class="tabs" role="tablist" aria-label="Етапи розрахунку"><button role="tab" id="input-tab" aria-selected="true" aria-controls="input-panel" tabindex="0" data-tab="input">01 · Введення</button><button role="tab" id="results-tab" aria-selected="false" aria-controls="results-panel" tabindex="-1" data-tab="results">02 · Результати</button><button role="tab" id="solution-tab" aria-selected="false" aria-controls="solution-panel" tabindex="-1" data-tab="solution">03 · Розв’язок</button></nav>
-<section id="input-panel" role="tabpanel" aria-labelledby="input-tab">
-<div class="card"><div class="section-head"><h2><span class="step">1</span>Конструктор рівнянь</h2><span class="badge" id="syntax-status">Очікуємо рівняння</span></div><p class="muted tiny">Одне рівняння на рядок. Виберіть символ, щоб вставити його в позицію курсора.</p><div class="tokens" id="tokens"></div>
-<div class="editor-shell"><div class="editor-row"><div class="gutter" id="gutter" aria-hidden="true">1</div><div class="edit-stack"><pre id="highlight" aria-hidden="true"></pre><textarea id="equations" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Система рівнянь" aria-describedby="syntax-help" placeholder="I1 - I2 = 0&#10;Z1*I1 + Z2*I2 = E1" maxlength="12000"></textarea></div></div><div class="editor-foot"><span id="line-count">0 рівнянь</span><span>+ − * / ( ) = · десяткові кома або крапка</span></div></div>
-<div id="errors" aria-live="polite"></div><p id="example-note" class="notice" style="margin-top:12px" hidden>Приклад: структура рівнянь і округлені опори — з наданого фото. Джерела для демонстрації: E₁ = 100∠0° В, E₂ = 80∠−30° В, E₃ = 120∠45° В. Вони не відтворюють числові відповіді підручника, оскільки початкові значення джерел на фото не наведено.</p><div id="symbolic" class="math-block" hidden></div>
-<details class="help" style="margin-top:16px"><summary>Правила введення та позначення</summary><div id="syntax-help"><p>Множення записуйте явно: <code>Z1*I1</code>. Дозволені дужки, дроби, числа та параметри. Наприклад: <code>(Z1+Z2)*I1 - Z2*I2 = E1</code>. Регістр літер неважливий. Уявна одиниця — <code>j</code>, наприклад <code>(2+3*j)*I1=E1</code>.</p><p>Система має бути лінійною: добуток невідомих і невідома в знаменнику не підтримуються. У вузловому методі можна записати <code>(U1-U2)/Z1=0</code>. Редактор розв’язує введену систему; рівняння за схемою ви складаєте самостійно.</p><p>Enter — нове рівняння. Tab — наступний елемент інтерфейсу. Порожнє поле параметра не дорівнює нулю. Фази джерел — у градусах, напруги — діючі значення.</p></div></details></div>
-<div class="card" id="parameter-section" hidden><div class="section-head"><h2><span class="step">2</span>Параметри у рівняннях</h2><span class="badge" id="param-count"></span></div><p class="muted tiny">Введіть Re та Im для Z; модуль U і фазу φ для E. Повторення одного параметра синхронізовані.</p><div id="parameter-equations"></div><div id="numeric-status" class="notice" role="status"></div><div id="substituted" class="math-block" hidden></div><div style="margin-top:16px" class="actions"><button class="primary" id="show-results">Перейти до результатів →</button><span class="live-note" id="auto-note"></span></div></div>
-</section>
-<section id="results-panel" role="tabpanel" aria-labelledby="results-tab" hidden><div class="card"><div class="section-head"><h2>Результати розрахунку</h2><label class="precision">Знаків після коми<select id="precision"><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option></select></label></div><div id="results-content"></div></div><div class="actions"><button id="back-input">← До рівнянь</button><button id="print">Друк / PDF</button></div></section>
-<section id="solution-panel" role="tabpanel" aria-labelledby="solution-tab" hidden><div class="card"><div class="section-head"><h2>Покроковий розв’язок</h2><span class="badge">Метод Гауса · вибір головного елемента</span></div><div id="solution-content"></div></div></section>
-<footer class="footer"><span>2–8 невідомих · до 8 опорів · до 5 джерел</span><span id="math-status">Формули: завантаження KaTeX…</span></footer>
-</main>
-<script>
-'use strict';
-/* Standalone application. No eval, build step, backend or external calculation service. */
-const $=id=>document.getElementById(id);
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const C=(r=0,i=0)=>({r,i});
-const add=(a,b)=>C(a.r+b.r,a.i+b.i), neg=a=>C(-a.r,-a.i), sub=(a,b)=>add(a,neg(b));
-const mul=(a,b)=>C(a.r*b.r-a.i*b.i,a.r*b.i+a.i*b.r), abs=a=>Math.hypot(a.r,a.i);
-function div(a,b){const scale=Math.max(Math.abs(b.r),Math.abs(b.i));if(!scale)throw Error('Ділення на нуль. Перевірте знаменник і значення опорів.');const br=b.r/scale,bi=b.i/scale,d=br*br+bi*bi;return C(((a.r/scale)*br+(a.i/scale)*bi)/d,((a.i/scale)*br-(a.r/scale)*bi)/d)}
-const finite=z=>Number.isFinite(z.r)&&Number.isFinite(z.i);
-let config={method:'branch',n:5,z:5,e:3}, params={}, system=null, outcome=null;
-let timer;
-const names=()=>Array.from({length:config.n},(_,i)=>config.method==='node'?'U'+(i+1):config.method==='mesh'?'I'+(i+1)+(i+1):'I'+(i+1));
-const displayName=s=>s.replace(/^(I|U|Z|E)(\d+)$/,(_,a,b)=>a+'<sub>'+b+'</sub>');
-const texName=s=>s==='J'?'j':s.replace(/^(I|U|Z|E)(\d+)$/,'$1_{$2}');
-class ParseError extends Error{constructor(message,pos=0,len=1){super(message);this.pos=pos;this.len=len}}
-function tokenize(text){const out=[];let p=0;while(p<text.length){if(/\s/.test(text[p])){p++;continue}const start=p,tail=text.slice(p);let m;if((m=tail.match(/^(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:[eE][+-]?\d+)?/))){const v=Number(m[0].replace(',','.'));if(!Number.isFinite(v))throw new ParseError('Число завелике або некоректне.',p,m[0].length);out.push({type:'num',value:v,pos:p,len:m[0].length});p+=m[0].length}else if((m=tail.match(/^[a-zA-Z][a-zA-Z0-9_]*/))){out.push({type:'id',value:m[0].toUpperCase(),pos:p,len:m[0].length});p+=m[0].length}else if('+-*/()='.includes(text[p])){out.push({type:text[p],pos:p,len:1});p++}else if(text[p]==='−'){out.push({type:'-',pos:p,len:1});p++}else throw new ParseError('Недопустимий символ «'+text[start]+'». Використовуйте латинські літери та + - * / ( ) =.',p)}out.push({type:'end',pos:p,len:1});return out}
-function parseEquation(text){if(text.length>1500)throw new ParseError('Рівняння задовге: максимум 1500 символів.',0,text.length);const tokens=tokenize(text);if(tokens.length>400)throw new ParseError('Рівняння надто складне: скоротіть кількість доданків.',0,text.length);let k=0,depth=0;const variables=names(),used=new Set();const peek=()=>tokens[k];function take(type){if(peek().type!==type)throw new ParseError(type===')'?'Не закрито дужку.':'Очікується «'+type+'».',peek().pos,peek().len);return tokens[k++]}
-function atom(){const t=peek();if(++depth>80)throw new ParseError('Забагато вкладених дужок.',t.pos);let n;if(t.type==='num'){k++;n={type:'num',value:t.value,pos:t.pos,dependent:false}}else if(t.type==='id'){k++;let dep=variables.includes(t.value);if(!dep&&t.value!=='J'&&!/^Z[1-8]$/.test(t.value)&&!/^E[1-5]$/.test(t.value))throw new ParseError('Невідоме позначення '+t.value+'. Доступні невідомі: '+variables.join(', ')+'.',t.pos,t.len);if(/^Z/.test(t.value)&&Number(t.value.slice(1))>config.z)throw new ParseError('Опір '+t.value+' недоступний. Збільште кількість опорів Z.',t.pos,t.len);if(/^E/.test(t.value)&&Number(t.value.slice(1))>config.e)throw new ParseError('Джерело '+t.value+' недоступне. Збільште кількість джерел E.',t.pos,t.len);if(/^[ZE]/.test(t.value))used.add(t.value);n={type:'id',name:t.value,pos:t.pos,dependent:dep}}else if(t.type==='('){k++;n=expression();take(')');n={type:'group',child:n,pos:t.pos,dependent:n.dependent}}else if(t.type==='+'||t.type==='-'){k++;const child=atom();n={type:'unary',op:t.type,child,pos:t.pos,dependent:child.dependent}}else throw new ParseError(t.type==='end'?'Незавершене рівняння: очікується число, параметр або невідома.':'Очікується число, параметр, невідома або дужка.',t.pos,t.len);depth--;return n}
-function product(){let a=atom();while(peek().type==='*'||peek().type==='/'){const op=tokens[k++],b=atom();if(op.type==='*'&&a.dependent&&b.dependent)throw new ParseError('Нелінійний вираз: не можна множити дві невідомі.',op.pos);if(op.type==='/'&&b.dependent)throw new ParseError('Нелінійний вираз: невідома не може бути в знаменнику.',op.pos);a={type:'binary',op:op.type,left:a,right:b,pos:op.pos,dependent:a.dependent||b.dependent}}return a}
-function expression(){let a=product();while(peek().type==='+'||peek().type==='-'){const op=tokens[k++],b=product();a={type:'binary',op:op.type,left:a,right:b,pos:op.pos,dependent:a.dependent||b.dependent}}return a}
-const left=expression();take('=');const right=expression();if(peek().type!=='end')throw new ParseError(peek().type==='='?'У рядку має бути один знак рівності.':'Зайвий символ або пропущений оператор множення «*».',peek().pos,peek().len);return {left,right,used,tokens,text}}
-function tex(n,values=false){if(n.type==='num')return String(n.value);if(n.type==='id'){if(values&&/^[ZE]/.test(n.name))return '\\left('+complexTex(parameterValue(n.name))+'\\right)';return texName(n.name)}if(n.type==='group')return '\\left('+tex(n.child,values)+'\\right)';if(n.type==='unary')return n.op+tex(n.child,values);if(n.op==='/')return '\\frac{'+tex(n.left,values)+'}{'+tex(n.right,values)+'}';return '{'+tex(n.left,values)+'}'+(n.op==='*'?'\\,':n.op)+'{'+tex(n.right,values)+'}'}
-function equationTex(eq,values=false){return tex(eq.left,values)+'&='+tex(eq.right,values)}
-function systemTex(eqs,values=false){return '\\left\\{\\begin{aligned}'+eqs.map(e=>equationTex(e,values)).join('\\\\[5pt]')+'\\end{aligned}\\right.'}
-function mathMarkup(t,block=true){return '<div class="math" data-display="'+block+'" data-tex="'+esc(t)+'">'+esc(t)+'</div>'}
-function renderMath(root=document){if(!window.katex)return;root.querySelectorAll('[data-tex]').forEach(el=>{try{window.katex.render(el.dataset.tex,el,{displayMode:el.dataset.display!=='false',throwOnError:false,trust:false,strict:'ignore',output:'htmlAndMathml'})}catch{el.textContent=el.dataset.tex}})}
-window.addEventListener('mathready',()=>{renderMath();$('math-status').textContent='Формули · KaTeX'});
-window.addEventListener('mathfailed',()=>{$('math-status').textContent='KaTeX недоступний: показано LaTeX. Обчислення працюють.'});
-function numberValue(s){const t=String(s??'').trim().replace(/−/g,'-').replace(',','.');if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/.test(t))return null;const x=Number(t);return Number.isFinite(x)?x:null}
-function parameterValue(id){const p=params[id]||{},a=numberValue(p.a),b=numberValue(p.b);if(a===null||b===null)throw Error('Заповніть обидва поля '+id+'.');if(id[0]==='E'){if(a<0)throw Error('Модуль напруги '+id+' має бути невід’ємним. Знак задайте фазою.');const angle=(b%360)*Math.PI/180;return C(a*Math.cos(angle),a*Math.sin(angle))}return C(a,b)}
-function paramWidget(id){params[id]??={a:'',b:''};const e=id[0]==='E';return '<span class="param '+(e?'e':'')+'"><span class="param-title">'+displayName(id)+'<span class="unit">'+(e?'В · °':'Ом')+'</span></span><span class="param-fields"><label>'+(e?'U, В':'Re')+'<input inputmode="decimal" type="text" autocomplete="off" data-param="'+id+'" data-part="a" aria-label="'+id+' '+(e?'напруга':'дійсна частина')+'" value="'+esc(params[id].a)+'"></label><span class="field-sign">'+(e?'∠':'+ j·')+'</span><label>'+(e?'φ, °':'Im')+'<input inputmode="decimal" type="text" autocomplete="off" data-param="'+id+'" data-part="b" aria-label="'+id+' '+(e?'кут':'уявна частина')+'" value="'+esc(params[id].b)+'"></label></span></span>'}
-function inlineNode(n){if(n.type==='num')return '<span>'+esc(n.value)+'</span>';if(n.type==='id')return /^[ZE]/.test(n.name)?paramWidget(n.name):'<span>'+displayName(n.name==='J'?'j':n.name)+'</span>';if(n.type==='group')return '<span>(</span>'+inlineNode(n.child)+'<span>)</span>';if(n.type==='unary')return '<span>'+n.op+'</span>'+inlineNode(n.child);if(n.op==='/')return '<span class="fraction"><span class="numerator">'+inlineNode(n.left)+'</span><span>'+inlineNode(n.right)+'</span></span>';return inlineNode(n.left)+'<span>'+(n.op==='*'?'·':n.op==='-'?'−':'+')+'</span>'+inlineNode(n.right)}
-function affine(n){const empty=()=>({c:C(),a:Array.from({length:config.n},()=>C())});if(n.type==='num')return {...empty(),c:C(n.value)};if(n.type==='id'){const x=empty(),idx=names().indexOf(n.name);if(idx>=0)x.a[idx]=C(1);else x.c=n.name==='J'?C(0,1):parameterValue(n.name);return x}if(n.type==='group')return affine(n.child);if(n.type==='unary'){const x=affine(n.child);return n.op==='-'?{c:neg(x.c),a:x.a.map(neg)}:x}const a=affine(n.left),b=affine(n.right);if(n.op==='+')return {c:add(a.c,b.c),a:a.a.map((z,i)=>add(z,b.a[i]))};if(n.op==='-')return {c:sub(a.c,b.c),a:a.a.map((z,i)=>sub(z,b.a[i]))};if(n.op==='/')return {c:div(a.c,b.c),a:a.a.map(z=>div(z,b.c))};if(n.left.dependent)return {c:mul(a.c,b.c),a:a.a.map(z=>mul(z,b.c))};return {c:mul(a.c,b.c),a:b.a.map(z=>mul(z,a.c))}}
-// Row-scaled elimination preserves the different units/scales of KCL and KVL rows.
-function solve(A,b){const n=A.length,M=A.map((row,i)=>row.map(z=>({...z})).concat([{...b[i]}])),steps=[];let rank=0;const tol=1e-12;
-for(let i=0;i<n;i++){const s=Math.max(...A[i].map(abs));if(s>0)M[i]=M[i].map(z=>div(z,C(s)))}
-const rhsBounds=M.map(row=>abs(row[n]));
-steps.push({label:'Нормування рядків за найбільшим модулем коефіцієнта',matrix:M.map(r=>r.map(z=>({...z})))});
-for(let col=0;col<n&&rank<n;col++){let best=rank;for(let i=rank+1;i<n;i++)if(abs(M[i][col])>abs(M[best][col]))best=i;if(abs(M[best][col])<=tol)continue;const operations=[];if(best!==rank){[M[rank],M[best]]=[M[best],M[rank]];[rhsBounds[rank],rhsBounds[best]]=[rhsBounds[best],rhsBounds[rank]];operations.push('R_{'+(rank+1)+'}\\leftrightarrow R_{'+(best+1)+'}')}
-const pivot=M[rank][col];for(let i=rank+1;i<n;i++){const f=div(M[i][col],pivot);if(abs(f)>0){rhsBounds[i]+=abs(f)*rhsBounds[rank];for(let j=col+1;j<=n;j++)M[i][j]=sub(M[i][j],mul(f,M[rank][j]));M[i][col]=C();operations.push('R_{'+(i+1)+'}\\leftarrow R_{'+(i+1)+'}-('+complexTex(f)+')R_{'+(rank+1)+'}')}}rank++;steps.push({label:'Виключення невідомої '+names()[col],operations,matrix:M.map(r=>r.map(z=>({...z})))})}
-if(M.flat().some(z=>!finite(z)))throw Error('Переповнення під час обчислень. Перевірте масштаб введених значень.');
-for(let i=rank;i<n;i++){if(abs(M[i][n])>tol*rhsBounds[i])return {kind:'inconsistent',rank,steps}}
-if(rank<n)return {kind:'dependent',rank,steps};const x=Array.from({length:n},()=>C()),back=[];for(let i=n-1;i>=0;i--){let t=M[i][n];for(let j=i+1;j<n;j++)t=sub(t,mul(M[i][j],x[j]));x[i]=div(t,M[i][i]);back.push({i,numerator:t,denominator:M[i][i],value:x[i]})}if(x.some(z=>!finite(z)))throw Error('Результат виходить за числовий діапазон.');
-const residual=A.map((r,i)=>sub(r.reduce((s,z,j)=>add(s,mul(z,x[j])),C()),b[i]));const rowErrors=residual.map((r,i)=>{const d=A[i].reduce((s,z,j)=>s+abs(z)*abs(x[j]),abs(b[i]));return d?abs(r)/d:abs(r)});const relative=Math.max(...rowErrors);return {kind:'unique',x,steps,back,residual,relative,rank,ill:M.some((r,i)=>abs(r[i])<1e-8)}}
-function fmt(v,d=Number($('precision').value)){if(Math.abs(v)<.5*10**(-d))v=0;const a=Math.abs(v);if(a>0&&(a>=1e9||a<10**(-d)))return v.toExponential(3).replace('.',',');return v.toFixed(d).replace(/\.?0+$/,'').replace('.',',')||'0'}
-function complexText(z){return fmt(z.r)+(z.i<0?' − j·':' + j·')+fmt(Math.abs(z.i))}
-function complexTex(z){function f(v){const x=fmt(v).replace(',','.');return x.includes('e')?x.replace(/e([+-]?\d+)/,'\\cdot10^{$1}'):x}return f(z.r)+(z.i<0?'-j\\,':'+j\\,')+f(Math.abs(z.i))}
-function matrixTex(M){return '\\left[\\begin{array}{'+ 'c'.repeat(config.n)+'|c}'+M.map(row=>row.map(complexTex).join('&')).join('\\\\[3pt]')+'\\end{array}\\right]'}
-function updateTokens(){const arr=[...names(),...Array.from({length:config.z},(_,i)=>'Z'+(i+1)),...Array.from({length:config.e},(_,i)=>'E'+(i+1)),'+','-','*','/','(',')','='];$('tokens').innerHTML=arr.map(s=>'<button type="button" data-insert="'+s+'" aria-label="Вставити '+s+'">'+displayName(s)+'</button>').join('');$('equations').placeholder=names()[0]+' - '+names()[1]+' = 0\nZ1*'+names()[0]+' + Z2*'+names()[1]+' = E1'}
-function validate(){clearTimeout(timer);system=null;outcome=null;const text=$('equations').value,lines=text.split('\n'),entries=[],errors=[];let offset=0;
-lines.forEach((line,i)=>{if(line.trim()){try{entries.push({...parseEquation(line),line:i+1})}catch(e){errors.push({message:e.message,line:i+1,pos:e.pos??0,len:e.len??1,offset})}}offset+=line.length+1});$('gutter').textContent=lines.map((_,i)=>i+1).join('\n');$('line-count').textContent=entries.length+' / '+config.n+' рівнянь';
-const byline=new Map(errors.map(e=>[e.line,e]));$('highlight').innerHTML=lines.map((s,i)=>{const e=byline.get(i+1);if(!e)return esc(s);return esc(s.slice(0,e.pos))+'<mark>'+esc(s.slice(e.pos,e.pos+e.len)||' ')+'</mark>'+esc(s.slice(e.pos+e.len))}).join('\n')+'\n';syncScroll();
-$('errors').innerHTML=errors.map((e,i)=>'<button class="err-item" data-error="'+i+'">Рядок '+e.line+', позиція '+(e.pos+1)+': '+esc(e.message)+'</button>').join('');$('errors').querySelectorAll('button').forEach((b,i)=>b.onclick=()=>{const e=errors[i];$('equations').focus();$('equations').setSelectionRange(e.offset+e.pos,e.offset+e.pos+e.len)});
-const complete=!errors.length&&entries.length===config.n;$('syntax-status').className='badge '+(errors.length?'bad':complete?'ok':'');$('syntax-status').textContent=errors.length?'Помилок: '+errors.length:complete?'Система записана коректно':'Потрібно '+config.n+' рівнянь';
-if(entries.length&&!errors.length){$('symbolic').hidden=false;$('symbolic').innerHTML=mathMarkup(systemTex(entries));renderMath($('symbolic'))}else $('symbolic').hidden=true;
-$('parameter-section').hidden=!complete;
-if(complete){system=entries;const ids=[...new Set(entries.flatMap(eq=>[...eq.used]))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));system.used=ids;$('param-count').textContent=ids.length+' параметрів';$('parameter-equations').innerHTML=entries.map((eq,i)=>'<div class="eq-row"><span class="eq-num">'+(i+1)+'</span><div class="eq-content">'+inlineNode(eq.left)+'<span>=</span>'+inlineNode(eq.right)+'</div></div>').join('');calculate()}else{renderOutcome();$('auto-note').textContent=''}
-}
-function syncScroll(){$('highlight').scrollTop=$('equations').scrollTop;$('highlight').scrollLeft=$('equations').scrollLeft;$('gutter').scrollTop=$('equations').scrollTop}
-function calculate(){outcome=null;$('substituted').hidden=true;$('auto-note').textContent='';if(!system){renderOutcome();return}let missing=0,invalid=0,negative=false;document.querySelectorAll('[data-param]').forEach(el=>{const v=numberValue(el.value),blank=!el.value.trim(),bad=!blank&&(v===null||(el.dataset.param[0]==='E'&&el.dataset.part==='a'&&v<0));el.setAttribute('aria-invalid',String(bad));if(bad)invalid++;if(el.dataset.param[0]==='E'&&el.dataset.part==='a'&&v!==null&&v<0)negative=true});for(const id of system.used){for(const key of ['a','b'])if(!String(params[id]?.[key]??'').trim())missing++}
-if(missing||invalid){$('numeric-status').className='notice'+(invalid?' error':'');$('numeric-status').textContent=negative?'Модуль напруги має бути невід’ємним. Напрямок задайте фазою.':invalid?'Виправте виділені значення. Допустимі числа, наприклад −20,5 або 1e-3.':'Залишилося заповнити полів: '+missing+'. Нуль також потрібно ввести явно.';renderOutcome();return}
-try{const A=[],b=[];for(const eq of system){const l=affine(eq.left),r=affine(eq.right);A.push(l.a.map((z,i)=>sub(z,r.a[i])));b.push(sub(r.c,l.c))}if([...A.flat(),...b].some(z=>!finite(z)))throw Error('Переповнення чисел у коефіцієнтах.');outcome={...solve(A,b),A,b};$('substituted').hidden=false;$('substituted').innerHTML='<div class="tiny muted">Система після підстановки</div>'+mathMarkup(systemTex(system,true));renderMath($('substituted'));$('numeric-status').className='notice '+(outcome.kind==='unique'?'success':'error');$('numeric-status').textContent=outcome.kind==='unique'?'Розв’язок обчислено. Результати та кроки оновлено автоматично.':outcome.kind==='dependent'?'Система має нескінченну кількість розв’язків у межах числової точності.':'Система суперечлива: розв’язків немає у межах числової точності.';$('auto-note').textContent=outcome.kind==='unique'?'✓ Обчислено автоматично':''}catch(e){outcome={kind:'error',message:e.message};$('numeric-status').className='notice error';$('numeric-status').textContent=e.message}renderOutcome()}
-function renderOutcome(){const r=$('results-content'),s=$('solution-content');if(!outcome){const msg=!system?'Спочатку складіть коректну систему рівнянь.':'Заповніть усі параметри на вкладці «Введення».';r.innerHTML=s.innerHTML='<div class="empty"><div class="empty-symbol">∑</div>'+msg+'</div>';return}if(outcome.kind==='error'){r.innerHTML=s.innerHTML='<div class="notice error">'+esc(outcome.message)+'</div>';return}
-const o=outcome,unit=config.method==='node'?'В':'А',ns=names();
-if(o.kind!=='unique'){r.innerHTML='<div class="notice error">'+(o.kind==='dependent'?'Нескінченна кількість розв’язків. Рівняння залежні або не визначають усі невідомі.':'Розв’язків немає: рівняння суперечать одне одному.')+'</div><p class="muted tiny" style="margin-top:12px">Ранг матриці коефіцієнтів: '+o.rank+' із '+config.n+'. Висновок із числовим допуском 10⁻¹² після нормування рядків.</p>'}else{
-r.innerHTML='<div class="notice '+(o.relative<1e-8?'success':'error')+'">'+(o.relative<1e-8?'✓ Перевірка підстановкою пройдена.':'Похибка перевищує очікувану. Перевірте дані.')+' Відносна нев’язка: '+o.relative.toExponential(2)+'.</div>'+(o.ill?'<p class="notice">Матриця близька до виродженої. Результат може бути чутливим до точності вхідних даних.</p>':'')+'<div class="result-grid">'+o.x.map((z,i)=>{const m=abs(z),phase=m<1e-300?null:Math.atan2(z.i,z.r)*180/Math.PI;return '<div class="result-card"><div class="name">'+displayName(ns[i])+' · '+unit+'</div><div class="value">'+complexText(z)+'</div><div class="polar">'+fmt(m)+' ∠ '+(phase===null?'—':fmt(phase)+'°')+'<br>'+(phase===null?'Для нуля фаза не визначена.':fmt(m)+' · e<sup>j('+fmt(phase)+'°)</sup>')+'</div></div>'}).join('')+'</div><h3>Перевірка кожного рівняння</h3><p class="muted tiny">Залишок — ліва частина мінус права. Перевірка використовує повну точність; числа нижче округлено.</p><div class="table-scroll"><table><thead><tr><th>Рівняння</th><th>Ліва частина</th><th>Права частина</th><th>|Залишок|</th></tr></thead><tbody>'+system.map((eq,i)=>{const evalSide=n=>{const a=affine(n);return a.a.reduce((v,z,j)=>add(v,mul(z,o.x[j])),a.c)};return '<tr><td>'+(i+1)+'</td><td>'+complexText(evalSide(eq.left))+'</td><td>'+complexText(evalSide(eq.right))+'</td><td class="'+(abs(o.residual[i])<1e-7?'success-text':'')+'">'+abs(o.residual[i]).toExponential(2)+'</td></tr>'}).join('')+'</tbody></table></div><p class="muted tiny">Ця перевірка підтверджує розв’язок введеної системи. Правильність складання рівнянь за електричною схемою перевіряється окремо.</p>'}
-s.innerHTML='<h3>1. Початкова система</h3>'+mathMarkup(systemTex(system))+'<h3>2. Комплексні параметри та підстановка</h3>'+system.used.map(id=>mathMarkup(texName(id)+'='+complexTex(parameterValue(id))+'\\;\\text{'+(id[0]==='Z'?'Ом':'В')+'}',false)).join('')+mathMarkup(systemTex(system,true))+'<h3>3. Розширена матриця [A | b]</h3>'+mathMarkup(matrixTex(o.A.map((row,i)=>[...row,o.b[i]])))+'<h3>4. Прямий хід методу Гауса</h3><p class="muted tiny">Спочатку нормуємо кожен рядок за найбільшим модулем його коефіцієнтів. Для кожного стовпця обираємо найбільший доступний головний елемент. Допуск рангу: 10⁻¹².</p>'+o.steps.map((st,i)=>'<details class="solution-step" '+(i===0?'open':'')+'><summary>'+esc(st.label)+'</summary><div>'+(st.operations||[]).map(op=>mathMarkup(op,false)).join('')+mathMarkup(matrixTex(st.matrix))+'</div></details>').join('');
-if(o.kind==='unique'){s.innerHTML+='<h3>5. Зворотна підстановка</h3>'+o.back.map(st=>mathMarkup(texName(ns[st.i])+'=\\frac{'+complexTex(st.numerator)+'}{'+complexTex(st.denominator)+'}='+complexTex(st.value)+'\\;\\text{'+unit+'}')).join('')+'<p class="notice success">Максимальна відносна нев’язка: '+o.relative.toExponential(3)+'. Обчислення виконано до округлення.</p>'}else{s.innerHTML+='<div class="notice error">'+(o.kind==='dependent'?'Ранг менший за кількість невідомих: є вільні змінні. Єдиного розв’язку немає.':'Після виключення отримано рядок 0 = b, де b ≠ 0. Система суперечлива.')+'</div>'}renderMath(r);renderMath(s)}
-function switchTab(tab){document.querySelectorAll('[role=tab]').forEach(b=>{const on=b.dataset.tab===tab;b.setAttribute('aria-selected',String(on));b.tabIndex=on?0:-1;$(b.dataset.tab+'-panel').hidden=!on})}
-function loadExample(){params={};$('example-note').hidden=false;if(config.method==='branch'){config.n=5;config.z=5;config.e=3;$('equations').value='I2 - I3 + I5 = 0\n-I1 + I4 - I5 = 0\nZ2*I2 + Z3*I3 = E2 + E3\nZ3*I3 + Z5*I5 - Z1*I1 = E3 - E1\nZ1*I1 + Z4*I4 = E1';fillExampleParams()}else if(config.method==='mesh'){config.n=3;config.z=5;config.e=3;$('equations').value='(Z2+Z3)*I11 - Z3*I22 = -E2-E3\n(Z1+Z3+Z5)*I22 - Z3*I11 - Z1*I33 = E3-E1\n(Z1+Z4)*I33 - Z1*I22 = E1';fillExampleParams()}else{config.n=2;config.z=5;config.e=3;$('equations').value='(1/Z2+1/Z3+1/Z5)*U1 - U2/Z5 = -E2/Z2+E3/Z3\n(1/Z1+1/Z4+1/Z5)*U2 - U1/Z5 = E1/Z1';fillExampleParams()}syncConfig();updateTokens();validate();switchTab('input')}
-function fillExampleParams(){const zs=[[22.5,7.428],[0,42.241],[20,-45.214],[30,25.398],[12,25.133]];zs.forEach((z,i)=>params['Z'+(i+1)]={a:String(z[0]),b:String(z[1])});/* Reproducible illustrative sources: the photo does not provide their initial values. */[[100,0],[80,-30],[120,45]].forEach((e,i)=>params['E'+(i+1)]={a:String(e[0]),b:String(e[1])})}
-function syncConfig(){$('method').value=config.method;$('count').value=config.n;$('zcount').value=config.z;$('ecount').value=config.e}
-for(const [id,min,max,value] of [['count',2,8,5],['zcount',1,8,5],['ecount',0,5,3]]){for(let i=min;i<=max;i++)$(id).add(new Option(i,i));$(id).value=value}
-['method','count','zcount','ecount'].forEach(id=>$(id).addEventListener('change',()=>{config={method:$('method').value,n:Number($('count').value),z:Number($('zcount').value),e:Number($('ecount').value)};updateTokens();validate()}));
-$('equations').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(validate,120)});$('equations').addEventListener('scroll',syncScroll);new ResizeObserver(()=>{$('highlight').style.height=$('equations').clientHeight+'px'}).observe($('equations'));
-$('tokens').addEventListener('click',ev=>{const b=ev.target.closest('[data-insert]');if(!b)return;const el=$('equations');el.setRangeText(b.dataset.insert,el.selectionStart,el.selectionEnd,'end');el.focus();validate()});
-$('parameter-equations').addEventListener('input',ev=>{const el=ev.target;if(!el.matches('[data-param]'))return;const {param,part}=el.dataset;params[param][part]=el.value;document.querySelectorAll('[data-param="'+param+'"][data-part="'+part+'"]').forEach(other=>{if(other!==el)other.value=el.value});calculate()});
-document.querySelectorAll('[role=tab]').forEach(b=>{b.addEventListener('click',()=>switchTab(b.dataset.tab));b.addEventListener('keydown',ev=>{const bs=[...document.querySelectorAll('[role=tab]')],i=bs.indexOf(b);let next;if(ev.key==='ArrowRight')next=bs[(i+1)%bs.length];if(ev.key==='ArrowLeft')next=bs[(i+bs.length-1)%bs.length];if(ev.key==='Home')next=bs[0];if(ev.key==='End')next=bs.at(-1);if(next){ev.preventDefault();switchTab(next.dataset.tab);next.focus()}})});
-$('show-results').onclick=()=>switchTab('results');$('back-input').onclick=()=>switchTab('input');$('example').onclick=loadExample;$('clear').onclick=()=>{params={};$('example-note').hidden=true;$('equations').value='';validate();switchTab('input');$('equations').focus()};$('precision').onchange=()=>{if(system)calculate()};$('print').onclick=()=>{document.querySelectorAll('#solution-content details').forEach(el=>el.open=true);window.print()};
-// Pure engine is exposed for reproducible numerical tests; it has no network side effects.
-window.Phasor={parseEquation,affine,solve,C,add,sub,mul,div,get config(){return config},get outcome(){return outcome},get system(){return system},validate};
-updateTokens();validate();if(window.katex){renderMath();$('math-status').textContent='Формули · KaTeX'}
-</script>
-</body></html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Фазор — комплексні системи Кірхгофа</title>
+    <meta
+      name="description"
+      content="Конструктор рівнянь Кірхгофа, контурних струмів і вузлових напруг із комплексними числами та покроковим розв’язанням."
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.css"
+      crossorigin="anonymous"
+    />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.19.0/dist/katex.min.js"
+      crossorigin="anonymous"
+      onload="window.dispatchEvent(new Event('mathready'))"
+      onerror="
+        window.mathLoadFailed = true;
+        window.dispatchEvent(new Event('mathfailed'));
+      "
+    ></script>
+    <style>
+      :root {
+        --bg: #f4f6f8;
+        --paper: #fff;
+        --ink: #172735;
+        --muted: #627383;
+        --line: #dde5eb;
+        --blue: #1765d1;
+        --bluewash: #edf4ff;
+        --green: #087f62;
+        --red: #b73143;
+        --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          15px/1.6 system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      textarea:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #88b8ff;
+        outline-offset: 3px;
+      }
+      button {
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 8px 14px;
+        background: white;
+        color: var(--ink);
+      }
+      button:hover {
+        border-color: #95b4db;
+        background: #f6faff;
+      }
+      .primary {
+        background: var(--blue);
+        color: white;
+        border-color: var(--blue);
+      }
+      .primary:hover {
+        background: #1157ba;
+        color: white;
+      }
+      header {
+        background: var(--ink);
+        color: white;
+      }
+      header .wrap {
+        padding-top: 27px;
+        padding-bottom: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .brand {
+        font-size: 26px;
+        font-weight: 750;
+        letter-spacing: -1px;
+      }
+      .brand span {
+        color: #8cbfff;
+      }
+      .tag {
+        font: 12px var(--mono);
+        color: #b0c0ce;
+        letter-spacing: 1.8px;
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: auto;
+        padding: 28px 30px;
+      }
+      h1 {
+        font-size: 30px;
+        line-height: 1.25;
+        letter-spacing: -0.8px;
+        margin: 2px 0 10px;
+      }
+      h2 {
+        font-size: 19px;
+        line-height: 1.3;
+        margin: 0;
+      }
+      h3 {
+        font-size: 16px;
+        margin: 20px 0 8px;
+      }
+      p {
+        margin: 6px 0 14px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .intro {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 1.8px;
+        color: var(--blue);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .card {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+      }
+      .settings {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 18px;
+      }
+      .settings label {
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        font-weight: 650;
+        gap: 6px;
+      }
+      select {
+        width: 100%;
+        padding: 9px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: white;
+        color: var(--ink);
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        border-bottom: 1px solid var(--line);
+        margin: 22px 0;
+      }
+      .tabs button {
+        border: 0;
+        border-radius: 8px 8px 0 0;
+        padding: 12px 20px;
+        background: transparent;
+        color: var(--muted);
+        font-weight: 650;
+      }
+      .tabs button[aria-selected="true"] {
+        color: var(--blue);
+        background: var(--bluewash);
+        box-shadow: inset 0 -3px var(--blue);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .step {
+        display: inline-grid;
+        place-items: center;
+        border-radius: 6px;
+        width: 26px;
+        height: 26px;
+        font-size: 13px;
+        margin-right: 8px;
+        color: var(--blue);
+        background: var(--bluewash);
+      }
+      .badge {
+        font-size: 12px;
+        border-radius: 99px;
+        padding: 4px 10px;
+        background: #eef2f5;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .badge.ok {
+        background: #e7f6ef;
+        color: var(--green);
+      }
+      .badge.bad {
+        background: #fff0f1;
+        color: var(--red);
+      }
+      .tokens {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 12px;
+      }
+      .tokens button {
+        font: 12px var(--mono);
+        padding: 4px 9px;
+      }
+      .editor-shell {
+        border: 1px solid #cbd6df;
+        border-radius: 10px;
+        background: #fbfcfe;
+        overflow: hidden;
+      }
+      .editor-row {
+        display: flex;
+        position: relative;
+      }
+      .gutter {
+        width: 40px;
+        flex-shrink: 0;
+        padding: 14px 9px;
+        background: #f0f3f7;
+        color: #97a5b2;
+        text-align: right;
+        font: 14px/28px var(--mono);
+        overflow: hidden;
+        white-space: pre;
+        user-select: none;
+      }
+      .edit-stack {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+      }
+      #highlight,
+      #equations {
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        padding: 14px 16px;
+        font: 14px/28px var(--mono);
+        letter-spacing: 0;
+        white-space: pre;
+        tab-size: 2;
+        overflow: auto;
+        width: 100%;
+        height: 230px;
+      }
+      #highlight {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        color: transparent;
+        background: transparent;
+        overflow: hidden;
+      }
+      #highlight mark {
+        background: #ffe0e4;
+        color: transparent;
+        border-bottom: 2px solid var(--red);
+      }
+      #equations {
+        position: relative;
+        display: block;
+        resize: vertical;
+        background: transparent;
+        color: var(--ink);
+        caret-color: var(--blue);
+        min-height: 145px;
+        max-height: 600px;
+      }
+      #equations::selection {
+        background: #adceff80;
+      }
+      .editor-foot {
+        border-top: 1px solid var(--line);
+        padding: 8px 14px;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .notice {
+        padding: 12px 15px;
+        border-radius: 8px;
+        background: #f0f4f8;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .notice.error {
+        background: #fff0f2;
+        color: var(--red);
+      }
+      .notice.success {
+        background: #eaf7f1;
+        color: var(--green);
+      }
+      #errors:empty {
+        display: none;
+      }
+      .err-item {
+        display: block;
+        width: 100%;
+        border: 0;
+        text-align: left;
+        padding: 6px 0;
+        background: none;
+        color: var(--red);
+        font-size: 13px;
+      }
+      .math-block {
+        padding: 16px;
+        overflow-x: auto;
+        border-radius: 9px;
+        background: #fafbfd;
+        margin-top: 12px;
+      }
+      .math {
+        white-space: pre-wrap;
+        font-family: var(--mono);
+        overflow-x: auto;
+      }
+      .katex-display {
+        margin: 0.6em 0 !important;
+      }
+      .eq-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-bottom: 1px solid var(--line);
+        padding: 17px 0;
+        min-width: 0;
+      }
+      .eq-row:last-child {
+        border: 0;
+      }
+      .eq-num {
+        flex: 0 0 23px;
+        color: #93a3b0;
+        font: 12px var(--mono);
+      }
+      .eq-content {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 7px;
+        font-family: var(--mono);
+      }
+      .param {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 8px 10px;
+        background: #f1f6ff;
+        border: 1px solid #d9e7fa;
+        border-radius: 8px;
+        font: 12px system-ui;
+      }
+      .param.e {
+        background: #f0f8f4;
+        border-color: #d5eadf;
+      }
+      .param-title {
+        color: var(--blue);
+        font-weight: 750;
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+      }
+      .param.e .param-title {
+        color: var(--green);
+      }
+      .param-fields {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .param label {
+        font-size: 10px;
+        color: var(--muted);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .param input {
+        width: 82px;
+        border: 1px solid #c4d4e6;
+        border-radius: 5px;
+        padding: 5px 6px;
+        color: var(--ink);
+        background: white;
+        font: 13px var(--mono);
+      }
+      .param input[aria-invalid="true"] {
+        border-color: var(--red);
+        background: #fff3f4;
+      }
+      .param .unit {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .field-sign {
+        font-size: 12px;
+        margin-top: 13px;
+      }
+      .empty {
+        padding: 45px 15px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .empty .empty-symbol {
+        font:
+          38px Georgia,
+          serif;
+        color: #aebecd;
+        margin-bottom: 8px;
+      }
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .result-card {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 17px;
+        background: #fcfdff;
+      }
+      .result-card .name {
+        font-size: 12px;
+        color: var(--blue);
+        font-weight: 750;
+      }
+      .result-card .value {
+        font: 20px/1.5 var(--mono);
+        margin: 9px 0;
+        overflow-wrap: anywhere;
+      }
+      .result-card .polar {
+        font: 13px/1.7 var(--mono);
+        color: var(--muted);
+      }
+      .table-scroll {
+        overflow: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+      }
+      td,
+      th {
+        padding: 10px 13px;
+        text-align: left;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+      th {
+        color: var(--muted);
+        font-weight: 550;
+      }
+      .success-text {
+        color: var(--green);
+      }
+      .fail-text {
+        color: var(--red);
+      }
+      .solution-step {
+        border-top: 1px solid var(--line);
+        padding: 14px 0;
+      }
+      .solution-step summary {
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .fraction {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        vertical-align: middle;
+      }
+      .fraction > .numerator {
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 5px;
+      }
+      .fraction > span {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      details.help {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      details.help summary {
+        cursor: pointer;
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .help code {
+        color: var(--blue);
+        background: var(--bluewash);
+        padding: 2px 4px;
+        border-radius: 4px;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 12px 0 26px;
+      }
+      .tiny {
+        font-size: 12px;
+      }
+      .precision {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+      }
+      .precision select {
+        width: 65px;
+      }
+      .live-note {
+        font-size: 12px;
+        color: var(--green);
+      }
+      @media (max-width: 720px) {
+        .wrap {
+          padding: 20px 15px;
+        }
+        header .wrap {
+          padding-top: 18px;
+          padding-bottom: 18px;
+        }
+        .tag {
+          display: none;
+        }
+        h1 {
+          font-size: 25px;
+        }
+        .intro {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .card {
+          padding: 17px;
+        }
+        .settings {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .settings label:first-child {
+          grid-column: 1/-1;
+        }
+        .tabs button {
+          padding: 11px 12px;
+          font-size: 13px;
+        }
+        .section-head {
+          flex-wrap: wrap;
+        }
+        .param input {
+          width: 71px;
+        }
+        .editor-foot {
+          flex-direction: column;
+          gap: 0;
+        }
+        .eq-row {
+          gap: 5px;
+        }
+        #equations,
+        #highlight {
+          font-size: 12px;
+          padding-left: 10px;
+        }
+        .footer {
+          flex-direction: column;
+        }
+        .result-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media print {
+        header,
+        .settings,
+        .tabs,
+        .intro .actions,
+        #input-panel,
+        .footer,
+        .precision {
+          display: none !important;
+        }
+        body {
+          background: white;
+        }
+        .wrap {
+          max-width: none;
+          padding: 0;
+        }
+        .card {
+          break-inside: avoid;
+          border: 0;
+        }
+        #results-panel,
+        #solution-panel {
+          display: block !important;
+        }
+        .solution-step {
+          break-inside: avoid;
+        }
+        details > div {
+          display: block;
+        }
+        .math-block {
+          overflow: visible;
+        }
+      }
+
+      /* Оновлення: картки, інструменти формул і стійка адаптивна сітка. */
+      .parameter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+        gap: 12px;
+        margin: 18px 0;
+      }
+      .parameter-card {
+        padding: 14px;
+        border: 1px solid #d8e4f3;
+        border-radius: 10px;
+        background: #f7faff;
+        min-width: 0;
+      }
+      .parameter-card.e,
+      .parameter-card.j {
+        background: #f4faf7;
+        border-color: #d5e8df;
+      }
+      .parameter-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .parameter-top strong {
+        font-size: 17px;
+        color: var(--blue);
+      }
+      .parameter-top small {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--muted);
+        margin-left: 4px;
+      }
+      .form-toggle {
+        font-size: 11px;
+        padding: 4px 7px;
+        white-space: nowrap;
+        background: white;
+      }
+      .parameter-inputs {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: end;
+        gap: 8px;
+      }
+      .parameter-inputs label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .parameter-inputs > span {
+        padding-bottom: 7px;
+        font: 13px var(--mono);
+      }
+      .parameter-inputs input {
+        width: 100%;
+        min-width: 0;
+        border: 1px solid #c4d4e6;
+        border-radius: 6px;
+        padding: 8px;
+        color: var(--ink);
+        background: white;
+        font: 13px var(--mono);
+      }
+      .parameter-inputs input[aria-invalid="true"] {
+        border-color: var(--red);
+        background: #fff0f2;
+      }
+      .parameter-preview {
+        font: 11px/1.6 var(--mono);
+        color: var(--muted);
+        margin-top: 9px;
+        min-height: 18px;
+        overflow-wrap: anywhere;
+      }
+      .formula {
+        position: relative;
+        background: #fafbfd;
+        border: 1px solid #edf0f4;
+        border-radius: 8px;
+        padding: 33px 12px 12px;
+        margin: 10px 0;
+        min-width: 0;
+      }
+      .formula > .math {
+        max-width: 100%;
+        overflow: auto;
+        line-height: 1.6;
+      }
+      .copy-tex {
+        position: absolute;
+        right: 7px;
+        top: 5px;
+        padding: 2px 7px;
+        font-size: 10px;
+        color: var(--muted);
+        border-color: transparent;
+        background: transparent;
+      }
+      .copy-tex:hover {
+        background: white;
+        border-color: var(--line);
+      }
+      .math-block {
+        padding: 8px;
+      }
+      .math-block .formula {
+        margin: 0;
+        border: 0;
+      }
+      .extra-tokens {
+        width: 100%;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .extra-tokens summary {
+        cursor: pointer;
+      }
+      .extra-tokens > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        padding-top: 7px;
+      }
+      .result-actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .result-actions button {
+        font-size: 12px;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background: #133b32;
+        color: white;
+        border: 1px solid #40665e;
+        border-radius: 10px;
+        box-shadow: 0 8px 30px #17273525;
+        padding: 12px 20px;
+        font-size: 13px;
+        max-width: calc(100vw - 30px);
+      }
+      .toast.error {
+        background: #6d2432;
+        border-color: #9b4f5d;
+      }
+      .clipboard-fallback {
+        position: fixed;
+        left: -9999px;
+        top: 0;
+      }
+      dialog {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 25px;
+        max-width: 700px;
+        width: calc(100% - 30px);
+        color: var(--ink);
+      }
+      dialog::backdrop {
+        background: #17273580;
+      }
+      #copy-manual {
+        width: 100%;
+        height: 220px;
+        font: 13px/1.5 var(--mono);
+        margin-bottom: 15px;
+        border: 1px solid var(--line);
+        padding: 12px;
+        border-radius: 8px;
+      }
+      #highlight {
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      @media (max-width: 720px) {
+        .parameter-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .parameter-top {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .parameter-inputs {
+          gap: 5px;
+        }
+        .parameter-inputs input {
+          padding: 7px 5px;
+          font-size: 12px;
+        }
+        .parameter-card {
+          padding: 10px;
+        }
+        .parameter-preview {
+          font-size: 10px;
+        }
+        .result-actions {
+          align-items: flex-start;
+        }
+        .intro .actions {
+          gap: 6px;
+        }
+        .intro .actions button {
+          font-size: 12px;
+          padding: 7px 10px;
+        }
+        .formula {
+          padding-left: 7px;
+          padding-right: 7px;
+        }
+        .katex-display {
+          font-size: 0.92em;
+        }
+      }
+      @media (max-width: 380px) {
+        .parameter-grid {
+          grid-template-columns: 1fr;
+        }
+        .parameter-top {
+          flex-direction: row;
+          align-items: center;
+        }
+      }
+      @page {
+        size: A4 landscape;
+        margin: 12mm;
+      }
+      @media print {
+        .copy-tex,
+        .toast,
+        dialog,
+        .result-actions,
+        .actions,
+        .tabs,
+        #save-status {
+          display: none !important;
+        }
+        .formula {
+          border: 0;
+          overflow: visible;
+          break-inside: avoid;
+          padding: 5px 0;
+        }
+        .formula > .math {
+          overflow: visible;
+          max-width: none;
+        }
+        .math-block {
+          overflow: visible;
+        }
+        .result-card {
+          break-inside: avoid;
+        }
+        .result-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .katex-display {
+          font-size: 0.83em;
+        }
+        .solution-step summary {
+          font-size: 12px;
+        }
+        #results-panel,
+        #solution-panel {
+          display: block !important;
+        }
+        .table-scroll {
+          overflow: visible;
+        }
+        table {
+          font-size: 10px;
+        }
+        td,
+        th {
+          padding: 6px;
+        }
+        .card {
+          break-inside: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="brand">∿ Фазор<span>.</span></div>
+        <div class="tag">ЕЛЕКТРОТЕХНІКА / КОМПЛЕКСНІ СИСТЕМИ</div>
+      </div>
+    </header>
+    <main class="wrap">
+      <div class="intro">
+        <div>
+          <div class="eyebrow">Від рівняння до розв’язку</div>
+          <h1>Системи Кірхгофа</h1>
+          <p class="muted">
+            Складіть рівняння. Введіть параметри. Отримайте розв’язок із
+            перевіркою.
+          </p>
+        </div>
+        <div class="actions">
+          <button id="share">Поділитися посиланням</button
+          ><button id="example">Завантажити приклад</button
+          ><button id="clear">Очистити</button>
+        </div>
+      </div>
+      <div class="card settings">
+        <label
+          >Метод<select id="method">
+            <option value="branch">Рівняння Кірхгофа · I₁, I₂…</option>
+            <option value="mesh">Контурні струми · I₁₁, I₂₂…</option>
+            <option value="node">Вузлові напруги · U₁, U₂…</option>
+          </select></label
+        >
+        <label>Невідомих<select id="count"></select></label
+        ><label>Доступних опорів Z<select id="zcount"></select></label
+        ><label>Джерел напруги E<select id="ecount"></select></label>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Етапи розрахунку">
+        <button
+          role="tab"
+          id="input-tab"
+          aria-selected="true"
+          aria-controls="input-panel"
+          tabindex="0"
+          data-tab="input"
+        >
+          01 · Введення</button
+        ><button
+          role="tab"
+          id="results-tab"
+          aria-selected="false"
+          aria-controls="results-panel"
+          tabindex="-1"
+          data-tab="results"
+        >
+          02 · Результати</button
+        ><button
+          role="tab"
+          id="solution-tab"
+          aria-selected="false"
+          aria-controls="solution-panel"
+          tabindex="-1"
+          data-tab="solution"
+        >
+          03 · Розв’язок
+        </button>
+      </nav>
+      <section id="input-panel" role="tabpanel" aria-labelledby="input-tab">
+        <div class="card">
+          <div class="section-head">
+            <h2><span class="step">1</span>Конструктор рівнянь</h2>
+            <span class="badge" id="syntax-status">Очікуємо рівняння</span>
+          </div>
+          <p class="muted tiny">
+            Одне рівняння на рядок. Можна писати Z1I1, 3j та (Z1+Z2)I1.
+            Натисніть символ для вставлення.
+          </p>
+          <div class="tokens" id="tokens"></div>
+          <div class="editor-shell">
+            <div class="editor-row">
+              <div class="gutter" id="gutter" aria-hidden="true">1</div>
+              <div class="edit-stack">
+                <pre id="highlight" aria-hidden="true"></pre>
+                <textarea
+                  id="equations"
+                  spellcheck="false"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  aria-label="Система рівнянь"
+                  aria-describedby="syntax-help"
+                  placeholder="I1 - I2 = 0&#10;Z1*I1 + Z2*I2 = E1"
+                  maxlength="12000"
+                ></textarea>
+              </div>
+            </div>
+            <div class="editor-foot">
+              <span id="line-count">0 рівнянь</span
+              ><span>+ − * / ( ) = · десяткові кома або крапка</span>
+            </div>
+          </div>
+          <div id="errors" aria-live="polite"></div>
+          <p id="example-note" class="notice" style="margin-top: 12px" hidden>
+            Навчальна схема: 5 гілок, 3 контури та 2 вузлові напруги. Джерела E
+            введені в алгебраїчній формі без округлення. Приклад для вибраного
+            методу розраховується автоматично.
+          </p>
+          <div id="symbolic" class="math-block" hidden></div>
+          <details class="help" style="margin-top: 16px">
+            <summary>Правила введення та позначення</summary>
+            <div id="syntax-help">
+              <p>
+                Невідомі: I1… I8 (гілки), I11… I88 (контури), U1… U8 (вузли).
+                Їхня кількість задається зверху. Параметри: Z1… Z8 (Ом), Y1… Y8
+                (См), E1… E5 (В), J1… J5 (А). Регістр літер неважливий; уявна
+                одиниця — j, без індексу.
+              </p>
+              <p>
+                Неявне множення: <code>3j</code>, <code>2I1</code>,
+                <code>Z1I1</code>, <code>Z1 I1</code>, <code>5(I1+I2)</code>,
+                <code>(Z1+Z2)I1</code>. Множення й ділення мають однаковий
+                пріоритет і виконуються зліва направо:
+                <code>I1/2Z1</code> означає <code>(I1/2)*Z1</code>; для
+                знаменника добутком пишіть <code>I1/(2Z1)</code>.
+              </p>
+              <p>
+                Дозволені + − * / та дужки. Система має бути лінійною: добуток
+                невідомих і невідома в знаменнику не підтримуються. Для вузлів,
+                наприклад: <code>Y1 U1 + Y2(U1-U2)=J1;</code>. Крапка чи ;
+                наприкінці рядка ігноруються.
+              </p>
+              <p>
+                Десяткові кома й крапка рівнозначні. Науковий запис:
+                <code>1e-3</code> (мала e); <code>2E1</code> означає
+                <code>2*E1</code>. Модулі невід’ємні; від’ємний знак задається
+                фазою. Джерела напруги й струму — діючі значення.
+              </p>
+              <p>
+                Порожнє поле не дорівнює нулю. Дані автоматично зберігаються
+                лише в цьому браузері. Посилання містить знімок усієї системи.
+                Рівняння за схемою ви складаєте самостійно.
+              </p>
+            </div>
+          </details>
+        </div>
+        <div class="card" id="parameter-section" hidden>
+          <div class="section-head">
+            <h2><span class="step">2</span>Параметри системи</h2>
+            <span class="badge" id="param-count"></span>
+          </div>
+          <p class="muted tiny">
+            Кожен параметр вводиться один раз. Кнопка ⇄ перемикає форму з
+            перерахунком значень; кути — у градусах.
+          </p>
+          <div id="parameter-equations" class="parameter-grid"></div>
+          <div id="numeric-status" class="notice" role="status"></div>
+          <div id="substituted" class="math-block" hidden></div>
+          <div style="margin-top: 16px" class="actions">
+            <button class="primary" id="show-results">
+              Перейти до результатів →</button
+            ><span class="live-note" id="auto-note"></span>
+          </div>
+        </div>
+      </section>
+      <section
+        id="results-panel"
+        role="tabpanel"
+        aria-labelledby="results-tab"
+        hidden
+      >
+        <div class="card">
+          <div class="section-head">
+            <h2>Результати розрахунку</h2>
+            <div class="result-actions">
+              <button id="copy-results" disabled>Копіювати результати</button
+              ><label class="precision"
+                >Знаків після коми<select id="precision">
+                  <option>3</option>
+                  <option selected>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>8</option>
+                </select></label
+              >
+            </div>
+          </div>
+          <div id="results-content"></div>
+        </div>
+        <div class="actions">
+          <button id="back-input">← До рівнянь</button
+          ><button id="print">Друк / PDF</button>
+        </div>
+      </section>
+      <section
+        id="solution-panel"
+        role="tabpanel"
+        aria-labelledby="solution-tab"
+        hidden
+      >
+        <div class="card">
+          <div class="section-head">
+            <h2>Покроковий розв’язок</h2>
+            <span class="badge">Метод Гауса · вибір головного елемента</span>
+          </div>
+          <div id="solution-content"></div>
+        </div>
+      </section>
+      <footer class="footer">
+        <span
+          >2–8 невідомих · Z/Y до 8 · E/J до 5<br /><span id="save-status"
+            >Автозбереження у цьому браузері</span
+          ></span
+        ><span id="math-status">Формули: завантаження KaTeX…</span>
+      </footer>
+    </main>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <dialog id="copy-dialog">
+      <h2>Копіювання тексту</h2>
+      <p class="muted">Скопіюйте виділений текст: Ctrl+C або ⌘C.</p>
+      <textarea
+        id="copy-manual"
+        readonly
+        aria-label="Текст для копіювання"
+      ></textarea>
+      <div class="actions"><button id="close-copy">Закрити</button></div>
+    </dialog>
+    <script>
+
+      'use strict';const _0x52a25f=_0x4fed;(function(_0x468bb4,_0x108fe5){const _0x3ca0bd=_0x4fed,_0x2a711e=_0x468bb4();while(!![]){try{const _0x46b5f8=-parseInt(_0x3ca0bd(0x1b3))/0x1*(parseInt(_0x3ca0bd(0x245))/0x2)+-parseInt(_0x3ca0bd(0x244))/0x3+-parseInt(_0x3ca0bd(0x261))/0x4+parseInt(_0x3ca0bd(0x20e))/0x5+parseInt(_0x3ca0bd(0x22d))/0x6*(parseInt(_0x3ca0bd(0x248))/0x7)+-parseInt(_0x3ca0bd(0x178))/0x8+-parseInt(_0x3ca0bd(0x1a0))/0x9*(-parseInt(_0x3ca0bd(0x251))/0xa);if(_0x46b5f8===_0x108fe5)break;else _0x2a711e['push'](_0x2a711e['shift']());}catch(_0x2b4a9f){_0x2a711e['push'](_0x2a711e['shift']());}}}(_0x4518,0x88d48));const $=_0x1b5782=>document['getElementById'](_0x1b5782),esc=_0x4c94bf=>String(_0x4c94bf)[_0x52a25f(0x1d5)](/[&<>"']/g,_0x11beae=>({'&':_0x52a25f(0x1bc),'<':_0x52a25f(0x20f),'>':'&gt;','\x22':'&quot;','\x27':_0x52a25f(0x1e5)}[_0x11beae])),STORAGE_KEY='phasor.state.v2',MAX_TEXT=0x2ee0,PARAM_ID=/^(?:[ZY][1-8]|[EJ][1-5])$/,DEFAULT_CONFIG={'method':_0x52a25f(0x13a),'n':0x5,'z':0x5,'e':0x3};let config={...DEFAULT_CONFIG},params=Object['create'](null),system=null,outcome=null,parseTimer,toastTimer;const copyFeedback=new WeakMap();let storageAvailable=!![],lastErrors=[];const C=(_0x21b8e5=0x0,_0x3f6f58=0x0)=>({'r':_0x21b8e5,'i':_0x3f6f58}),add=(_0x4648ed,_0x5c629f)=>C(_0x4648ed['r']+_0x5c629f['r'],_0x4648ed['i']+_0x5c629f['i']),neg=_0x1f5911=>C(-_0x1f5911['r'],-_0x1f5911['i']),sub=(_0x5b80a,_0x56b529)=>add(_0x5b80a,neg(_0x56b529)),mul=(_0x5e89d8,_0x381632)=>C(_0x5e89d8['r']*_0x381632['r']-_0x5e89d8['i']*_0x381632['i'],_0x5e89d8['r']*_0x381632['i']+_0x5e89d8['i']*_0x381632['r']),abs=_0x45656a=>Math[_0x52a25f(0x22e)](_0x45656a['r'],_0x45656a['i']),finite=_0x287352=>Number[_0x52a25f(0x1d0)](_0x287352['r'])&&Number[_0x52a25f(0x1d0)](_0x287352['i']);function div(_0x36ca71,_0xaf5af2){const _0x5e8393=_0x52a25f,_0x40507c=Math[_0x5e8393(0x168)](Math[_0x5e8393(0x1ea)](_0xaf5af2['r']),Math[_0x5e8393(0x1ea)](_0xaf5af2['i']));if(!_0x40507c)throw Error(_0x5e8393(0x121));const _0x2ffa25=_0xaf5af2['r']/_0x40507c,_0x2a1e60=_0xaf5af2['i']/_0x40507c,_0xbe5793=_0x2ffa25*_0x2ffa25+_0x2a1e60*_0x2a1e60;return C((_0x36ca71['r']/_0x40507c*_0x2ffa25+_0x36ca71['i']/_0x40507c*_0x2a1e60)/_0xbe5793,(_0x36ca71['i']/_0x40507c*_0x2ffa25-_0x36ca71['r']/_0x40507c*_0x2a1e60)/_0xbe5793);}function names(){const _0x2dae66=_0x52a25f;return Array[_0x2dae66(0x1dc)]({'length':config['n']},(_0x2e2560,_0x4581ae)=>config[_0x2dae66(0x20b)]==='node'?'U'+(_0x4581ae+0x1):config[_0x2dae66(0x20b)]===_0x2dae66(0x1ac)?'I'+(_0x4581ae+0x1)+(_0x4581ae+0x1):'I'+(_0x4581ae+0x1));}const displayName=_0x30d62f=>esc(_0x30d62f)['replace'](/^([IUZYEJ])(\d+)$/,'$1<sub>$2</sub>'),texName=_0x26482e=>_0x26482e['replace'](/^([IUZYEJ])(\d+)$/,_0x52a25f(0x267)),unitFor=_0x8caf1f=>({'Z':'Ом','Y':'См','E':'В','J':'А'}[_0x8caf1f[0x0]]),defaultForm=_0x5d01cc=>/^[EJ]/[_0x52a25f(0x12c)](_0x5d01cc)?_0x52a25f(0x19b):_0x52a25f(0x189);function getParam(_0x15ebe9){return params[_0x15ebe9]??={'form':defaultForm(_0x15ebe9),'a':'','b':''};}function numberValue(_0x34a8e0){const _0x5b54db=_0x52a25f,_0x2c635c=String(_0x34a8e0??'')[_0x5b54db(0x18a)]()['replace'](/−/g,'-')['replace'](',','.');if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/[_0x5b54db(0x12c)](_0x2c635c))return null;const _0x147094=Number(_0x2c635c);return Number[_0x5b54db(0x1d0)](_0x147094)?_0x147094:null;}function parameterValue(_0x24c25b){const _0x56be28=_0x52a25f,_0x71ff6a=getParam(_0x24c25b),_0x3d582c=numberValue(_0x71ff6a['a']),_0x54a5eb=numberValue(_0x71ff6a['b']);if(_0x3d582c===null||_0x54a5eb===null)throw Error(_0x56be28(0x14e)+_0x24c25b+'.');if(_0x71ff6a[_0x56be28(0x16c)]===_0x56be28(0x189))return C(_0x3d582c,_0x54a5eb);if(_0x3d582c<0x0)throw Error('Модуль\x20'+_0x24c25b+_0x56be28(0x1a3));const _0x5b8518=_0x54a5eb%0x168*Math['PI']/0xb4;return C(_0x3d582c*Math[_0x56be28(0x1e0)](_0x5b8518),_0x3d582c*Math[_0x56be28(0x1bd)](_0x5b8518));}function fullNumber(_0x501f9b){const _0x44c6fb=_0x52a25f;return _0x501f9b===0x0?'0':String(Number(_0x501f9b[_0x44c6fb(0x110)](0xf)));}class ParseError extends Error{constructor(_0x44c18f,_0x1a73f5=0x0,_0x8dd687=0x1){const _0xdfefa2=_0x52a25f;super(_0x44c18f),this[_0xdfefa2(0x148)]=_0x1a73f5,this[_0xdfefa2(0x146)]=_0x8dd687;}}function tokenize(_0x5cd3ea){const _0x1604b1=_0x52a25f,_0x4396f1=_0x5cd3ea[_0x1604b1(0x1d5)](/[;.]+\s*$/,''),_0x547b74=[];let _0x54d63a=0x0;while(_0x54d63a<_0x4396f1[_0x1604b1(0x1e8)]){if(/\s/[_0x1604b1(0x12c)](_0x4396f1[_0x54d63a])){_0x54d63a++;continue;}const _0xd83912=_0x4396f1[_0x1604b1(0x24c)](_0x54d63a);let _0x4a3b03;if(_0x4a3b03=_0xd83912[_0x1604b1(0x174)](/^(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:(?:e[+-]?|E[+-])\d+)?/)){const _0x5c79d6=Number(_0x4a3b03[0x0][_0x1604b1(0x1d5)](',','.'));if(!Number['isFinite'](_0x5c79d6))throw new ParseError(_0x1604b1(0x16d),_0x54d63a,_0x4a3b03[0x0]['length']);_0x547b74['push']({'type':_0x1604b1(0x222),'value':_0x5c79d6,'pos':_0x54d63a,'len':_0x4a3b03[0x0][_0x1604b1(0x1e8)]}),_0x54d63a+=_0x4a3b03[0x0]['length'];}else{if(_0x4a3b03=_0xd83912['match'](/^[IUZYEJ]\d+/i))_0x547b74[_0x1604b1(0x13e)]({'type':'id','value':_0x4a3b03[0x0]['toUpperCase'](),'pos':_0x54d63a,'len':_0x4a3b03[0x0][_0x1604b1(0x1e8)]}),_0x54d63a+=_0x4a3b03[0x0][_0x1604b1(0x1e8)];else{if(/^[jJ]/[_0x1604b1(0x12c)](_0xd83912))_0x547b74[_0x1604b1(0x13e)]({'type':'id','value':'j','pos':_0x54d63a,'len':0x1}),_0x54d63a++;else{if(_0x4a3b03=_0xd83912['match'](/^[a-zA-Z_][a-zA-Z0-9_]*/))_0x547b74['push']({'type':'id','value':_0x4a3b03[0x0][_0x1604b1(0x1f6)](),'pos':_0x54d63a,'len':_0x4a3b03[0x0][_0x1604b1(0x1e8)]}),_0x54d63a+=_0x4a3b03[0x0][_0x1604b1(0x1e8)];else{if(_0x1604b1(0x177)['includes'](_0x4396f1[_0x54d63a])||_0x4396f1[_0x54d63a]==='−')_0x547b74[_0x1604b1(0x13e)]({'type':_0x4396f1[_0x54d63a]==='−'?'-':_0x4396f1[_0x54d63a],'pos':_0x54d63a,'len':0x1}),_0x54d63a++;else throw new ParseError('Недопустимий\x20символ\x20«'+_0x4396f1[_0x54d63a]+'».\x20Використовуйте\x20латинські\x20позначення.',_0x54d63a);}}}}if(_0x547b74[_0x1604b1(0x1e8)]>0x190)throw new ParseError(_0x1604b1(0x190),0x0,_0x5cd3ea[_0x1604b1(0x1e8)]);}const _0x2cc36a=[];for(const _0x1345cf of _0x547b74){const _0x48ad48=_0x2cc36a['at'](-0x1),_0x3245f4=_0x48ad48&&[_0x1604b1(0x222),'id',')'][_0x1604b1(0x13f)](_0x48ad48[_0x1604b1(0x130)]),_0x27a30e=['id','('][_0x1604b1(0x13f)](_0x1345cf[_0x1604b1(0x130)]);if(_0x3245f4&&_0x27a30e)_0x2cc36a['push']({'type':'*','pos':_0x1345cf['pos'],'len':_0x1345cf['len'],'implicit':!![]});_0x2cc36a['push'](_0x1345cf);}return _0x2cc36a[_0x1604b1(0x13e)]({'type':_0x1604b1(0x1d8),'pos':_0x4396f1[_0x1604b1(0x1e8)],'len':0x1}),_0x2cc36a;}function parseEquation(_0x4f99fa){const _0x1ce723=_0x52a25f;if(_0x4f99fa[_0x1ce723(0x1e8)]>0x5dc)throw new ParseError(_0x1ce723(0x1bb),0x0,_0x4f99fa['length']);const _0x4db3dc=tokenize(_0x4f99fa),_0x4317de=names(),_0x18f75a=new Set();let _0x59bf86=0x0,_0x21c9f8=0x0;const _0x5a1560=()=>_0x4db3dc[_0x59bf86];function _0x548f23(_0x39caa5){const _0x4d7a40=_0x1ce723;if(_0x5a1560()[_0x4d7a40(0x130)]!==_0x39caa5)throw new ParseError(_0x39caa5===')'?_0x4d7a40(0x15c):_0x4d7a40(0x129)+_0x39caa5+'».',_0x5a1560()[_0x4d7a40(0x148)],_0x5a1560()['len']);return _0x4db3dc[_0x59bf86++];}function _0x146484(){const _0x3a18a3=_0x1ce723,_0x421cd7=_0x5a1560();if(++_0x21c9f8>0x50)throw new ParseError(_0x3a18a3(0x166),_0x421cd7[_0x3a18a3(0x148)]);let _0x5abd6a;if(_0x421cd7[_0x3a18a3(0x130)]===_0x3a18a3(0x222))_0x59bf86++,_0x5abd6a={'type':_0x3a18a3(0x222),'value':_0x421cd7[_0x3a18a3(0x1a8)],'dependent':![]};else{if(_0x421cd7[_0x3a18a3(0x130)]==='id'){_0x59bf86++;const _0x54f3ee=_0x4317de[_0x3a18a3(0x13f)](_0x421cd7[_0x3a18a3(0x1a8)]);if(!_0x54f3ee&&_0x421cd7[_0x3a18a3(0x1a8)]!=='j'&&!PARAM_ID[_0x3a18a3(0x12c)](_0x421cd7['value']))throw new ParseError(_0x3a18a3(0x199)+_0x421cd7[_0x3a18a3(0x1a8)]+_0x3a18a3(0x139)+_0x4317de[_0x3a18a3(0x120)](',\x20')+'.',_0x421cd7[_0x3a18a3(0x148)],_0x421cd7[_0x3a18a3(0x146)]);if(/^Z/['test'](_0x421cd7[_0x3a18a3(0x1a8)])&&Number(_0x421cd7['value'][_0x3a18a3(0x24c)](0x1))>config['z'])throw new ParseError(_0x3a18a3(0x15b)+_0x421cd7['value']+_0x3a18a3(0x1d4),_0x421cd7[_0x3a18a3(0x148)],_0x421cd7['len']);if(/^E/[_0x3a18a3(0x12c)](_0x421cd7['value'])&&Number(_0x421cd7[_0x3a18a3(0x1a8)][_0x3a18a3(0x24c)](0x1))>config['e'])throw new ParseError(_0x3a18a3(0x250)+_0x421cd7['value']+'\x20недоступне.\x20Збільште\x20кількість\x20E.',_0x421cd7[_0x3a18a3(0x148)],_0x421cd7[_0x3a18a3(0x146)]);if(PARAM_ID[_0x3a18a3(0x12c)](_0x421cd7[_0x3a18a3(0x1a8)]))_0x18f75a[_0x3a18a3(0x11d)](_0x421cd7['value']);_0x5abd6a={'type':'id','name':_0x421cd7[_0x3a18a3(0x1a8)],'dependent':_0x54f3ee};}else{if(_0x421cd7[_0x3a18a3(0x130)]==='('){_0x59bf86++;const _0x1a8118=_0x451d60();_0x548f23(')'),_0x5abd6a={'type':'group','child':_0x1a8118,'dependent':_0x1a8118[_0x3a18a3(0x1c2)]};}else{if(_0x421cd7['type']==='+'||_0x421cd7[_0x3a18a3(0x130)]==='-'){_0x59bf86++;const _0x47f5bf=_0x146484();_0x5abd6a={'type':'unary','op':_0x421cd7[_0x3a18a3(0x130)],'child':_0x47f5bf,'dependent':_0x47f5bf[_0x3a18a3(0x1c2)]};}else throw new ParseError(_0x421cd7[_0x3a18a3(0x130)]===_0x3a18a3(0x1d8)?'Незавершене\x20рівняння.':_0x3a18a3(0x1c4),_0x421cd7[_0x3a18a3(0x148)],_0x421cd7[_0x3a18a3(0x146)]);}}}return _0x21c9f8--,_0x5abd6a;}function _0x37423c(){const _0x20a7b2=_0x1ce723;let _0x52754b=_0x146484();while(_0x5a1560()[_0x20a7b2(0x130)]==='*'||_0x5a1560()['type']==='/'){const _0x446e3a=_0x4db3dc[_0x59bf86++],_0x19dc31=_0x146484();if(_0x446e3a['type']==='*'&&_0x52754b[_0x20a7b2(0x1c2)]&&_0x19dc31[_0x20a7b2(0x1c2)])throw new ParseError('Нелінійний\x20вираз:\x20добуток\x20двох\x20невідомих.',_0x446e3a[_0x20a7b2(0x148)],_0x446e3a[_0x20a7b2(0x146)]);if(_0x446e3a['type']==='/'&&_0x19dc31[_0x20a7b2(0x1c2)])throw new ParseError(_0x20a7b2(0x1cd),_0x446e3a[_0x20a7b2(0x148)],_0x446e3a[_0x20a7b2(0x146)]);_0x52754b={'type':_0x20a7b2(0x10e),'op':_0x446e3a['type'],'left':_0x52754b,'right':_0x19dc31,'dependent':_0x52754b[_0x20a7b2(0x1c2)]||_0x19dc31[_0x20a7b2(0x1c2)]};}return _0x52754b;}function _0x451d60(){const _0xa476aa=_0x1ce723;let _0x64e9c=_0x37423c();while(_0x5a1560()[_0xa476aa(0x130)]==='+'||_0x5a1560()[_0xa476aa(0x130)]==='-'){const _0x35e806=_0x4db3dc[_0x59bf86++],_0x2fe13f=_0x37423c();_0x64e9c={'type':'binary','op':_0x35e806[_0xa476aa(0x130)],'left':_0x64e9c,'right':_0x2fe13f,'dependent':_0x64e9c[_0xa476aa(0x1c2)]||_0x2fe13f[_0xa476aa(0x1c2)]};}return _0x64e9c;}const _0x12fd20=_0x451d60();_0x548f23('=');const _0x1848b0=_0x451d60();if(_0x5a1560()[_0x1ce723(0x130)]!=='end')throw new ParseError(_0x5a1560()[_0x1ce723(0x130)]==='='?'У\x20рядку\x20має\x20бути\x20один\x20знак\x20рівності.':_0x1ce723(0x216),_0x5a1560()[_0x1ce723(0x148)],_0x5a1560()['len']);return{'left':_0x12fd20,'right':_0x1848b0,'used':_0x18f75a,'text':_0x4f99fa};}function affine(_0x49ed97){const _0x57e843=_0x52a25f,_0x18d808=()=>({'c':C(),'a':Array[_0x57e843(0x1dc)]({'length':config['n']},()=>C())});if(_0x49ed97[_0x57e843(0x130)]==='num')return{..._0x18d808(),'c':C(_0x49ed97['value'])};if(_0x49ed97[_0x57e843(0x130)]==='id'){const _0x685720=_0x18d808(),_0x4f798a=names()[_0x57e843(0x262)](_0x49ed97['name']);if(_0x4f798a>=0x0)_0x685720['a'][_0x4f798a]=C(0x1);else _0x685720['c']=_0x49ed97[_0x57e843(0x133)]==='j'?C(0x0,0x1):parameterValue(_0x49ed97['name']);return _0x685720;}if(_0x49ed97[_0x57e843(0x130)]==='group')return affine(_0x49ed97[_0x57e843(0x197)]);if(_0x49ed97[_0x57e843(0x130)]==='unary'){const _0x2d4ea3=affine(_0x49ed97[_0x57e843(0x197)]);return _0x49ed97['op']==='-'?{'c':neg(_0x2d4ea3['c']),'a':_0x2d4ea3['a'][_0x57e843(0x1fd)](neg)}:_0x2d4ea3;}const _0x440c15=affine(_0x49ed97[_0x57e843(0x12f)]),_0x431e7e=affine(_0x49ed97['right']);if(_0x49ed97['op']==='+')return{'c':add(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a'][_0x57e843(0x1fd)]((_0x1104ec,_0x7119d8)=>add(_0x1104ec,_0x431e7e['a'][_0x7119d8]))};if(_0x49ed97['op']==='-')return{'c':sub(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a']['map']((_0x12176e,_0x2f65e0)=>sub(_0x12176e,_0x431e7e['a'][_0x2f65e0]))};if(_0x49ed97['op']==='/')return{'c':div(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a'][_0x57e843(0x1fd)](_0x259f17=>div(_0x259f17,_0x431e7e['c']))};return _0x49ed97[_0x57e843(0x12f)]['dependent']?{'c':mul(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a']['map'](_0x9a8b2=>mul(_0x9a8b2,_0x431e7e['c']))}:{'c':mul(_0x440c15['c'],_0x431e7e['c']),'a':_0x431e7e['a'][_0x57e843(0x1fd)](_0x5bbbd8=>mul(_0x5bbbd8,_0x440c15['c']))};}function solve(_0x57ebb6,_0x2a158e){const _0x3f00aa=_0x52a25f,_0x4cdf0d=_0x57ebb6['length'],_0x1a03bb=1e-12;if(!_0x4cdf0d||_0x4cdf0d>0x8||_0x2a158e['length']!==_0x4cdf0d||_0x57ebb6[_0x3f00aa(0x25d)](_0x3315b9=>_0x3315b9[_0x3f00aa(0x1e8)]!==_0x4cdf0d))throw Error(_0x3f00aa(0x272));if([..._0x57ebb6['flat'](),..._0x2a158e][_0x3f00aa(0x25d)](_0x128e7d=>!finite(_0x128e7d)))throw Error(_0x3f00aa(0x264));const _0x5d9a27=_0x57ebb6[_0x3f00aa(0x1fd)]((_0x2df1fe,_0x21c40e)=>_0x2df1fe[_0x3f00aa(0x1fd)](_0x15ee53=>({..._0x15ee53}))[_0x3f00aa(0x126)]([{..._0x2a158e[_0x21c40e]}])),_0x445a2c=[],_0x500a2c=[];for(let _0x536c3c=0x0;_0x536c3c<_0x4cdf0d;_0x536c3c++){const _0x56c79c=Math[_0x3f00aa(0x168)](..._0x57ebb6[_0x536c3c][_0x3f00aa(0x1fd)](abs)),_0x59b666=_0x56c79c||abs(_0x2a158e[_0x536c3c])||0x1;_0x445a2c[_0x3f00aa(0x13e)](_0x59b666),_0x5d9a27[_0x536c3c]=_0x5d9a27[_0x536c3c]['map'](_0x36386d=>div(_0x36386d,C(_0x59b666)));}const _0x5611bb=_0x5d9a27['map'](_0xf44c08=>abs(_0xf44c08[_0x4cdf0d])),_0x38ed12=()=>_0x5d9a27[_0x3f00aa(0x1fd)](_0x20c7cf=>_0x20c7cf['map'](_0x349700=>({..._0x349700})));_0x500a2c[_0x3f00aa(0x13e)]({'label':_0x3f00aa(0x127),'matrix':_0x38ed12()});let _0x411218=0x0;for(let _0x53f54f=0x0;_0x53f54f<_0x4cdf0d&&_0x411218<_0x4cdf0d;_0x53f54f++){let _0xf2ab5b=_0x411218;for(let _0x46deca=_0x411218+0x1;_0x46deca<_0x4cdf0d;_0x46deca++)if(abs(_0x5d9a27[_0x46deca][_0x53f54f])>abs(_0x5d9a27[_0xf2ab5b][_0x53f54f]))_0xf2ab5b=_0x46deca;if(abs(_0x5d9a27[_0xf2ab5b][_0x53f54f])<=_0x1a03bb)continue;const _0x52c89c=[];_0xf2ab5b!==_0x411218&&([_0x5d9a27[_0x411218],_0x5d9a27[_0xf2ab5b]]=[_0x5d9a27[_0xf2ab5b],_0x5d9a27[_0x411218]],[_0x5611bb[_0x411218],_0x5611bb[_0xf2ab5b]]=[_0x5611bb[_0xf2ab5b],_0x5611bb[_0x411218]],_0x52c89c[_0x3f00aa(0x13e)]('R_{'+(_0x411218+0x1)+_0x3f00aa(0x1d9)+(_0xf2ab5b+0x1)+'}'));const _0x594173=_0x5d9a27[_0x411218][_0x53f54f];for(let _0x14fba4=_0x411218+0x1;_0x14fba4<_0x4cdf0d;_0x14fba4++){const _0x7fb5a4=div(_0x5d9a27[_0x14fba4][_0x53f54f],_0x594173);if(abs(_0x7fb5a4)===0x0)continue;_0x5611bb[_0x14fba4]+=abs(_0x7fb5a4)*_0x5611bb[_0x411218];for(let _0x583a9b=_0x53f54f+0x1;_0x583a9b<=_0x4cdf0d;_0x583a9b++)_0x5d9a27[_0x14fba4][_0x583a9b]=sub(_0x5d9a27[_0x14fba4][_0x583a9b],mul(_0x7fb5a4,_0x5d9a27[_0x411218][_0x583a9b]));_0x5d9a27[_0x14fba4][_0x53f54f]=C(),_0x52c89c['push'](_0x3f00aa(0x213)+(_0x14fba4+0x1)+_0x3f00aa(0x16a)+(_0x14fba4+0x1)+'}-('+complexTex(_0x7fb5a4)+_0x3f00aa(0x223)+(_0x411218+0x1)+'}');}_0x411218++,_0x500a2c['push']({'label':_0x3f00aa(0x1fc)+(names()[_0x53f54f]||'x'+(_0x53f54f+0x1)),'operations':_0x52c89c,'matrix':_0x38ed12()});}if(_0x5d9a27['flat']()[_0x3f00aa(0x25d)](_0x556707=>!finite(_0x556707))||_0x5611bb[_0x3f00aa(0x25d)](_0x557577=>!Number['isFinite'](_0x557577)))throw Error(_0x3f00aa(0x226));for(let _0xa6c1a3=_0x411218;_0xa6c1a3<_0x4cdf0d;_0xa6c1a3++){if(abs(_0x5d9a27[_0xa6c1a3][_0x4cdf0d])>_0x1a03bb*_0x5611bb[_0xa6c1a3])return{'kind':_0x3f00aa(0x1f7),'rank':_0x411218,'steps':_0x500a2c,'scales':_0x445a2c};}if(_0x411218<_0x4cdf0d)return{'kind':'dependent','rank':_0x411218,'steps':_0x500a2c,'scales':_0x445a2c};const _0x11c1cf=Array[_0x3f00aa(0x1dc)]({'length':_0x4cdf0d},()=>C()),_0x225154=[];for(let _0x11c75a=_0x4cdf0d-0x1;_0x11c75a>=0x0;_0x11c75a--){let _0x4e5771=_0x5d9a27[_0x11c75a][_0x4cdf0d];for(let _0x1f893d=_0x11c75a+0x1;_0x1f893d<_0x4cdf0d;_0x1f893d++)_0x4e5771=sub(_0x4e5771,mul(_0x5d9a27[_0x11c75a][_0x1f893d],_0x11c1cf[_0x1f893d]));_0x11c1cf[_0x11c75a]=div(_0x4e5771,_0x5d9a27[_0x11c75a][_0x11c75a]),_0x225154[_0x3f00aa(0x13e)]({'i':_0x11c75a,'numerator':_0x4e5771,'denominator':_0x5d9a27[_0x11c75a][_0x11c75a],'value':_0x11c1cf[_0x11c75a]});}if(_0x11c1cf[_0x3f00aa(0x25d)](_0x14c1dd=>!finite(_0x14c1dd)))throw Error(_0x3f00aa(0x144));const _0x4517f1=_0x57ebb6[_0x3f00aa(0x1fd)]((_0x29067f,_0x270589)=>sub(_0x29067f[_0x3f00aa(0x229)]((_0x2b75d8,_0x35536c,_0xb1c326)=>add(_0x2b75d8,mul(_0x35536c,_0x11c1cf[_0xb1c326])),C()),_0x2a158e[_0x270589]));if(_0x4517f1[_0x3f00aa(0x25d)](_0x5dd5a6=>!finite(_0x5dd5a6)))throw Error(_0x3f00aa(0x17c));const _0x4f988e=_0x4517f1['map']((_0x2d3c68,_0x4aa10a)=>{const _0x2d7508=_0x3f00aa,_0x5f4b6a=_0x57ebb6[_0x4aa10a][_0x2d7508(0x229)]((_0x435e2a,_0x5576b5,_0x55bc66)=>_0x435e2a+abs(_0x5576b5)*abs(_0x11c1cf[_0x55bc66]),abs(_0x2a158e[_0x4aa10a]));if(!Number[_0x2d7508(0x1d0)](_0x5f4b6a))throw Error(_0x2d7508(0x26d));return _0x5f4b6a?abs(_0x2d3c68)/_0x5f4b6a:abs(_0x2d3c68);});return{'kind':'unique','rank':_0x411218,'x':_0x11c1cf,'back':_0x225154,'steps':_0x500a2c,'scales':_0x445a2c,'residual':_0x4517f1,'relative':Math[_0x3f00aa(0x168)](..._0x4f988e),'ill':_0x5d9a27[_0x3f00aa(0x25d)]((_0xa8000e,_0x15a105)=>abs(_0xa8000e[_0x15a105])<1e-8)};}function _0x4fed(_0x1a2d5c,_0x4e6856){_0x1a2d5c=_0x1a2d5c-0x108;const _0x45183e=_0x4518();let _0x4fed1b=_0x45183e[_0x1a2d5c];return _0x4fed1b;}function fmt(_0xf5c938,_0x6a0640=Number($(_0x52a25f(0x1ab))[_0x52a25f(0x1a8)])){const _0x4f15ad=_0x52a25f;if(_0xf5c938===0x0)return'0';const _0x4afa80=Math[_0x4f15ad(0x1ea)](_0xf5c938);if(_0x4afa80>=0x3b9aca00||_0x4afa80<0xa**-_0x6a0640)return _0xf5c938[_0x4f15ad(0x22b)](Math['min'](_0x6a0640,0x5))['replace']('.',',');return _0xf5c938['toFixed'](_0x6a0640)[_0x4f15ad(0x1d5)](/\.?0+$/,'')[_0x4f15ad(0x1d5)]('.',',');}function cleanComplex(_0x1865b3){const _0x581a99=_0x52a25f,_0x2a6657=0x20*Number['EPSILON']*abs(_0x1865b3);return C(Math['abs'](_0x1865b3['r'])<_0x2a6657?0x0:_0x1865b3['r'],Math[_0x581a99(0x1ea)](_0x1865b3['i'])<_0x2a6657?0x0:_0x1865b3['i']);}function _0x4518(){const _0x413626=['isArray','\x22><div\x20class=\x22parameter-top\x22><strong>','rect','trim','✓\x20Скопійовано','Рівняння\x20Кірхгофа','\x20=\x20','ill','|c}','Рівняння\x20надто\x20складне:\x20скоротіть\x20кількість\x20доданків.','params','Вузлові\x20напруги','focus','htmlAndMathml','afterprint','solution-content','child','Введіть\x20обидві\x20складові','Невідоме\x20позначення\x20','\x20=\x200\x0a(Z1+Z2)','polar','setRangeText','</td></tr>','click','parameter-equations','6305706qnlDtf','clipboard-fallback','\x20=\x20E1','\x20має\x20бути\x20невід’ємним.\x20Знак\x20задайте\x20фазою.','Спочатку\x20заповніть\x20обидва\x20коректні\x20поля\x20','scrollTop','addEventListener','className','value','matches','\x20⇄</button></div><div\x20class=\x22parameter-inputs\x22><label>','precision','mesh','Є\x20нескінченна\x20кількість\x20розв’язків\x20у\x20межах\x20числової\x20точності.','Модуль,\x20','\x22\x20aria-label=\x22Змінити\x20форму\x20','readOnly','close','Посилання\x20сформовано;\x20адресний\x20рядок\x20не\x20вдалося\x20оновити.','325310xWlzFb','show-results','✓\x20Обчислено\x20автоматично','group','tokens','param','display','used','Рівняння\x20задовге:\x20максимум\x201500\x20символів.','&amp;','sin','atan2','function','Не\x20вдалося\x20прочитати\x20стан\x20із\x20посилання.\x20Перевіряю\x20локальне\x20збереження.','[data-param]','dependent','aria-invalid','Очікується\x20число,\x20параметр,\x20невідома\x20або\x20дужка.','✓\x20Перевірка\x20підстановкою\x20пройдена.','\x20/\x20','Після\x20виключення\x20отримано\x20рядок\x200\x20=\x20b,\x20де\x20b\x20≠\x200\x20у\x20межах\x20допуску.','parse','matrix','setItem','unique','badge\x20','Нелінійний\x20вираз:\x20невідома\x20в\x20знаменнику.','activeElement','back','isFinite','</mark>','-j\x5c,','\x5cleft(','\x20недоступний.\x20Збільште\x20кількість\x20Z.','replace','\x20·\x20e<sup>j(','innerHTML','end','}\x5cleftrightarrow\x20R_{','removeAttribute','back-input','from','Нескінченна\x20кількість\x20розв’язків.\x20Рівняння\x20не\x20визначають\x20усі\x20невідомі.','unary','timer','cos','beforeprint','\x5c;\x5ctext{','math-status','\x20Відносна\x20нев’язка:\x20','&#39;','\x5cright)','input','length','LaTeX\x20скопійовано','abs','target','<tr><td>','scrollLeft','symbolic','operations','\x22\x20aria-label=\x22Вставити\x20','append','getItem','<h3>1.\x20Початкова\x20система</h3>','</summary><div>','line-count','toUpperCase','inconsistent','\x22\x20data-part=\x22a\x22\x20aria-label=\x22','Ранг\x20менший\x20за\x20кількість\x20невідомих:\x20є\x20вільні\x20змінні.','Некоректні\x20налаштування\x20у\x20збережених\x20даних.','notice\x20','Виключення\x20','map','</span><label>','\x5cleft[\x5cbegin{array}{','</div></details>','Потрібно\x20','insert','\x22></label></div><div\x20class=\x22parameter-preview\x22\x20data-param-preview=\x22','param-count','φ,\x20°','Модуль\x20має\x20бути\x20невід’ємним.\x20Напрямок\x20задайте\x20фазою.','href','Посилання\x20містить\x20пошкоджений\x20або\x20непідтримуваний\x20стан.','Система\x20записана\x20коректно','numeric-status','method','<h3>3.\x20Розширена\x20матриця\x20[A\x20|\x20b]</h3>','style','1762345RHauXj','&lt;','<details\x20class=\x22extra-tokens\x22><summary>Провідності\x20Y\x20та\x20джерела\x20струму\x20J</summary><div>','-panel','closest','R_{','selectionEnd','\x20рівнянь','Зайвий\x20символ\x20або\x20пропущений\x20оператор.','ArrowRight','right','textContent','setSelectionRange','toast','isConnected','offset','<h3>2.\x20Параметри\x20та\x20підстановка</h3>','<button\x20type=\x22button\x22\x20data-insert=\x22','[data-toggle-form=\x22','Результати\x20скопійовано','num',')R_{','Некоректні\x20параметри\x20стану.','Re\x20+\x20j·Im','Переповнення\x20під\x20час\x20обчислень.\x20Перевірте\x20масштаб\x20значень.','</button>','Спочатку\x20складіть\x20коректну\x20систему\x20рівнянь.','reduce','\x20параметрів','toExponential','createElement','30PRtHwc','hypot','message','residual','\x5cleft\x5c{\x5cbegin{aligned}','<div\x20class=\x22formula\x22><button\x20class=\x22copy-tex\x22\x20type=\x22button\x22\x20data-copy-tex\x20aria-label=\x22Копіювати\x20LaTeX\x22>Копіювати\x20LaTeX</button>','currentTarget','phasor','onclick','\x5cfrac{','[data-error]','.</div>','save-status','showModal','\x20∠\x20','querySelectorAll','<p\x20class=\x22notice\x22>Матриця\x20близька\x20до\x20виродженої:\x20результат\x20чутливий\x20до\x20точності\x20даних.</p>','</small></strong><button\x20type=\x22button\x22\x20class=\x22form-toggle\x22\x20data-toggle-form=\x22','ecount','tab','</td><td>','Максимальна\x20відносна\x20нев’язка:\x20','><summary>','2615736JrUwud','4ibAtrU','querySelector','error','1063783vNZozt','relative','Фазор\x20—\x20','label','slice','</div><div\x20class=\x22value\x22>','\x20error','Phasor','Джерело\x20','30ilptwB','ArrowLeft','copy-results','execCommand','Re,\x20','set','\x20-\x20','KaTeX\x20недоступний:\x20показано\x20LaTeX.\x20Обчислення\x20працюють.','Скопійовано','share','get',',\x20позиція\x20','some','Автокопіювання\x20недоступне.\x20Скопіюйте\x20текст\x20із\x20відкритого\x20поля.','hash','select','1135888phPVGz','indexOf','flatMap','Некоректні\x20або\x20завеликі\x20коефіцієнти.','модуль','.\x20Нуль\x20введіть\x20явно.','$1_{$2}','уявна\x20частина','open','example-note','<input\x20type=\x22text\x22\x20maxlength=\x22120\x22\x20inputmode=\x22decimal\x22\x20autocomplete=\x22off\x22\x20data-param=\x22','Автозбереження\x20недоступне\x20у\x20цьому\x20браузері','Завеликий\x20масштаб\x20для\x20достовірної\x20перевірки.','=\x5cfrac{','split','Непідтримуваний\x20або\x20пошкоджений\x20формат\x20стану.','Залишилося\x20заповнити\x20полів:\x20','Некоректний\x20розмір\x20матриці.','<article\x20class=\x22parameter-card\x20','End','has','string','(1/Z2+1/Z3+1/Z5)*U1\x20-\x20U2/Z5\x20=\x20-E2/Z2+E3/Z3\x0a(1/Z1+1/Z4+1/Z5)*U2\x20-\x20U1/Z5\x20=\x20E1/Z1','Заповніть\x20усі\x20параметри\x20на\x20вкладці\x20«Введення».','toggleForm','close-copy','binary','remove','toPrecision','Система\x20суперечлива:\x20розв’язків\x20немає\x20у\x20межах\x20числової\x20точності.','width','katex','mathLoadFailed','denominator','writeText','highlight','<div\x20class=\x22result-card\x22><div\x20class=\x22name\x22>','key','Модуль\x20∠\x20φ','stringify','body','add','</div>','gutter','join','Ділення\x20на\x20нуль.\x20Перевірте\x20знаменник\x20і\x20значення\x20параметрів.','clipboard','I2\x20-\x20I3\x20+\x20I5\x20=\x200\x0a-I1\x20+\x20I4\x20-\x20I5\x20=\x200\x0aZ2*I2\x20+\x20Z3*I3\x20=\x20E2\x20+\x20E3\x0aZ3*I3\x20+\x20Z5*I5\x20-\x20Z1*I1\x20=\x20E3\x20-\x20E1\x0aZ1*I1\x20+\x20Z4*I4\x20=\x20E1','<h3>4.\x20Прямий\x20хід\x20методу\x20Гауса</h3><p\x20class=\x22muted\x20tiny\x22>Ділимо\x20кожен\x20рядок\x20разом\x20із\x20правою\x20частиною\x20на\x20найбільший\x20модуль\x20коефіцієнта\x20A.\x20Для\x20нульового\x20рядка\x20—\x20на\x20|b|\x20(або\x201).\x20Для\x20кожного\x20стовпця\x20обираємо\x20найбільший\x20головний\x20елемент.\x20Допуск\x20правої\x20частини\x20переноситься\x20й\x20накопичується\x20окремо\x20для\x20кожного\x20рядка.</p>','\x5ccdot10^{$1}','concat','Однакове\x20масштабування\x20коефіцієнтів\x20і\x20правих\x20частин','\x20<small>','Очікується\x20«','node','.\x20Допуск\x20після\x20масштабування:\x2010⁻¹².</p>','test','resize','disabled','left','type','\x22\x20title=\x22Перетворити\x20введені\x20значення\x20в\x20іншу\x20форму\x22>','Перевірте\x20дані:\x20завелика\x20похибка.','name','setAttribute','forEach','Досягнуто\x20обмеження\x20довжини\x20системи.','kind','change','.\x20Невідомі:\x20','branch','mathfailed','equations','tex','push','includes','\x20+\x20j·','</div><div\x20class=\x22polar\x22>','part','<div\x20class=\x22result-grid\x22>','Результат\x20виходить\x20за\x20числовий\x20діапазон.','substituted','len','<div\x20class=\x22empty\x22><div\x20class=\x22empty-symbol\x22>∑</div>','pos','line','onchange','observe','\x20−\x20j·','copy','Заповніть\x20обидва\x20поля\x20','config','errors','copy-dialog','</tbody></table></div><p\x20class=\x22muted\x20tiny\x22>Перевірка\x20підтверджує\x20розв’язок\x20введеної\x20системи.\x20Правильність\x20складання\x20рівнянь\x20за\x20схемою\x20перевіряється\x20окремо.</p>','[data-param-preview=\x22','Некоректні\x20дані\x20параметра\x20','success','</div><p\x20class=\x22muted\x20tiny\x22>Ранг\x20матриці:\x20','Результати\x20округлено\x20для\x20відображення.','\x5c\x5c[3pt]','<p\x20class=\x22notice\x20success\x22>Максимальна\x20відносна\x20нев’язка:\x20','Розв’язок\x20обчислено.\x20Результати\x20та\x20кроки\x20оновлено\x20автоматично.','Опір\x20','Не\x20закрито\x20дужку.','dataset','textarea','hidden','Y1\x20U1\x20+\x20Y2(U1-U2)\x20=\x20J1\x0aY3\x20U2\x20+\x20Y2(U2-U1)\x20=\x200','кут','count','\x22></div></article>','clientHeight','placeholder','Забагато\x20вкладених\x20дужок.','notice','max','preventDefault','}\x5cleftarrow\x20R_{','.</p>','form','Число\x20завелике\x20або\x20некоректне.','[role=tab]','original','\x22></label><span>','sort','selectionStart','parameter-section','match','example','replaceState','+-*/()=','6778048KgMbmb','—\x20(фаза\x20не\x20визначена)','°)</sup>','\x22\x20value=\x22','Переповнення\x20при\x20перевірці\x20результату.','\x20або\x20очистіть\x20їх.','\x20·\x20','create','copy-manual','steps','false','#solution-content\x20details','<div\x20class=\x22notice\x20error\x22>','Розв’язків\x20немає:\x20рівняння\x20суперечать\x20одне\x20одному.','syntax-status'];_0x4518=function(){return _0x413626;};return _0x4518();}function complexText(_0x5c9d56){const _0x39edf3=_0x52a25f,_0xd47728=cleanComplex(_0x5c9d56);return fmt(_0xd47728['r'])+(_0xd47728['i']<0x0?_0x39edf3(0x14c):_0x39edf3(0x140))+fmt(Math[_0x39edf3(0x1ea)](_0xd47728['i']));}function complexTex(_0x466c41){const _0x5e5157=_0x52a25f,_0xfdafee=cleanComplex(_0x466c41),_0x1daea9=_0x3ac0cc=>fmt(_0x3ac0cc)[_0x5e5157(0x1d5)](',','.')[_0x5e5157(0x1d5)](/e([+-]?\d+)/,_0x5e5157(0x125));return _0x1daea9(_0xfdafee['r'])+(_0xfdafee['i']<0x0?_0x5e5157(0x1d2):'+j\x5c,')+_0x1daea9(Math['abs'](_0xfdafee['i']));}function polarText(_0x41493c){const _0x3e8602=_0x52a25f;return fmt(abs(_0x41493c))+_0x3e8602(0x23b)+(abs(_0x41493c)===0x0?_0x3e8602(0x179):fmt(Math[_0x3e8602(0x1be)](_0x41493c['i'],_0x41493c['r'])*0xb4/Math['PI'])+'°');}function tex(_0x15c60c,_0x421838=![]){const _0x2d01b5=_0x52a25f;if(_0x15c60c['type']===_0x2d01b5(0x222))return String(_0x15c60c[_0x2d01b5(0x1a8)])[_0x2d01b5(0x1d5)](/e([+-]?\d+)/,_0x2d01b5(0x125));if(_0x15c60c[_0x2d01b5(0x130)]==='id')return _0x421838&&PARAM_ID[_0x2d01b5(0x12c)](_0x15c60c[_0x2d01b5(0x133)])?_0x2d01b5(0x1d3)+complexTex(parameterValue(_0x15c60c[_0x2d01b5(0x133)]))+_0x2d01b5(0x1e6):texName(_0x15c60c['name']);if(_0x15c60c['type']===_0x2d01b5(0x1b6))return _0x2d01b5(0x1d3)+tex(_0x15c60c['child'],_0x421838)+'\x5cright)';if(_0x15c60c[_0x2d01b5(0x130)]===_0x2d01b5(0x1de))return _0x15c60c['op']+tex(_0x15c60c[_0x2d01b5(0x197)],_0x421838);if(_0x15c60c['op']==='/')return _0x2d01b5(0x236)+tex(_0x15c60c[_0x2d01b5(0x12f)],_0x421838)+'}{'+tex(_0x15c60c[_0x2d01b5(0x218)],_0x421838)+'}';return'{'+tex(_0x15c60c[_0x2d01b5(0x12f)],_0x421838)+'}'+(_0x15c60c['op']==='*'?'\x5c,':_0x15c60c['op'])+'{'+tex(_0x15c60c['right'],_0x421838)+'}';}function systemTex(_0xa87481,_0x154522=![]){const _0x43a705=_0x52a25f;return _0x43a705(0x231)+_0xa87481[_0x43a705(0x1fd)](_0x545821=>tex(_0x545821['left'],_0x154522)+'&='+tex(_0x545821[_0x43a705(0x218)],_0x154522))[_0x43a705(0x120)]('\x5c\x5c[5pt]')+'\x5cend{aligned}\x5cright.';}function matrixTex(_0x156990){const _0x2557e3=_0x52a25f;return _0x2557e3(0x1ff)+'c'['repeat'](_0x156990[0x0]['length']-0x1)+_0x2557e3(0x18f)+_0x156990[_0x2557e3(0x1fd)](_0xfc7ba9=>_0xfc7ba9['map'](complexTex)['join']('&'))[_0x2557e3(0x120)](_0x2557e3(0x158))+'\x5cend{array}\x5cright]';}function mathMarkup(_0x29f2ca,_0x234f64=!![]){const _0x145a0b=_0x52a25f;return _0x145a0b(0x232)+'<div\x20class=\x22math\x22\x20data-display=\x22'+_0x234f64+'\x22\x20data-tex=\x22'+esc(_0x29f2ca)+'\x22>'+esc(_0x29f2ca)+'</div></div>';}function renderMath(_0x1d2b66=document){const _0x19e2b3=_0x52a25f;if(!window[_0x19e2b3(0x113)])return;_0x1d2b66[_0x19e2b3(0x23c)]('[data-tex]')['forEach'](_0x3ade6a=>{const _0x12ba15=_0x19e2b3;try{window[_0x12ba15(0x113)]['render'](_0x3ade6a[_0x12ba15(0x15d)][_0x12ba15(0x13d)],_0x3ade6a,{'displayMode':_0x3ade6a[_0x12ba15(0x15d)][_0x12ba15(0x1b9)]!==_0x12ba15(0x182),'throwOnError':![],'trust':![],'strict':'ignore','output':_0x12ba15(0x194)});}catch{_0x3ade6a['textContent']=_0x3ade6a['dataset'][_0x12ba15(0x13d)];}});}window[_0x52a25f(0x1a6)]('mathready',()=>{const _0x47af89=_0x52a25f;renderMath(),$(_0x47af89(0x1e3))['textContent']='Формули\x20·\x20KaTeX';}),window['addEventListener'](_0x52a25f(0x13b),()=>{const _0x4f9282=_0x52a25f;$(_0x4f9282(0x1e3))[_0x4f9282(0x219)]='KaTeX\x20недоступний:\x20показано\x20LaTeX.\x20Обчислення\x20працюють.';});function paramWidget(_0x34dfce){const _0x2e1856=_0x52a25f,_0x242b76=getParam(_0x34dfce),_0x152308=_0x242b76['form']===_0x2e1856(0x19b),_0x23dde5=unitFor(_0x34dfce);return _0x2e1856(0x273)+_0x34dfce[0x0]['toLowerCase']()+_0x2e1856(0x188)+displayName(_0x34dfce)+_0x2e1856(0x128)+_0x23dde5+_0x2e1856(0x23e)+_0x34dfce+_0x2e1856(0x1af)+_0x34dfce+_0x2e1856(0x131)+(_0x152308?_0x2e1856(0x11a):_0x2e1856(0x225))+_0x2e1856(0x1aa)+(_0x152308?_0x2e1856(0x1ae)+_0x23dde5:_0x2e1856(0x255)+_0x23dde5)+_0x2e1856(0x26b)+_0x34dfce+_0x2e1856(0x1f8)+_0x34dfce+'\x20'+(_0x152308?_0x2e1856(0x265):'дійсна\x20частина')+_0x2e1856(0x17b)+esc(_0x242b76['a'])+_0x2e1856(0x170)+(_0x152308?'∠':'+\x20j·')+_0x2e1856(0x1fe)+(_0x152308?_0x2e1856(0x205):'Im,\x20'+_0x23dde5)+_0x2e1856(0x26b)+_0x34dfce+'\x22\x20data-part=\x22b\x22\x20aria-label=\x22'+_0x34dfce+'\x20'+(_0x152308?_0x2e1856(0x161):_0x2e1856(0x268))+_0x2e1856(0x17b)+esc(_0x242b76['b'])+_0x2e1856(0x203)+_0x34dfce+_0x2e1856(0x163);}function renderParameterGrid(){const _0xb1f0ea=_0x52a25f;$(_0xb1f0ea(0x19f))[_0xb1f0ea(0x1d7)]=system[_0xb1f0ea(0x1ba)][_0xb1f0ea(0x1fd)](paramWidget)[_0xb1f0ea(0x120)]('');}function toggleForm(_0x4763d0){const _0x425336=_0x52a25f,_0x21d519=getParam(_0x4763d0),_0x451758=_0x21d519[_0x425336(0x16c)]===_0x425336(0x19b)?_0x425336(0x189):'polar',_0x2e193f=!_0x21d519['a'][_0x425336(0x18a)](),_0x2de84c=!_0x21d519['b'][_0x425336(0x18a)]();if(!(_0x2e193f&&_0x2de84c)){let _0x4c7230;try{_0x4c7230=parameterValue(_0x4763d0);}catch(_0x1c037b){return showToast(_0x425336(0x1a4)+_0x4763d0+_0x425336(0x17d),!![]),![];}_0x451758===_0x425336(0x189)?(_0x21d519['a']=fullNumber(_0x4c7230['r']),_0x21d519['b']=fullNumber(_0x4c7230['i'])):(_0x21d519['a']=fullNumber(abs(_0x4c7230)),_0x21d519['b']=fullNumber(abs(_0x4c7230)===0x0?0x0:Math[_0x425336(0x1be)](_0x4c7230['i'],_0x4c7230['r'])*0xb4/Math['PI']));}return _0x21d519[_0x425336(0x16c)]=_0x451758,renderParameterGrid(),calculate(),saveState(),document[_0x425336(0x246)](_0x425336(0x220)+_0x4763d0+'\x22]')?.[_0x425336(0x193)](),!![];}function updateTokens(){const _0x1c8742=_0x52a25f,_0x44f43a=_0x234755=>Array[_0x1c8742(0x1dc)]({'length':_0x234755==='Z'?config['z']:_0x234755==='E'?config['e']:_0x234755==='Y'?0x8:0x5},(_0x28368c,_0x157553)=>_0x234755+(_0x157553+0x1)),_0x914a0a=config[_0x1c8742(0x20b)]===_0x1c8742(0x12a)?[...names(),..._0x44f43a('Y'),..._0x44f43a('J'),..._0x44f43a('Z'),..._0x44f43a('E')]:[...names(),..._0x44f43a('Z'),..._0x44f43a('E')],_0x4a61d5=_0x123c6f=>_0x1c8742(0x21f)+_0x123c6f+_0x1c8742(0x1f0)+_0x123c6f+'\x22>'+displayName(_0x123c6f)+_0x1c8742(0x227);$(_0x1c8742(0x1b7))[_0x1c8742(0x1d7)]=_0x914a0a[_0x1c8742(0x126)](['j','+','-','*','/','(',')','='])[_0x1c8742(0x1fd)](_0x4a61d5)['join']('')+(config[_0x1c8742(0x20b)]==='node'?'':_0x1c8742(0x210)+[..._0x44f43a('Y'),..._0x44f43a('J')][_0x1c8742(0x1fd)](_0x4a61d5)['join']('')+_0x1c8742(0x200)),$(_0x1c8742(0x13c))[_0x1c8742(0x165)]=config[_0x1c8742(0x20b)]===_0x1c8742(0x12a)?_0x1c8742(0x160):names()[0x0]+_0x1c8742(0x257)+names()[0x1]+_0x1c8742(0x19a)+names()[0x0]+_0x1c8742(0x1a2);}function syncEditorGeometry(){const _0x1db63d=_0x52a25f,_0x299e9c=$(_0x1db63d(0x13c)),_0x43e41e=$(_0x1db63d(0x117));_0x43e41e['style'][_0x1db63d(0x112)]=_0x299e9c['clientWidth']+'px',_0x43e41e[_0x1db63d(0x20d)]['height']=_0x299e9c[_0x1db63d(0x164)]+'px',_0x43e41e['scrollTop']=_0x299e9c[_0x1db63d(0x1a5)],_0x43e41e['scrollLeft']=_0x299e9c[_0x1db63d(0x1ed)],$(_0x1db63d(0x11f))[_0x1db63d(0x1a5)]=_0x299e9c[_0x1db63d(0x1a5)];}function validate(){const _0x158434=_0x52a25f;clearTimeout(parseTimer),system=null,outcome=null;const _0x3824aa=$('equations')[_0x158434(0x1a8)],_0x49e101=_0x3824aa[_0x158434(0x26f)]('\x0a'),_0x440d4d=[],_0xab9f2c=[];let _0x3847b7=0x0;_0x49e101['forEach']((_0x2b832d,_0x229429)=>{const _0x4dc164=_0x158434;if(_0x2b832d[_0x4dc164(0x18a)]())try{_0x440d4d['push']({...parseEquation(_0x2b832d),'line':_0x229429+0x1});}catch(_0x24d0ee){_0xab9f2c[_0x4dc164(0x13e)]({'message':_0x24d0ee[_0x4dc164(0x22f)],'line':_0x229429+0x1,'pos':_0x24d0ee[_0x4dc164(0x148)]??0x0,'len':_0x24d0ee[_0x4dc164(0x146)]??0x1,'offset':_0x3847b7});}_0x3847b7+=_0x2b832d[_0x4dc164(0x1e8)]+0x1;}),lastErrors=_0xab9f2c,$(_0x158434(0x11f))[_0x158434(0x219)]=_0x49e101[_0x158434(0x1fd)]((_0x18bbb6,_0x1d099c)=>_0x1d099c+0x1)[_0x158434(0x120)]('\x0a'),$(_0x158434(0x1f5))[_0x158434(0x219)]=_0x440d4d[_0x158434(0x1e8)]+_0x158434(0x1c6)+config['n']+'\x20рівнянь';const _0x5d4454=new Map(_0xab9f2c[_0x158434(0x1fd)](_0x254261=>[_0x254261['line'],_0x254261]));$(_0x158434(0x117))[_0x158434(0x1d7)]=_0x49e101[_0x158434(0x1fd)]((_0x54040e,_0x3e7edf)=>{const _0x2008ff=_0x158434,_0x108b02=_0x5d4454[_0x2008ff(0x25b)](_0x3e7edf+0x1);return!_0x108b02?esc(_0x54040e):esc(_0x54040e['slice'](0x0,_0x108b02[_0x2008ff(0x148)]))+'<mark>'+esc(_0x54040e[_0x2008ff(0x24c)](_0x108b02[_0x2008ff(0x148)],_0x108b02[_0x2008ff(0x148)]+_0x108b02[_0x2008ff(0x146)])||'\x20')+_0x2008ff(0x1d1)+esc(_0x54040e[_0x2008ff(0x24c)](_0x108b02[_0x2008ff(0x148)]+_0x108b02[_0x2008ff(0x146)]));})[_0x158434(0x120)]('\x0a')+'\x0a',syncEditorGeometry(),$(_0x158434(0x150))['innerHTML']=_0xab9f2c['map']((_0xc32cc6,_0x230abb)=>'<button\x20class=\x22err-item\x22\x20data-error=\x22'+_0x230abb+'\x22>Рядок\x20'+_0xc32cc6[_0x158434(0x149)]+_0x158434(0x25c)+(_0xc32cc6['pos']+0x1)+':\x20'+esc(_0xc32cc6[_0x158434(0x22f)])+_0x158434(0x227))[_0x158434(0x120)]('');const _0x34b40c=!_0xab9f2c['length']&&_0x440d4d[_0x158434(0x1e8)]===config['n'];$(_0x158434(0x186))[_0x158434(0x1a7)]=_0x158434(0x1cc)+(_0xab9f2c[_0x158434(0x1e8)]?'bad':_0x34b40c?'ok':''),$('syntax-status')[_0x158434(0x219)]=_0xab9f2c[_0x158434(0x1e8)]?'Помилок:\x20'+_0xab9f2c[_0x158434(0x1e8)]:_0x34b40c?_0x158434(0x209):_0x158434(0x201)+config['n']+_0x158434(0x215),$(_0x158434(0x1ee))[_0x158434(0x15f)]=!_0x440d4d['length']||!!_0xab9f2c[_0x158434(0x1e8)];!$(_0x158434(0x1ee))[_0x158434(0x15f)]&&($(_0x158434(0x1ee))['innerHTML']=mathMarkup(systemTex(_0x440d4d)),renderMath($(_0x158434(0x1ee))));$(_0x158434(0x173))[_0x158434(0x15f)]=!_0x34b40c;if(_0x34b40c){system=_0x440d4d;const _0x5cb020={'Z':0x0,'Y':0x1,'E':0x2,'J':0x3};system[_0x158434(0x1ba)]=[...new Set(_0x440d4d[_0x158434(0x263)](_0x3704a4=>[..._0x3704a4[_0x158434(0x1ba)]]))][_0x158434(0x171)]((_0x2708e0,_0x2dbb12)=>_0x5cb020[_0x2708e0[0x0]]-_0x5cb020[_0x2dbb12[0x0]]||Number(_0x2708e0[_0x158434(0x24c)](0x1))-Number(_0x2dbb12[_0x158434(0x24c)](0x1))),$(_0x158434(0x204))[_0x158434(0x219)]=system[_0x158434(0x1ba)][_0x158434(0x1e8)]+_0x158434(0x22a),renderParameterGrid(),calculate();}else renderOutcome(),$('auto-note')[_0x158434(0x219)]='';}function calculate(){const _0x4642eb=_0x52a25f;outcome=null,$(_0x4642eb(0x145))[_0x4642eb(0x15f)]=!![],$('auto-note')[_0x4642eb(0x219)]='';if(!system){renderOutcome();return;}let _0xa3fcf=0x0,_0x41c934=0x0,_0x5695d1=![];document[_0x4642eb(0x23c)]('[data-param]')[_0x4642eb(0x135)](_0x2dc0f9=>{const _0x2d31e9=_0x4642eb,_0x5ddbcb=getParam(_0x2dc0f9[_0x2d31e9(0x15d)][_0x2d31e9(0x1b8)]),_0x3b7933=numberValue(_0x2dc0f9[_0x2d31e9(0x1a8)]),_0x44e059=!_0x2dc0f9['value'][_0x2d31e9(0x18a)](),_0x16c238=_0x5ddbcb['form']===_0x2d31e9(0x19b)&&_0x2dc0f9[_0x2d31e9(0x15d)][_0x2d31e9(0x142)]==='a'&&_0x3b7933!==null&&_0x3b7933<0x0,_0x41a4b0=!_0x44e059&&(_0x3b7933===null||_0x16c238);_0x2dc0f9[_0x2d31e9(0x134)](_0x2d31e9(0x1c3),String(_0x41a4b0));if(_0x44e059)_0xa3fcf++;if(_0x41a4b0)_0x41c934++;if(_0x16c238)_0x5695d1=!![];});for(const _0x14c01f of system[_0x4642eb(0x1ba)]){const _0x54d3c2=document['querySelector'](_0x4642eb(0x153)+_0x14c01f+'\x22]');try{const _0x568b3c=parameterValue(_0x14c01f);_0x54d3c2[_0x4642eb(0x219)]=getParam(_0x14c01f)['form']===_0x4642eb(0x19b)?complexText(_0x568b3c)+'\x20'+unitFor(_0x14c01f):polarText(_0x568b3c)+'\x20'+unitFor(_0x14c01f);}catch{_0x54d3c2[_0x4642eb(0x219)]=_0x4642eb(0x198);}}if(_0xa3fcf||_0x41c934){$(_0x4642eb(0x20a))[_0x4642eb(0x1a7)]=_0x4642eb(0x167)+(_0x41c934?_0x4642eb(0x24e):''),$(_0x4642eb(0x20a))[_0x4642eb(0x219)]=_0x5695d1?_0x4642eb(0x206):_0x41c934?'Виправте\x20виділені\x20поля.\x20Числа:\x20−20,5\x20або\x201e-3.':_0x4642eb(0x271)+_0xa3fcf+_0x4642eb(0x266),renderOutcome();return;}try{const _0x1878ad=[],_0x2aee93=[];for(const _0x4df593 of system){const _0x481c58=affine(_0x4df593[_0x4642eb(0x12f)]),_0x58ea02=affine(_0x4df593[_0x4642eb(0x218)]);_0x1878ad[_0x4642eb(0x13e)](_0x481c58['a'][_0x4642eb(0x1fd)]((_0x26d46e,_0x4377f9)=>sub(_0x26d46e,_0x58ea02['a'][_0x4377f9]))),_0x2aee93[_0x4642eb(0x13e)](sub(_0x58ea02['c'],_0x481c58['c']));}outcome={...solve(_0x1878ad,_0x2aee93),'A':_0x1878ad,'b':_0x2aee93},$(_0x4642eb(0x145))['hidden']=![],$('substituted')[_0x4642eb(0x1d7)]='<div\x20class=\x22tiny\x20muted\x22>Система\x20після\x20підстановки\x20·\x20числа\x20округлено\x20лише\x20для\x20показу</div>'+mathMarkup(systemTex(system,!![])),renderMath($(_0x4642eb(0x145))),$('numeric-status')['className']=_0x4642eb(0x1fb)+(outcome[_0x4642eb(0x137)]===_0x4642eb(0x1cb)?_0x4642eb(0x155):_0x4642eb(0x247)),$('numeric-status')[_0x4642eb(0x219)]=outcome[_0x4642eb(0x137)]===_0x4642eb(0x1cb)?_0x4642eb(0x15a):outcome[_0x4642eb(0x137)]===_0x4642eb(0x1c2)?_0x4642eb(0x1ad):_0x4642eb(0x111),$('auto-note')[_0x4642eb(0x219)]=outcome['kind']==='unique'?_0x4642eb(0x1b5):'';}catch(_0x38c1a1){outcome={'kind':_0x4642eb(0x247),'message':_0x38c1a1['message']},$('numeric-status')['className']='notice\x20error',$(_0x4642eb(0x20a))['textContent']=_0x38c1a1[_0x4642eb(0x22f)];}renderOutcome();}function renderOutcome(){const _0x5583dd=_0x52a25f,_0x400fc1=$('results-content'),_0x150cce=$(_0x5583dd(0x196));$(_0x5583dd(0x253))[_0x5583dd(0x12e)]=outcome?.[_0x5583dd(0x137)]!==_0x5583dd(0x1cb);if(!outcome){const _0x439206=!system?_0x5583dd(0x228):_0x5583dd(0x10b);_0x400fc1[_0x5583dd(0x1d7)]=_0x150cce[_0x5583dd(0x1d7)]=_0x5583dd(0x147)+_0x439206+'</div>';return;}if(outcome[_0x5583dd(0x137)]===_0x5583dd(0x247)){_0x400fc1[_0x5583dd(0x1d7)]=_0x150cce[_0x5583dd(0x1d7)]='<div\x20class=\x22notice\x20error\x22>'+esc(outcome[_0x5583dd(0x22f)])+_0x5583dd(0x11e);return;}const _0x2d31fb=outcome,_0xf76293=config['method']===_0x5583dd(0x12a)?'В':'А',_0x5af65f=names();_0x2d31fb[_0x5583dd(0x137)]!==_0x5583dd(0x1cb)?_0x400fc1[_0x5583dd(0x1d7)]='<div\x20class=\x22notice\x20error\x22>'+(_0x2d31fb[_0x5583dd(0x137)]===_0x5583dd(0x1c2)?_0x5583dd(0x1dd):_0x5583dd(0x185))+_0x5583dd(0x156)+_0x2d31fb['rank']+'\x20із\x20'+config['n']+_0x5583dd(0x12b):_0x400fc1[_0x5583dd(0x1d7)]='<div\x20class=\x22notice\x20'+(_0x2d31fb[_0x5583dd(0x249)]<1e-8?_0x5583dd(0x155):_0x5583dd(0x247))+'\x22>'+(_0x2d31fb[_0x5583dd(0x249)]<1e-8?_0x5583dd(0x1c5):_0x5583dd(0x132))+_0x5583dd(0x1e4)+_0x2d31fb[_0x5583dd(0x249)][_0x5583dd(0x22b)](0x2)+_0x5583dd(0x238)+(_0x2d31fb[_0x5583dd(0x18e)]?_0x5583dd(0x23d):'')+_0x5583dd(0x143)+_0x2d31fb['x']['map']((_0xb4f3c9,_0x13b328)=>_0x5583dd(0x118)+displayName(_0x5af65f[_0x13b328])+_0x5583dd(0x17e)+_0xf76293+_0x5583dd(0x24d)+complexText(_0xb4f3c9)+_0x5583dd(0x141)+polarText(_0xb4f3c9)+'<br>'+(abs(_0xb4f3c9)===0x0?'Для\x20нуля\x20фаза\x20не\x20визначена.':fmt(abs(_0xb4f3c9))+_0x5583dd(0x1d6)+fmt(Math[_0x5583dd(0x1be)](_0xb4f3c9['i'],_0xb4f3c9['r'])*0xb4/Math['PI'])+_0x5583dd(0x17a))+'</div></div>')[_0x5583dd(0x120)]('')+'</div><h3>Перевірка\x20кожного\x20рівняння</h3><p\x20class=\x22muted\x20tiny\x22>Залишок\x20—\x20ліва\x20частина\x20мінус\x20права.\x20Перевірка\x20виконується\x20до\x20округлення.</p>'+'<div\x20class=\x22table-scroll\x22><table><thead><tr><th>Рівняння</th><th>Ліва\x20частина</th><th>Права\x20частина</th><th>|Залишок|</th></tr></thead><tbody>'+system[_0x5583dd(0x1fd)]((_0x363466,_0x373ca9)=>{const _0x52d3b5=_0x5583dd,_0x15e47e=_0x26d8e8=>{const _0x543d2d=_0x4fed,_0x3d74df=affine(_0x26d8e8);return _0x3d74df['a'][_0x543d2d(0x229)]((_0x5bb2cc,_0x3a8c8e,_0x32f12b)=>add(_0x5bb2cc,mul(_0x3a8c8e,_0x2d31fb['x'][_0x32f12b])),_0x3d74df['c']);};return _0x52d3b5(0x1ec)+(_0x373ca9+0x1)+'</td><td>'+complexText(_0x15e47e(_0x363466[_0x52d3b5(0x12f)]))+'</td><td>'+complexText(_0x15e47e(_0x363466['right']))+_0x52d3b5(0x241)+abs(_0x2d31fb[_0x52d3b5(0x230)][_0x373ca9])[_0x52d3b5(0x22b)](0x2)+_0x52d3b5(0x19d);})[_0x5583dd(0x120)]('')+_0x5583dd(0x152),_0x150cce['innerHTML']=_0x5583dd(0x1f3)+mathMarkup(systemTex(system))+_0x5583dd(0x21e)+system[_0x5583dd(0x1ba)]['map'](_0x2e3a20=>mathMarkup(texName(_0x2e3a20)+'='+complexTex(parameterValue(_0x2e3a20))+_0x5583dd(0x1e2)+unitFor(_0x2e3a20)+'}',![]))[_0x5583dd(0x120)]('')+mathMarkup(systemTex(system,!![]))+_0x5583dd(0x20c)+mathMarkup(matrixTex(_0x2d31fb['A']['map']((_0x22177d,_0xa60c82)=>[..._0x22177d,_0x2d31fb['b'][_0xa60c82]])))+_0x5583dd(0x124)+_0x2d31fb[_0x5583dd(0x181)][_0x5583dd(0x1fd)]((_0x3992ba,_0x385de2)=>'<details\x20class=\x22solution-step\x22\x20'+(_0x385de2===0x0?_0x5583dd(0x269):'')+_0x5583dd(0x243)+esc(_0x3992ba[_0x5583dd(0x24b)])+_0x5583dd(0x1f4)+(_0x3992ba[_0x5583dd(0x1ef)]||[])['map'](_0x581249=>mathMarkup(_0x581249,![]))['join']('')+mathMarkup(matrixTex(_0x3992ba[_0x5583dd(0x1c9)]))+_0x5583dd(0x200))['join'](''),_0x2d31fb[_0x5583dd(0x137)]==='unique'?_0x150cce[_0x5583dd(0x1d7)]+='<h3>5.\x20Зворотна\x20підстановка</h3>'+_0x2d31fb[_0x5583dd(0x1cf)][_0x5583dd(0x1fd)](_0x5e22ff=>mathMarkup(texName(_0x5af65f[_0x5e22ff['i']])+_0x5583dd(0x26e)+complexTex(_0x5e22ff['numerator'])+'}{'+complexTex(_0x5e22ff[_0x5583dd(0x115)])+'}='+complexTex(_0x5e22ff[_0x5583dd(0x1a8)])+'\x5c;\x5ctext{'+_0xf76293+'}'))[_0x5583dd(0x120)]('')+_0x5583dd(0x159)+_0x2d31fb[_0x5583dd(0x249)][_0x5583dd(0x22b)](0x3)+_0x5583dd(0x16b):_0x150cce[_0x5583dd(0x1d7)]+=_0x5583dd(0x184)+(_0x2d31fb[_0x5583dd(0x137)]===_0x5583dd(0x1c2)?_0x5583dd(0x1f9):_0x5583dd(0x1c7))+_0x5583dd(0x11e),renderMath(_0x400fc1),renderMath(_0x150cce);}function switchTab(_0x44145a){const _0xc4af83=_0x52a25f;document['querySelectorAll'](_0xc4af83(0x16e))[_0xc4af83(0x135)](_0xacad0b=>{const _0x3ba176=_0xc4af83,_0x4a8337=_0xacad0b[_0x3ba176(0x15d)][_0x3ba176(0x240)]===_0x44145a;_0xacad0b['setAttribute']('aria-selected',String(_0x4a8337)),_0xacad0b['tabIndex']=_0x4a8337?0x0:-0x1,$(_0xacad0b[_0x3ba176(0x15d)][_0x3ba176(0x240)]+_0x3ba176(0x211))[_0x3ba176(0x15f)]=!_0x4a8337;});if(_0x44145a===_0xc4af83(0x1e7))syncEditorGeometry();}function fillExampleParams(){const _0x428801=_0x52a25f;params=Object[_0x428801(0x17f)](null),[[0xa,0x5],[0x14,0xa],[0xf,-0xf],[0x19,0xf],[0xa,0x14]]['forEach']((_0x4675e6,_0x105247)=>{const _0x2d3407=_0x428801;params['Z'+(_0x105247+0x1)]={'form':_0x2d3407(0x189),'a':String(_0x4675e6[0x0]),'b':String(_0x4675e6[0x1])};}),[[0x69,0x4b],[0x5,0x2d],[0x2d,-0x2d]][_0x428801(0x135)]((_0x4e8023,_0x52ee59)=>{params['E'+(_0x52ee59+0x1)]={'form':'rect','a':String(_0x4e8023[0x0]),'b':String(_0x4e8023[0x1])};});}function loadExample(){const _0x2fa686=_0x52a25f;config['z']=0x5,config['e']=0x3;if(config[_0x2fa686(0x20b)]===_0x2fa686(0x13a))config['n']=0x5,$('equations')[_0x2fa686(0x1a8)]=_0x2fa686(0x123);else config['method']==='mesh'?(config['n']=0x3,$(_0x2fa686(0x13c))[_0x2fa686(0x1a8)]='(Z2+Z3)*I11\x20-\x20Z3*I22\x20=\x20-E2-E3\x0a(Z1+Z3+Z5)*I22\x20-\x20Z3*I11\x20-\x20Z1*I33\x20=\x20E3-E1\x0a(Z1+Z4)*I33\x20-\x20Z1*I22\x20=\x20E1'):(config['n']=0x2,$(_0x2fa686(0x13c))['value']=_0x2fa686(0x10a));fillExampleParams(),syncConfig(),updateTokens(),validate(),switchTab(_0x2fa686(0x1e7)),saveState(),$(_0x2fa686(0x26a))['hidden']=![];}function syncConfig(){const _0x8e8985=_0x52a25f;$(_0x8e8985(0x20b))[_0x8e8985(0x1a8)]=config['method'],$(_0x8e8985(0x162))[_0x8e8985(0x1a8)]=config['n'],$('zcount')[_0x8e8985(0x1a8)]=config['z'],$(_0x8e8985(0x23f))[_0x8e8985(0x1a8)]=config['e'];}function exportState(){const _0x376e95=_0x52a25f;return{'version':0x2,'config':{...config},'equations':$(_0x376e95(0x13c))[_0x376e95(0x1a8)],'params':params,'precision':Number($(_0x376e95(0x1ab))[_0x376e95(0x1a8)])};}function sanitizeState(_0x1fd52f){const _0x30087a=_0x52a25f;if(!_0x1fd52f||_0x1fd52f['version']!==0x2||!_0x1fd52f[_0x30087a(0x14f)]||typeof _0x1fd52f[_0x30087a(0x13c)]!=='string'||_0x1fd52f[_0x30087a(0x13c)][_0x30087a(0x1e8)]>MAX_TEXT)throw Error(_0x30087a(0x270));const _0x47cf73=_0x1fd52f[_0x30087a(0x14f)];if(![_0x30087a(0x13a),'mesh',_0x30087a(0x12a)][_0x30087a(0x13f)](_0x47cf73['method'])||!Number['isInteger'](_0x47cf73['n'])||_0x47cf73['n']<0x2||_0x47cf73['n']>0x8||!Number['isInteger'](_0x47cf73['z'])||_0x47cf73['z']<0x0||_0x47cf73['z']>0x8||!Number['isInteger'](_0x47cf73['e'])||_0x47cf73['e']<0x0||_0x47cf73['e']>0x5)throw Error(_0x30087a(0x1fa));if(!_0x1fd52f[_0x30087a(0x191)]||typeof _0x1fd52f['params']!=='object'||Array[_0x30087a(0x187)](_0x1fd52f[_0x30087a(0x191)]))throw Error(_0x30087a(0x224));const _0x4a94f9=Object[_0x30087a(0x17f)](null);for(const [_0x6e5bbb,_0x37ef3a]of Object['entries'](_0x1fd52f[_0x30087a(0x191)])){if(!PARAM_ID['test'](_0x6e5bbb))continue;if(!_0x37ef3a||!['rect',_0x30087a(0x19b)]['includes'](_0x37ef3a[_0x30087a(0x16c)])||typeof _0x37ef3a['a']!==_0x30087a(0x109)||typeof _0x37ef3a['b']!==_0x30087a(0x109)||_0x37ef3a['a'][_0x30087a(0x1e8)]>0x78||_0x37ef3a['b'][_0x30087a(0x1e8)]>0x78)throw Error(_0x30087a(0x154)+_0x6e5bbb+'.');_0x4a94f9[_0x6e5bbb]={'form':_0x37ef3a[_0x30087a(0x16c)],'a':_0x37ef3a['a'],'b':_0x37ef3a['b']};}return{'version':0x2,'config':{'method':_0x47cf73[_0x30087a(0x20b)],'n':_0x47cf73['n'],'z':_0x47cf73['z'],'e':_0x47cf73['e']},'equations':_0x1fd52f[_0x30087a(0x13c)],'params':_0x4a94f9,'precision':[0x3,0x4,0x5,0x6,0x8][_0x30087a(0x13f)](_0x1fd52f[_0x30087a(0x1ab)])?_0x1fd52f[_0x30087a(0x1ab)]:0x4};}function sharedState(){const _0x272f55=_0x52a25f,_0x232767=location[_0x272f55(0x25f)][_0x272f55(0x24c)](0x1);if(!_0x232767)return null;if(_0x232767['length']>0x27100)throw Error('Посилання\x20надто\x20довге.');const _0x2d8803=new URLSearchParams(_0x232767)[_0x272f55(0x25b)](_0x272f55(0x234));return _0x2d8803===null?null:sanitizeState(JSON['parse'](_0x2d8803));}function applyState(_0x15d94f){const _0x163273=_0x52a25f;config=_0x15d94f[_0x163273(0x14f)],params=_0x15d94f[_0x163273(0x191)],$('equations')['value']=_0x15d94f[_0x163273(0x13c)],$(_0x163273(0x1ab))[_0x163273(0x1a8)]=_0x15d94f[_0x163273(0x1ab)],syncConfig(),updateTokens(),validate(),switchTab(_0x163273(0x1e7)),$(_0x163273(0x26a))[_0x163273(0x15f)]=!![];}function saveState(_0x24ea4c=!![]){const _0x3f9cb2=_0x52a25f;try{localStorage[_0x3f9cb2(0x1ca)](STORAGE_KEY,JSON[_0x3f9cb2(0x11b)](exportState())),storageAvailable=!![],$(_0x3f9cb2(0x239))[_0x3f9cb2(0x219)]='✓\x20Збережено\x20у\x20цьому\x20браузері';}catch{storageAvailable=![],$(_0x3f9cb2(0x239))[_0x3f9cb2(0x219)]=_0x3f9cb2(0x26c);}if(_0x24ea4c&&new URLSearchParams(location['hash'][_0x3f9cb2(0x24c)](0x1))[_0x3f9cb2(0x108)]('phasor'))try{const _0x5537cd=new URL(location[_0x3f9cb2(0x207)]);_0x5537cd['hash']=storageAvailable?'':new URLSearchParams({'phasor':JSON[_0x3f9cb2(0x11b)](exportState())})['toString'](),history['replaceState'](null,'',_0x5537cd[_0x3f9cb2(0x207)]);}catch{}}function restoreInitialState(){const _0x5be677=_0x52a25f;let _0xdfa9c2=null;try{_0xdfa9c2=sharedState();}catch{showToast(_0x5be677(0x1c0),!![]);}if(!_0xdfa9c2)try{const _0x44bbf6=localStorage[_0x5be677(0x1f2)](STORAGE_KEY);if(_0x44bbf6)_0xdfa9c2=sanitizeState(JSON[_0x5be677(0x1c8)](_0x44bbf6));}catch{$(_0x5be677(0x239))[_0x5be677(0x219)]='Локальне\x20збереження\x20недоступне\x20або\x20пошкоджене';}_0xdfa9c2?(applyState(_0xdfa9c2),saveState(![])):(syncConfig(),updateTokens(),validate());}function showToast(_0x32a1e8,_0x41ff93=![]){const _0x3e65a6=_0x52a25f;clearTimeout(toastTimer),$(_0x3e65a6(0x21b))[_0x3e65a6(0x219)]=_0x32a1e8,$(_0x3e65a6(0x21b))[_0x3e65a6(0x1a7)]=_0x3e65a6(0x21b)+(_0x41ff93?_0x3e65a6(0x24e):''),$('toast')[_0x3e65a6(0x15f)]=![],toastTimer=setTimeout(()=>{const _0x3caf41=_0x3e65a6;$(_0x3caf41(0x21b))['hidden']=!![];},0x1194);}async function copyText(_0x3bac2a,_0x1d6812,_0x44120d=_0x52a25f(0x259)){const _0x38c0ce=_0x52a25f;let _0x43f3b2=![];try{navigator[_0x38c0ce(0x122)]?.[_0x38c0ce(0x116)]&&(await navigator[_0x38c0ce(0x122)]['writeText'](_0x3bac2a),_0x43f3b2=!![]);}catch{}if(!_0x43f3b2){const _0x266110=document[_0x38c0ce(0x1ce)],_0x2525e2=document[_0x38c0ce(0x22c)](_0x38c0ce(0x15e));_0x2525e2['value']=_0x3bac2a,_0x2525e2[_0x38c0ce(0x1b0)]=!![],_0x2525e2['className']=_0x38c0ce(0x1a1),document[_0x38c0ce(0x11c)][_0x38c0ce(0x1f1)](_0x2525e2),_0x2525e2['select']();try{_0x43f3b2=Boolean(document[_0x38c0ce(0x254)]?.(_0x38c0ce(0x14d)));}catch{_0x43f3b2=![];}_0x2525e2[_0x38c0ce(0x10f)](),_0x266110?.[_0x38c0ce(0x193)]();}if(_0x43f3b2){if(_0x1d6812?.[_0x38c0ce(0x21c)]){const _0x4c7088=copyFeedback[_0x38c0ce(0x25b)](_0x1d6812),_0x2bce80=_0x4c7088?.[_0x38c0ce(0x16f)]??_0x1d6812[_0x38c0ce(0x219)];clearTimeout(_0x4c7088?.[_0x38c0ce(0x1df)]),_0x1d6812[_0x38c0ce(0x219)]=_0x38c0ce(0x18b);const _0x55cea3=setTimeout(()=>{const _0x64d411=_0x38c0ce;if(_0x1d6812['isConnected'])_0x1d6812[_0x64d411(0x219)]=_0x2bce80;copyFeedback['delete'](_0x1d6812);},0x708);copyFeedback[_0x38c0ce(0x256)](_0x1d6812,{'original':_0x2bce80,'timer':_0x55cea3});}return showToast(_0x44120d),!![];}$(_0x38c0ce(0x180))[_0x38c0ce(0x1a8)]=_0x3bac2a;const _0x125e33=$(_0x38c0ce(0x151));if(typeof _0x125e33[_0x38c0ce(0x23a)]===_0x38c0ce(0x1bf)){if(!_0x125e33[_0x38c0ce(0x269)])_0x125e33['showModal']();}else _0x125e33[_0x38c0ce(0x134)](_0x38c0ce(0x269),'');return $('copy-manual')['focus'](),$('copy-manual')[_0x38c0ce(0x260)](),showToast(_0x38c0ce(0x25e),!![]),![];}async function shareState(_0x22cc39){const _0x4b6a81=_0x52a25f,_0x55fdaa=new URL(location[_0x4b6a81(0x207)]);_0x55fdaa[_0x4b6a81(0x25f)]=new URLSearchParams({'phasor':JSON[_0x4b6a81(0x11b)](exportState())})['toString']();try{history[_0x4b6a81(0x176)](null,'',_0x55fdaa[_0x4b6a81(0x207)]);}catch{showToast(_0x4b6a81(0x1b2),!![]);}await copyText(_0x55fdaa['href'],_0x22cc39,'Посилання\x20на\x20поточний\x20стан\x20скопійовано');}function resultsReport(){const _0x14bded=_0x52a25f;if(outcome?.[_0x14bded(0x137)]!=='unique')return'';const _0x17fbc9={'branch':_0x14bded(0x18c),'mesh':'Контурні\x20струми','node':_0x14bded(0x192)}[config[_0x14bded(0x20b)]],_0x4e3396=config[_0x14bded(0x20b)]===_0x14bded(0x12a)?'В':'А';return[_0x14bded(0x24a)+_0x17fbc9,'',...outcome['x'][_0x14bded(0x1fd)]((_0x2c3b47,_0x1bfb2a)=>names()[_0x1bfb2a]+_0x14bded(0x18d)+complexText(_0x2c3b47)+'\x20'+_0x4e3396+_0x14bded(0x18d)+polarText(_0x2c3b47)+'\x20'+_0x4e3396),'',_0x14bded(0x242)+outcome[_0x14bded(0x249)]['toExponential'](0x3),_0x14bded(0x157)][_0x14bded(0x120)]('\x0a');}for(const [id,min,max,value]of[[_0x52a25f(0x162),0x2,0x8,0x5],['zcount',0x0,0x8,0x5],[_0x52a25f(0x23f),0x0,0x5,0x3]]){for(let i=min;i<=max;i++)$(id)['add'](new Option(i,i));$(id)[_0x52a25f(0x1a8)]=value;}[_0x52a25f(0x20b),_0x52a25f(0x162),'zcount',_0x52a25f(0x23f)][_0x52a25f(0x135)](_0x111033=>$(_0x111033)[_0x52a25f(0x1a6)](_0x52a25f(0x138),()=>{const _0x46c6dd=_0x52a25f;config={'method':$(_0x46c6dd(0x20b))['value'],'n':Number($(_0x46c6dd(0x162))['value']),'z':Number($('zcount')[_0x46c6dd(0x1a8)]),'e':Number($(_0x46c6dd(0x23f))[_0x46c6dd(0x1a8)])},$(_0x46c6dd(0x26a))[_0x46c6dd(0x15f)]=!![],updateTokens(),validate(),saveState();})),$(_0x52a25f(0x13c))[_0x52a25f(0x1a6)]('input',()=>{const _0x3574fe=_0x52a25f;$(_0x3574fe(0x26a))['hidden']=!![],saveState(),clearTimeout(parseTimer),system=null,outcome=null,$(_0x3574fe(0x173))[_0x3574fe(0x15f)]=!![],$('symbolic')[_0x3574fe(0x15f)]=!![],renderOutcome(),parseTimer=setTimeout(validate,0x8c),syncEditorGeometry();}),$(_0x52a25f(0x13c))[_0x52a25f(0x1a6)]('scroll',syncEditorGeometry);if(typeof ResizeObserver===_0x52a25f(0x1bf))new ResizeObserver(syncEditorGeometry)[_0x52a25f(0x14b)]($(_0x52a25f(0x13c)));window[_0x52a25f(0x1a6)](_0x52a25f(0x12d),syncEditorGeometry),$(_0x52a25f(0x1b7))[_0x52a25f(0x1a6)](_0x52a25f(0x19e),_0x115010=>{const _0x5ae898=_0x52a25f,_0x5a0bf6=_0x115010[_0x5ae898(0x1eb)][_0x5ae898(0x212)]('[data-insert]');if(!_0x5a0bf6)return;const _0x65c285=$(_0x5ae898(0x13c)),_0x522f61=_0x5a0bf6[_0x5ae898(0x15d)][_0x5ae898(0x202)];if(_0x65c285[_0x5ae898(0x1a8)][_0x5ae898(0x1e8)]-(_0x65c285['selectionEnd']-_0x65c285[_0x5ae898(0x172)])+_0x522f61[_0x5ae898(0x1e8)]>MAX_TEXT){showToast(_0x5ae898(0x136),!![]);return;}_0x65c285[_0x5ae898(0x19c)](_0x522f61,_0x65c285[_0x5ae898(0x172)],_0x65c285[_0x5ae898(0x214)],_0x5ae898(0x1d8)),_0x65c285[_0x5ae898(0x193)](),$(_0x5ae898(0x26a))[_0x5ae898(0x15f)]=!![],validate(),saveState();}),$(_0x52a25f(0x150))[_0x52a25f(0x1a6)]('click',_0x453478=>{const _0x5a42e4=_0x52a25f,_0x34c313=_0x453478['target'][_0x5a42e4(0x212)](_0x5a42e4(0x237));if(!_0x34c313)return;const _0x53afa2=lastErrors[Number(_0x34c313[_0x5a42e4(0x15d)][_0x5a42e4(0x247)])];if(!_0x53afa2)return;$(_0x5a42e4(0x13c))['focus'](),$(_0x5a42e4(0x13c))[_0x5a42e4(0x21a)](_0x53afa2[_0x5a42e4(0x21d)]+_0x53afa2[_0x5a42e4(0x148)],_0x53afa2[_0x5a42e4(0x21d)]+_0x53afa2[_0x5a42e4(0x148)]+_0x53afa2[_0x5a42e4(0x146)]);}),$(_0x52a25f(0x19f))[_0x52a25f(0x1a6)](_0x52a25f(0x1e7),_0x57ef54=>{const _0x35b213=_0x52a25f,_0x177bcf=_0x57ef54[_0x35b213(0x1eb)];if(!_0x177bcf[_0x35b213(0x1a9)](_0x35b213(0x1c1)))return;getParam(_0x177bcf[_0x35b213(0x15d)][_0x35b213(0x1b8)])[_0x177bcf[_0x35b213(0x15d)]['part']]=_0x177bcf[_0x35b213(0x1a8)],$('example-note')['hidden']=!![],calculate(),saveState();}),$(_0x52a25f(0x19f))[_0x52a25f(0x1a6)](_0x52a25f(0x19e),_0x464533=>{const _0x153e1a=_0x52a25f,_0x372642=_0x464533[_0x153e1a(0x1eb)][_0x153e1a(0x212)]('[data-toggle-form]');if(_0x372642)toggleForm(_0x372642['dataset'][_0x153e1a(0x10c)]);}),document['addEventListener'](_0x52a25f(0x19e),_0x123bd1=>{const _0x4727bb=_0x52a25f,_0x31782e=_0x123bd1['target'][_0x4727bb(0x212)]('[data-copy-tex]');if(_0x31782e)void copyText(_0x31782e[_0x4727bb(0x212)]('.formula')[_0x4727bb(0x246)]('[data-tex]')[_0x4727bb(0x15d)]['tex'],_0x31782e,_0x4727bb(0x1e9));}),document[_0x52a25f(0x23c)](_0x52a25f(0x16e))['forEach'](_0x3a8e32=>{const _0xd702d0=_0x52a25f;_0x3a8e32[_0xd702d0(0x1a6)]('click',()=>switchTab(_0x3a8e32[_0xd702d0(0x15d)][_0xd702d0(0x240)])),_0x3a8e32[_0xd702d0(0x1a6)]('keydown',_0x1245b1=>{const _0x408f1b=_0xd702d0,_0x4006bd=[...document['querySelectorAll'](_0x408f1b(0x16e))],_0x43c648=_0x4006bd[_0x408f1b(0x262)](_0x3a8e32),_0x26ceb1=_0x1245b1['key']===_0x408f1b(0x217)?_0x4006bd[(_0x43c648+0x1)%_0x4006bd[_0x408f1b(0x1e8)]]:_0x1245b1[_0x408f1b(0x119)]===_0x408f1b(0x252)?_0x4006bd[(_0x43c648+_0x4006bd[_0x408f1b(0x1e8)]-0x1)%_0x4006bd[_0x408f1b(0x1e8)]]:_0x1245b1[_0x408f1b(0x119)]==='Home'?_0x4006bd[0x0]:_0x1245b1[_0x408f1b(0x119)]===_0x408f1b(0x274)?_0x4006bd['at'](-0x1):null;_0x26ceb1&&(_0x1245b1[_0x408f1b(0x169)](),switchTab(_0x26ceb1[_0x408f1b(0x15d)]['tab']),_0x26ceb1[_0x408f1b(0x193)]());});}),$(_0x52a25f(0x1b4))[_0x52a25f(0x235)]=()=>switchTab('results'),$(_0x52a25f(0x1db))[_0x52a25f(0x235)]=()=>switchTab(_0x52a25f(0x1e7)),$(_0x52a25f(0x175))[_0x52a25f(0x235)]=loadExample,$('clear')[_0x52a25f(0x235)]=()=>{const _0x3ab6fa=_0x52a25f;params=Object[_0x3ab6fa(0x17f)](null),$(_0x3ab6fa(0x26a))[_0x3ab6fa(0x15f)]=!![],$(_0x3ab6fa(0x13c))[_0x3ab6fa(0x1a8)]='',validate(),switchTab(_0x3ab6fa(0x1e7)),saveState(),$(_0x3ab6fa(0x13c))[_0x3ab6fa(0x193)]();},$(_0x52a25f(0x1ab))[_0x52a25f(0x14a)]=()=>{if(system)calculate();saveState();},$(_0x52a25f(0x25a))[_0x52a25f(0x235)]=_0x198b21=>{const _0x52227b=_0x52a25f;void shareState(_0x198b21[_0x52227b(0x233)]);},$(_0x52a25f(0x253))[_0x52a25f(0x235)]=_0x3b89bd=>{const _0x3b81b3=_0x52a25f,_0x3e3508=resultsReport();if(_0x3e3508)void copyText(_0x3e3508,_0x3b89bd['currentTarget'],_0x3b81b3(0x221));},$(_0x52a25f(0x10d))[_0x52a25f(0x235)]=()=>{const _0x4d19f0=_0x52a25f,_0x29930a=$(_0x4d19f0(0x151));if(typeof _0x29930a['close']===_0x4d19f0(0x1bf))_0x29930a[_0x4d19f0(0x1b1)]();else _0x29930a[_0x4d19f0(0x1da)](_0x4d19f0(0x269));},window['addEventListener']('hashchange',()=>{const _0x16e61e=_0x52a25f;try{const _0x42706d=sharedState();_0x42706d&&(applyState(_0x42706d),saveState(![]),showToast('Стан\x20із\x20посилання\x20відновлено'));}catch{showToast(_0x16e61e(0x208),!![]);}});let printDetails=[];window[_0x52a25f(0x1a6)](_0x52a25f(0x1e1),()=>{const _0x33054c=_0x52a25f;printDetails=[...document[_0x33054c(0x23c)](_0x33054c(0x183))][_0x33054c(0x1fd)](_0x5e7382=>({'element':_0x5e7382,'open':_0x5e7382[_0x33054c(0x269)]})),printDetails[_0x33054c(0x135)](({element:_0xfefc36})=>{_0xfefc36['open']=!![];});}),window[_0x52a25f(0x1a6)](_0x52a25f(0x195),()=>{const _0x452be6=_0x52a25f;printDetails[_0x452be6(0x135)](({element:_0x4c6cad,open:_0x5f5613})=>{const _0x163af9=_0x452be6;_0x4c6cad[_0x163af9(0x269)]=_0x5f5613;}),printDetails=[];}),$('print')[_0x52a25f(0x235)]=()=>window['print'](),window[_0x52a25f(0x24f)]={'tokenize':tokenize,'parseEquation':parseEquation,'affine':affine,'solve':solve,'C':C,'add':add,'sub':sub,'mul':mul,'div':div,'validate':validate,'calculate':calculate,'parameterValue':parameterValue,'toggleForm':toggleForm,'exportState':exportState,'sanitizeState':sanitizeState,'applyState':applyState,'resultsReport':resultsReport,get 'config'(){return config;},get 'params'(){return params;},get 'outcome'(){return outcome;},get 'system'(){return system;}},restoreInitialState();if(window[_0x52a25f(0x113)])renderMath(),$(_0x52a25f(0x1e3))['textContent']='Формули\x20·\x20KaTeX';else{if(window[_0x52a25f(0x114)])$(_0x52a25f(0x1e3))[_0x52a25f(0x219)]=_0x52a25f(0x258);}
+    </script>
+  </body>
+</html>
