@@ -3,7 +3,10 @@
 <html lang="uk">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
     <title>Фазор — комплексні системи Кірхгофа</title>
     <meta
       name="description"
@@ -25,248 +28,430 @@
       "
     ></script>
     <style>
+      /* Варіант Б — збалансований SaaS. Контроли: 32/28 px; сенсорні: 36 px. */
       :root {
-        --bg: #f4f6f8;
+        color-scheme: light;
+        --bg: #f6f7f9;
         --paper: #fff;
-        --ink: #172735;
-        --muted: #627383;
-        --line: #dde5eb;
-        --blue: #1765d1;
-        --bluewash: #edf4ff;
-        --green: #087f62;
-        --red: #b73143;
-        --mono: ui-monospace, SFMono-Regular, Consolas, monospace;
+        --ink: #20252d;
+        --secondary: #525b67;
+        --muted: #697381;
+        --line: #e2e6eb;
+        --control-line: #cfd5dd;
+        --blue: #2563eb;
+        --bluewash: #f0f5ff;
+        --green: #176b45;
+        --red: #b4233b;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-synthesis: none;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
       * {
         box-sizing: border-box;
       }
       body {
         margin: 0;
+        min-width: 280px;
+        min-height: 100vh;
+        min-height: 100svh;
         background: var(--bg);
         color: var(--ink);
         font:
-          15px/1.6 system-ui,
-          -apple-system,
+          13px/1.5 -apple-system,
+          BlinkMacSystemFont,
           "Segoe UI",
           sans-serif;
+        font-variant-numeric: tabular-nums;
+        -webkit-font-smoothing: antialiased;
       }
       button,
       input,
       select,
       textarea {
         font: inherit;
+        color: inherit;
+      }
+      button,
+      select,
+      summary {
+        -webkit-tap-highlight-color: transparent;
+      }
+      button,
+      summary {
+        touch-action: manipulation;
       }
       button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 32px;
+        padding: 0 10px;
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        background: var(--paper);
+        color: var(--secondary);
+        line-height: 1;
+        font-size: 13px;
+        font-weight: 500;
+        white-space: nowrap;
         cursor: pointer;
+        transition:
+          background-color 150ms ease-out,
+          border-color 150ms ease-out,
+          color 150ms ease-out;
+      }
+      button:active {
+        background: #e9edf2;
+        border-color: #aeb7c3;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
       }
       button:focus-visible,
       input:focus-visible,
       select:focus-visible,
       textarea:focus-visible,
-      summary:focus-visible {
-        outline: 3px solid #88b8ff;
-        outline-offset: 3px;
+      summary:focus-visible,
+      .math:focus-visible {
+        outline: 2px solid #7299ed;
+        outline-offset: 2px;
       }
-      button {
-        border: 1px solid var(--line);
-        border-radius: 9px;
-        padding: 8px 14px;
-        background: white;
-        color: var(--ink);
+      input,
+      select {
+        height: 32px;
+        min-width: 0;
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        background-color: var(--paper);
+        padding: 0 8px;
+        line-height: 1.25;
       }
-      button:hover {
-        border-color: #95b4db;
-        background: #f6faff;
+      input {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      select {
+        -webkit-appearance: none;
+        appearance: none;
+        padding-right: 25px;
+        background-image:
+          linear-gradient(45deg, transparent 50%, #697381 50%),
+          linear-gradient(135deg, #697381 50%, transparent 50%);
+        background-position:
+          calc(100% - 12px) 50%,
+          calc(100% - 8px) 50%;
+        background-size: 4px 4px;
+        background-repeat: no-repeat;
+        cursor: pointer;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: #7a8390;
+        opacity: 1;
+      }
+      input[aria-invalid="true"],
+      input[aria-invalid="true"]:hover {
+        border-color: var(--red);
+        background: #fff9fa;
       }
       .primary {
         background: var(--blue);
-        color: white;
         border-color: var(--blue);
+        color: #fff;
       }
-      .primary:hover {
-        background: #1157ba;
-        color: white;
+      .primary:active {
+        background: #1d4ed8;
+        border-color: #1d4ed8;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .wrap {
+        width: 100%;
+        max-width: 1328px;
+        margin: 0 auto;
+        padding-left: max(24px, env(safe-area-inset-left));
+        padding-right: max(24px, env(safe-area-inset-right));
       }
       header {
-        background: var(--ink);
-        color: white;
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
       }
       header .wrap {
-        padding-top: 27px;
-        padding-bottom: 26px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 20px;
+        gap: 8px;
+        min-height: 52px;
+        padding-top: calc(12px + env(safe-area-inset-top));
+        padding-bottom: 12px;
       }
       .brand {
-        font-size: 26px;
-        font-weight: 750;
-        letter-spacing: -1px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 650;
+        letter-spacing: -0.3px;
       }
-      .brand span {
-        color: #8cbfff;
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        background: #f1f3f6;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      .brand-mark svg {
+        display: block;
+        width: 17px;
+        height: 17px;
       }
       .tag {
-        font: 12px var(--mono);
-        color: #b0c0ce;
-        letter-spacing: 1.8px;
-      }
-      .wrap {
-        max-width: 1200px;
-        margin: auto;
-        padding: 28px 30px;
-      }
-      h1 {
-        font-size: 30px;
-        line-height: 1.25;
-        letter-spacing: -0.8px;
-        margin: 2px 0 10px;
-      }
-      h2 {
-        font-size: 19px;
-        line-height: 1.3;
-        margin: 0;
-      }
-      h3 {
-        font-size: 16px;
-        margin: 20px 0 8px;
-      }
-      p {
-        margin: 6px 0 14px;
-      }
-      .muted {
         color: var(--muted);
+        font-size: 11px;
+      }
+      main.wrap {
+        padding-top: 24px;
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
       }
       .intro {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 24px;
+        gap: 12px;
+        margin-bottom: 18px;
+      }
+      .intro > div {
+        min-width: 0;
       }
       .eyebrow {
+        color: var(--muted);
         font-size: 11px;
-        font-weight: 750;
-        letter-spacing: 1.8px;
-        color: var(--blue);
-        text-transform: uppercase;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
       }
-      .card {
+      h1 {
+        font-size: 18px;
+        line-height: 1.3;
+        letter-spacing: -0.35px;
+        font-weight: 650;
+        margin: 0;
+      }
+      h2 {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.35;
+        font-weight: 650;
+        letter-spacing: -0.1px;
+      }
+      h3 {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        margin: 20px 0 8px;
+      }
+      p {
+        margin: 0 0 10px;
+      }
+      .intro p {
+        font-size: 12px;
+        margin: 6px 0 0;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .tiny {
+        font-size: 12px;
+      }
+      .actions {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      #clear {
+        border-color: transparent;
+        background: transparent;
+      }
+      .workspace {
+        min-width: 0;
         background: var(--paper);
         border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 24px;
-        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 1px 2px #15213a04;
+      }
+      .card {
+        min-width: 0;
+        padding: 20px;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+      }
+      #input-panel > .card + .card {
+        border-top: 1px solid var(--line);
       }
       .settings {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr 1fr;
-        gap: 18px;
+        grid-template-columns: minmax(250px, 1fr) auto auto auto;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--line);
       }
       .settings label {
+        min-width: 0;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        gap: 8px;
         font-size: 12px;
-        font-weight: 650;
-        gap: 6px;
+        color: var(--secondary);
       }
-      select {
+      .settings select {
+        width: 65px;
+        font-variant-numeric: tabular-nums;
+      }
+      .settings label:first-child select {
         width: 100%;
-        padding: 9px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        background: white;
-        color: var(--ink);
+        max-width: 340px;
       }
       .tabs {
         display: flex;
-        gap: 6px;
+        align-items: center;
+        gap: 0;
+        padding: 0 20px;
+        margin: 0;
         border-bottom: 1px solid var(--line);
-        margin: 22px 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .tabs button {
+        flex: 0 0 auto;
+        height: 36px;
         border: 0;
-        border-radius: 8px 8px 0 0;
-        padding: 12px 20px;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
         background: transparent;
+        padding: 0 12px;
         color: var(--muted);
-        font-weight: 650;
+        font-size: 12px;
       }
       .tabs button[aria-selected="true"] {
         color: var(--blue);
-        background: var(--bluewash);
-        box-shadow: inset 0 -3px var(--blue);
-      }
-      [hidden] {
-        display: none !important;
+        border-bottom-color: var(--blue);
+        background: transparent;
       }
       .section-head {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-        margin-bottom: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
       }
       .step {
-        display: inline-grid;
-        place-items: center;
-        border-radius: 6px;
-        width: 26px;
-        height: 26px;
-        font-size: 13px;
+        display: inline-block;
         margin-right: 8px;
-        color: var(--blue);
-        background: var(--bluewash);
+        color: var(--muted);
+        font: 11px/1 var(--mono);
+        vertical-align: 1px;
+      }
+      .step::after {
+        content: "/";
+        margin-left: 6px;
+        color: #b3bac4;
       }
       .badge {
-        font-size: 12px;
-        border-radius: 99px;
-        padding: 4px 10px;
-        background: #eef2f5;
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 2px 6px;
         color: var(--muted);
-        white-space: nowrap;
+        background: #fafbfc;
+        font-size: 11px;
+        line-height: 1.25;
       }
       .badge.ok {
-        background: #e7f6ef;
         color: var(--green);
+        background: #f7fbf8;
+        border-color: #dcebe1;
       }
       .badge.bad {
-        background: #fff0f1;
         color: var(--red);
+        background: #fff9fa;
+        border-color: #efdae0;
       }
       .tokens {
         display: flex;
         flex-wrap: wrap;
-        gap: 5px;
-        margin-bottom: 12px;
+        align-items: center;
+        gap: 4px;
+        padding: 8px;
+        margin-bottom: 10px;
+        background: #f8f9fb;
+        border-radius: 0;
       }
       .tokens button {
-        font: 12px var(--mono);
-        padding: 4px 9px;
+        height: 28px;
+        min-width: 28px;
+        padding: 0 7px;
+        border-radius: 4px;
+        border-color: transparent;
+        background: transparent;
+        color: #4e5865;
+        font: 12px/1 var(--mono);
+      }
+      .tokens sub {
+        font-size: 10px;
+      }
+      .extra-tokens {
+        width: 100%;
+        min-width: 0;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .extra-tokens summary {
+        width: fit-content;
+        min-height: 28px;
+        padding: 5px 4px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .extra-tokens > div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 8px;
       }
       .editor-shell {
-        border: 1px solid #cbd6df;
-        border-radius: 10px;
-        background: #fbfcfe;
         overflow: hidden;
+        border: 1px solid var(--control-line);
+        border-radius: 8px;
+        background: var(--paper);
       }
       .editor-row {
         display: flex;
         position: relative;
+        min-width: 0;
       }
       .gutter {
-        width: 40px;
-        flex-shrink: 0;
-        padding: 14px 9px;
-        background: #f0f3f7;
-        color: #97a5b2;
-        text-align: right;
-        font: 14px/28px var(--mono);
+        flex: 0 0 34px;
+        width: 34px;
         overflow: hidden;
+        padding: 12px 8px 12px 4px;
+        background: #f8f9fb;
+        color: #7d8795;
+        text-align: right;
         white-space: pre;
+        font: 12px/28px var(--mono);
         user-select: none;
+        -webkit-user-select: none;
       }
       .edit-stack {
         position: relative;
@@ -276,232 +461,323 @@
       #highlight,
       #equations {
         margin: 0;
+        width: 100%;
+        height: 224px;
         border: 0;
         border-radius: 0;
-        padding: 14px 16px;
-        font: 14px/28px var(--mono);
+        padding: 12px;
+        font: 13px/28px var(--mono);
         letter-spacing: 0;
         white-space: pre;
         tab-size: 2;
-        overflow: auto;
-        width: 100%;
-        height: 230px;
+        text-align: left;
+        font-variant-ligatures: none;
       }
       #highlight {
         position: absolute;
         inset: 0;
+        overflow: hidden;
         pointer-events: none;
         color: transparent;
         background: transparent;
-        overflow: hidden;
       }
       #highlight mark {
-        background: #ffe0e4;
         color: transparent;
+        background: #fde5ea;
         border-bottom: 2px solid var(--red);
       }
       #equations {
         position: relative;
         display: block;
+        min-height: 168px;
+        max-height: 560px;
+        overflow: auto;
         resize: vertical;
-        background: transparent;
         color: var(--ink);
+        background: transparent;
         caret-color: var(--blue);
-        min-height: 145px;
-        max-height: 600px;
+        -webkit-overflow-scrolling: touch;
       }
-      #equations::selection {
-        background: #adceff80;
+      #equations:focus-visible {
+        outline-offset: -2px;
       }
       .editor-foot {
-        border-top: 1px solid var(--line);
-        padding: 8px 14px;
         display: flex;
         justify-content: space-between;
-        gap: 10px;
-        font-size: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
         color: var(--muted);
       }
-      .notice {
-        padding: 12px 15px;
-        border-radius: 8px;
-        background: #f0f4f8;
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .notice.error {
-        background: #fff0f2;
+      .err-item {
+        display: block;
+        text-align: left;
+        height: auto;
+        min-height: 28px;
+        width: 100%;
+        padding: 5px 0;
+        line-height: 1.4;
+        border: 0;
+        background: transparent;
         color: var(--red);
-      }
-      .notice.success {
-        background: #eaf7f1;
-        color: var(--green);
+        font-size: 12px;
+        white-space: normal;
       }
       #errors:empty {
         display: none;
       }
-      .err-item {
-        display: block;
-        width: 100%;
+      .notice {
+        padding: 10px 12px;
         border: 0;
-        text-align: left;
-        padding: 6px 0;
-        background: none;
-        color: var(--red);
-        font-size: 13px;
+        border-left: 2px solid #dce1e8;
+        border-radius: 0;
+        background: #f8f9fb;
+        color: var(--secondary);
+        font-size: 12px;
+        line-height: 1.5;
       }
-      .math-block {
-        padding: 16px;
-        overflow-x: auto;
-        border-radius: 9px;
-        background: #fafbfd;
+      .notice.success {
+        background: #f7faf8;
+        border-left-color: #a9cbb5;
+        color: #315c43;
+      }
+      .notice.error {
+        background: #fff9fa;
+        border-left-color: #e5aeba;
+        color: #9b2740;
+      }
+      .help {
         margin-top: 12px;
+        color: var(--muted);
+        font-size: 12px;
+        border-top: 1px solid var(--line);
       }
-      .math {
-        white-space: pre-wrap;
-        font-family: var(--mono);
-        overflow-x: auto;
+      .help summary {
+        width: fit-content;
+        min-height: 32px;
+        padding: 8px 0;
+        color: var(--secondary);
+        font-weight: 500;
+        cursor: pointer;
       }
-      .katex-display {
-        margin: 0.6em 0 !important;
+      #syntax-help {
+        padding: 8px 0 0;
       }
-      .eq-row {
-        display: flex;
-        align-items: center;
+      .help code {
+        padding: 1px 3px;
+        background: #f2f4f7;
+        color: var(--secondary);
+        font: 11px var(--mono);
+        border-radius: 4px;
+        overflow-wrap: anywhere;
+      }
+      .parameter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
         gap: 12px;
-        border-bottom: 1px solid var(--line);
-        padding: 17px 0;
+        margin: 12px 0;
+      }
+      .parameter-card {
         min-width: 0;
-      }
-      .eq-row:last-child {
+        padding: 12px;
         border: 0;
+        border-bottom: 1px solid var(--line);
+        border-radius: 0;
+        background: transparent;
       }
-      .eq-num {
-        flex: 0 0 23px;
-        color: #93a3b0;
-        font: 12px var(--mono);
-      }
-      .eq-content {
-        display: flex;
-        flex: 1;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 7px;
-        font-family: var(--mono);
-      }
-      .param {
-        display: inline-flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 8px 10px;
-        background: #f1f6ff;
-        border: 1px solid #d9e7fa;
-        border-radius: 8px;
-        font: 12px system-ui;
-      }
-      .param.e {
-        background: #f0f8f4;
-        border-color: #d5eadf;
-      }
-      .param-title {
-        color: var(--blue);
-        font-weight: 750;
+      .parameter-top {
         display: flex;
         justify-content: space-between;
-        gap: 18px;
-      }
-      .param.e .param-title {
-        color: var(--green);
-      }
-      .param-fields {
-        display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
+        margin-bottom: 8px;
       }
-      .param label {
-        font-size: 10px;
+      .parameter-top strong {
+        font-size: 13px;
+        font-weight: 650;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .parameter-top small {
+        margin-left: 4px;
         color: var(--muted);
+        font-size: 11px;
+        font-weight: 400;
+      }
+      .form-toggle {
+        height: 28px;
+        padding: 0 6px;
+        border-color: transparent;
+        border-radius: 4px;
+        background: #f5f6f8;
+        color: var(--secondary);
+        font-size: 11px;
+      }
+      .parameter-inputs {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 6px;
+        align-items: end;
+      }
+      .parameter-inputs label {
         display: flex;
         flex-direction: column;
-        gap: 2px;
-      }
-      .param input {
-        width: 82px;
-        border: 1px solid #c4d4e6;
-        border-radius: 5px;
-        padding: 5px 6px;
-        color: var(--ink);
-        background: white;
-        font: 13px var(--mono);
-      }
-      .param input[aria-invalid="true"] {
-        border-color: var(--red);
-        background: #fff3f4;
-      }
-      .param .unit {
-        font-size: 10px;
+        min-width: 0;
+        gap: 4px;
         color: var(--muted);
+        font-size: 11px;
+        line-height: 1.3;
       }
-      .field-sign {
+      .parameter-inputs > span {
+        align-self: end;
+        display: flex;
+        align-items: center;
+        height: 32px;
+        color: var(--muted);
+        font: 11px/1 var(--mono);
+        white-space: nowrap;
+      }
+      .parameter-inputs input {
+        width: 100%;
+        font: 13px/1.25 var(--mono);
+        padding: 0 7px;
+        font-variant-numeric: tabular-nums;
+      }
+      .parameter-preview {
+        min-height: 16px;
+        margin-top: 6px;
+        color: var(--muted);
+        font: 11px/1.45 var(--mono);
+        overflow-wrap: anywhere;
+      }
+      .live-note {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .math-block {
+        min-width: 0;
+        padding: 0;
+        margin-top: 12px;
+      }
+      .formula {
+        display: grid;
+        min-width: 0;
+        row-gap: 8px;
+        padding: 12px;
+        margin: 10px 0;
+        border: 0;
+        border-radius: 0;
+        background: #fafbfc;
+      }
+      .copy-tex {
+        justify-self: end;
+        height: 28px;
+        padding: 0 7px;
+        border-color: transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .math {
+        min-width: 0;
+        max-width: 100%;
+        overflow: auto;
+        overscroll-behavior-x: contain;
+        -webkit-overflow-scrolling: touch;
+        white-space: pre-wrap;
+        font-family: var(--mono);
+      }
+      .katex-display {
+        margin: 4px 0 !important;
+        text-align: left !important;
+      }
+      .katex-display > .katex {
+        text-align: left !important;
+      }
+      .result-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+      .result-actions button {
         font-size: 12px;
-        margin-top: 13px;
       }
-      .empty {
-        padding: 45px 15px;
-        text-align: center;
+      .precision {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         color: var(--muted);
+        font-size: 11px;
       }
-      .empty .empty-symbol {
-        font:
-          38px Georgia,
-          serif;
-        color: #aebecd;
-        margin-bottom: 8px;
+      .precision select {
+        width: 59px;
       }
       .result-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
         gap: 12px;
-        margin-top: 18px;
+        margin: 16px 0;
       }
       .result-card {
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 17px;
-        background: #fcfdff;
+        min-width: 0;
+        padding: 12px;
+        border: 0;
+        border-bottom: 1px solid var(--line);
+        border-radius: 0;
+        background: transparent;
       }
       .result-card .name {
-        font-size: 12px;
-        color: var(--blue);
-        font-weight: 750;
+        color: var(--secondary);
+        font-size: 11px;
+        font-weight: 600;
       }
       .result-card .value {
-        font: 20px/1.5 var(--mono);
-        margin: 9px 0;
+        margin: 6px 0;
+        color: var(--ink);
+        font: 17px/1.35 var(--mono);
         overflow-wrap: anywhere;
       }
       .result-card .polar {
-        font: 13px/1.7 var(--mono);
         color: var(--muted);
+        font: 11px/1.6 var(--mono);
+        overflow-wrap: anywhere;
       }
       .table-scroll {
+        max-width: 100%;
         overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        border: 1px solid var(--line);
+        border-radius: 6px;
       }
       table {
-        border-collapse: collapse;
         width: 100%;
-        font-size: 13px;
+        border-collapse: collapse;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
       }
-      td,
-      th {
-        padding: 10px 13px;
-        text-align: left;
+      th,
+      td {
+        padding: 8px 10px;
         border-bottom: 1px solid var(--line);
+        text-align: left;
         white-space: nowrap;
       }
       th {
+        background: #f8f9fb;
         color: var(--muted);
-        font-weight: 550;
+        font-weight: 500;
+      }
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+      td:not(:first-child) {
+        font-family: var(--mono);
       }
       .success-text {
         color: var(--green);
@@ -510,329 +786,66 @@
         color: var(--red);
       }
       .solution-step {
+        padding: 10px 0;
         border-top: 1px solid var(--line);
-        padding: 14px 0;
       }
       .solution-step summary {
+        min-height: 32px;
+        padding: 6px 0;
+        color: var(--secondary);
+        font-size: 12px;
+        font-weight: 500;
         cursor: pointer;
-        font-weight: 600;
       }
-      .fraction {
-        display: inline-flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        vertical-align: middle;
-      }
-      .fraction > .numerator {
-        border-bottom: 1px solid var(--ink);
-        padding-bottom: 5px;
-      }
-      .fraction > span {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 5px;
-      }
-      details.help {
-        font-size: 13px;
+      .empty {
+        padding: 28px 16px;
+        text-align: center;
         color: var(--muted);
+        font-size: 13px;
       }
-      details.help summary {
-        cursor: pointer;
-        color: var(--ink);
-        font-weight: 600;
+      .empty-symbol {
+        margin-bottom: 8px;
+        color: #929caa;
+        font:
+          24px/1.2 Georgia,
+          serif;
       }
-      .help code {
-        color: var(--blue);
-        background: var(--bluewash);
-        padding: 2px 4px;
-        border-radius: 4px;
-      }
-      .actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
+      #results-panel > .actions {
+        padding: 0 20px 20px;
       }
       .footer {
         display: flex;
         justify-content: space-between;
-        gap: 15px;
-        color: var(--muted);
-        font-size: 12px;
-        padding: 12px 0 26px;
-      }
-      .tiny {
-        font-size: 12px;
-      }
-      .precision {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-      }
-      .precision select {
-        width: 65px;
-      }
-      .live-note {
-        font-size: 12px;
-        color: var(--green);
-      }
-      @media (max-width: 720px) {
-        .wrap {
-          padding: 20px 15px;
-        }
-        header .wrap {
-          padding-top: 18px;
-          padding-bottom: 18px;
-        }
-        .tag {
-          display: none;
-        }
-        h1 {
-          font-size: 25px;
-        }
-        .intro {
-          align-items: flex-start;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .card {
-          padding: 17px;
-        }
-        .settings {
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-        }
-        .settings label:first-child {
-          grid-column: 1/-1;
-        }
-        .tabs button {
-          padding: 11px 12px;
-          font-size: 13px;
-        }
-        .section-head {
-          flex-wrap: wrap;
-        }
-        .param input {
-          width: 71px;
-        }
-        .editor-foot {
-          flex-direction: column;
-          gap: 0;
-        }
-        .eq-row {
-          gap: 5px;
-        }
-        #equations,
-        #highlight {
-          font-size: 12px;
-          padding-left: 10px;
-        }
-        .footer {
-          flex-direction: column;
-        }
-        .result-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      @media print {
-        header,
-        .settings,
-        .tabs,
-        .intro .actions,
-        #input-panel,
-        .footer,
-        .precision {
-          display: none !important;
-        }
-        body {
-          background: white;
-        }
-        .wrap {
-          max-width: none;
-          padding: 0;
-        }
-        .card {
-          break-inside: avoid;
-          border: 0;
-        }
-        #results-panel,
-        #solution-panel {
-          display: block !important;
-        }
-        .solution-step {
-          break-inside: avoid;
-        }
-        details > div {
-          display: block;
-        }
-        .math-block {
-          overflow: visible;
-        }
-      }
-
-      /* Оновлення: картки, інструменти формул і стійка адаптивна сітка. */
-      .parameter-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-        gap: 12px;
-        margin: 18px 0;
-      }
-      .parameter-card {
-        padding: 14px;
-        border: 1px solid #d8e4f3;
-        border-radius: 10px;
-        background: #f7faff;
-        min-width: 0;
-      }
-      .parameter-card.e,
-      .parameter-card.j {
-        background: #f4faf7;
-        border-color: #d5e8df;
-      }
-      .parameter-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-      .parameter-top strong {
-        font-size: 17px;
-        color: var(--blue);
-      }
-      .parameter-top small {
-        font-size: 11px;
-        font-weight: 500;
-        color: var(--muted);
-        margin-left: 4px;
-      }
-      .form-toggle {
-        font-size: 11px;
-        padding: 4px 7px;
-        white-space: nowrap;
-        background: white;
-      }
-      .parameter-inputs {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        align-items: end;
-        gap: 8px;
-      }
-      .parameter-inputs label {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: 11px;
-        color: var(--muted);
-      }
-      .parameter-inputs > span {
-        padding-bottom: 7px;
-        font: 13px var(--mono);
-      }
-      .parameter-inputs input {
-        width: 100%;
-        min-width: 0;
-        border: 1px solid #c4d4e6;
-        border-radius: 6px;
-        padding: 8px;
-        color: var(--ink);
-        background: white;
-        font: 13px var(--mono);
-      }
-      .parameter-inputs input[aria-invalid="true"] {
-        border-color: var(--red);
-        background: #fff0f2;
-      }
-      .parameter-preview {
-        font: 11px/1.6 var(--mono);
-        color: var(--muted);
-        margin-top: 9px;
-        min-height: 18px;
-        overflow-wrap: anywhere;
-      }
-      .formula {
-        position: relative;
-        background: #fafbfd;
-        border: 1px solid #edf0f4;
-        border-radius: 8px;
-        padding: 33px 12px 12px;
-        margin: 10px 0;
-        min-width: 0;
-      }
-      .formula > .math {
-        max-width: 100%;
-        overflow: auto;
-        line-height: 1.6;
-      }
-      .copy-tex {
-        position: absolute;
-        right: 7px;
-        top: 5px;
-        padding: 2px 7px;
-        font-size: 10px;
-        color: var(--muted);
-        border-color: transparent;
-        background: transparent;
-      }
-      .copy-tex:hover {
-        background: white;
-        border-color: var(--line);
-      }
-      .math-block {
-        padding: 8px;
-      }
-      .math-block .formula {
-        margin: 0;
-        border: 0;
-      }
-      .extra-tokens {
-        width: 100%;
-        font-size: 11px;
-        color: var(--muted);
-        margin-top: 4px;
-      }
-      .extra-tokens summary {
-        cursor: pointer;
-      }
-      .extra-tokens > div {
-        display: flex;
+        align-items: flex-start;
         flex-wrap: wrap;
-        gap: 5px;
-        padding-top: 7px;
+        gap: 8px;
+        padding: 14px 0 0;
+        color: var(--muted);
+        font-size: 11px;
       }
-      .result-actions {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .result-actions button {
-        font-size: 12px;
-      }
-      button:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
+      #save-status {
+        display: inline-block;
+        margin-top: 3px;
       }
       .toast {
         position: fixed;
-        bottom: 20px;
+        z-index: 100;
+        bottom: calc(12px + env(safe-area-inset-bottom));
         left: 50%;
         transform: translateX(-50%);
-        z-index: 100;
-        background: #133b32;
-        color: white;
-        border: 1px solid #40665e;
-        border-radius: 10px;
-        box-shadow: 0 8px 30px #17273525;
-        padding: 12px 20px;
-        font-size: 13px;
-        max-width: calc(100vw - 30px);
+        max-width: calc(100vw - 32px);
+        padding: 10px 14px;
+        border: 1px solid #3f4855;
+        border-radius: 8px;
+        background: #252d38;
+        color: #fff;
+        font-size: 12px;
+        line-height: 1.5;
+        box-shadow: 0 2px 4px #0000000a;
+        pointer-events: none;
       }
       .toast.error {
-        background: #6d2432;
-        border-color: #9b4f5d;
+        border-color: #b67684;
       }
       .clipboard-fallback {
         position: fixed;
@@ -840,75 +853,348 @@
         top: 0;
       }
       dialog {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 25px;
-        max-width: 700px;
-        width: calc(100% - 30px);
+        width: calc(100% - 32px);
+        max-width: 640px;
+        max-height: calc(100vh - 32px);
+        max-height: calc(100dvh - 32px);
+        overflow: auto;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid var(--control-line);
+        border-radius: 10px;
         color: var(--ink);
+        background: var(--paper);
+        box-shadow: 0 2px 4px #0000000a;
+      }
+      dialog:not([open]) {
+        display: none;
+      }
+      dialog[open] {
+        z-index: 101;
       }
       dialog::backdrop {
-        background: #17273580;
+        background: #20252d55;
+      }
+      dialog > p {
+        margin: 8px 0 12px;
       }
       #copy-manual {
+        display: block;
         width: 100%;
         height: 220px;
+        margin-bottom: 12px;
+        padding: 10px;
+        border: 1px solid var(--control-line);
+        border-radius: 6px;
+        resize: vertical;
         font: 13px/1.5 var(--mono);
-        margin-bottom: 15px;
-        border: 1px solid var(--line);
-        padding: 12px;
-        border-radius: 8px;
       }
-      #highlight {
-        max-width: 100%;
-        box-sizing: border-box;
+      @supports not selector(:modal) {
+        dialog[open] {
+          position: fixed;
+          top: 16px;
+          left: 16px;
+          right: 16px;
+          margin: auto;
+        }
       }
-      @media (max-width: 720px) {
+      @media (hover: hover) {
+        button:not(:disabled):hover {
+          background: #f1f3f6;
+          border-color: #b9c1cc;
+          color: var(--ink);
+        }
+        .primary:not(:disabled):hover {
+          background: #1d4ed8;
+          border-color: #1d4ed8;
+          color: #fff;
+        }
+        .tabs button:hover {
+          border-left-color: transparent;
+          border-right-color: transparent;
+          background: #fafbfc;
+        }
+        .tabs button[aria-selected="true"]:hover {
+          border-bottom-color: var(--blue);
+        }
+        .tokens button:hover,
+        .copy-tex:hover,
+        #clear:hover {
+          border-color: transparent;
+          background: #e9edf2;
+        }
+        input:hover,
+        select:hover {
+          border-color: #adb7c5;
+        }
+        summary:hover {
+          color: var(--ink);
+        }
+      }
+      summary:active {
+        color: var(--ink);
+      }
+      @media (min-width: 1100px) {
+        @supports selector(:has(*)) {
+          #input-panel:has(#parameter-section:not([hidden])) {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            align-items: start;
+          }
+          #input-panel:has(#parameter-section:not([hidden]))
+            > .card:first-child {
+            border-right: 1px solid var(--line);
+          }
+          #input-panel > #parameter-section {
+            border-top: 0;
+          }
+          #parameter-section .parameter-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+      }
+      @media (max-width: 1023px) {
+        .settings {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .settings label:first-child {
+          grid-column: 1 / -1;
+        }
+        .settings label:first-child select {
+          max-width: none;
+        }
+        .settings label:not(:first-child) {
+          justify-content: space-between;
+        }
+        .settings select {
+          width: 62px;
+        }
+        .intro {
+          align-items: flex-start;
+        }
+        .intro .actions {
+          justify-content: flex-end;
+        }
+      }
+      /* Сенсорні пристрої: 16 px у полях не провокує автонаближення iOS.
+   Масштабування жестами НЕ обмежується. Усі однорядкові контроли <= 40 px. */
+      @media (pointer: coarse), (any-pointer: coarse), (max-width: 740px) {
+        button,
+        input,
+        select {
+          height: 36px;
+        }
+        input,
+        select,
+        textarea,
+        .parameter-inputs input,
+        #copy-manual {
+          font-size: 16px;
+        }
+        .tokens button {
+          height: 36px;
+          min-width: 36px;
+        }
+        .form-toggle,
+        .copy-tex {
+          height: 36px;
+        }
+        .tabs button {
+          height: 40px;
+        }
+        .parameter-inputs > span {
+          height: 36px;
+        }
+        #highlight,
+        #equations {
+          font-size: 16px;
+          line-height: 28px;
+        }
+        .gutter {
+          font-size: 12px;
+          line-height: 28px;
+        }
+        .extra-tokens summary,
+        .help summary,
+        .solution-step summary {
+          min-height: 36px;
+        }
+        th,
+        td {
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
+      }
+      @media (max-width: 740px) {
+        .wrap {
+          padding-left: max(16px, env(safe-area-inset-left));
+          padding-right: max(16px, env(safe-area-inset-right));
+        }
+        header .wrap {
+          min-height: 48px;
+        }
+        .tag {
+          font-size: 10px;
+        }
+        main.wrap {
+          padding-top: 18px;
+        }
+        .intro {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+          margin-bottom: 14px;
+        }
+        .intro .actions {
+          justify-content: flex-start;
+          gap: 6px;
+        }
+        .intro .actions button {
+          padding: 0 9px;
+          font-size: 12px;
+        }
+        .card {
+          padding: 16px;
+        }
+        .settings {
+          padding: 16px;
+          gap: 10px;
+        }
+        .settings label {
+          font-size: 11px;
+          gap: 6px;
+        }
+        .settings label:not(:first-child) {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 5px;
+        }
+        .settings select {
+          width: 100%;
+        }
+        .tabs {
+          padding: 0 6px;
+        }
+        .tabs button {
+          padding: 0 9px;
+          font-size: 12px;
+        }
+        .section-head {
+          align-items: flex-start;
+        }
+        .section-head .badge {
+          white-space: normal;
+        }
         .parameter-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
         }
         .parameter-top {
           align-items: flex-start;
           flex-direction: column;
         }
-        .parameter-inputs {
-          gap: 5px;
-        }
-        .parameter-inputs input {
-          padding: 7px 5px;
-          font-size: 12px;
-        }
-        .parameter-card {
-          padding: 10px;
-        }
-        .parameter-preview {
-          font-size: 10px;
-        }
         .result-actions {
-          align-items: flex-start;
+          width: 100%;
+          justify-content: space-between;
         }
-        .intro .actions {
-          gap: 6px;
+        .precision {
+          max-width: 100%;
         }
-        .intro .actions button {
-          font-size: 12px;
-          padding: 7px 10px;
+        .result-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+        .result-card .value {
+          font-size: 15px;
+        }
+        #results-panel > .actions {
+          padding: 0 16px 16px;
         }
         .formula {
-          padding-left: 7px;
-          padding-right: 7px;
+          padding: 12px;
         }
         .katex-display {
-          font-size: 0.92em;
+          font-size: 0.94em;
+        }
+        dialog {
+          padding: 16px;
         }
       }
-      @media (max-width: 380px) {
+      @media (max-width: 460px) {
         .parameter-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: minmax(0, 1fr);
+          gap: 8px;
+        }
+        .parameter-card {
+          display: grid;
+          grid-template-columns: 86px minmax(0, 1fr);
+          column-gap: 8px;
+          row-gap: 4px;
+          padding: 12px;
         }
         .parameter-top {
-          flex-direction: row;
-          align-items: center;
+          grid-row: 1 / 3;
+          margin: 0;
+          gap: 6px;
+          justify-content: flex-start;
+        }
+        .parameter-top small {
+          margin-left: 2px;
+        }
+        .form-toggle {
+          max-width: 100%;
+          padding: 0 4px;
+          font-size: 10px;
+        }
+        .parameter-preview {
+          grid-column: 2;
+          margin-top: 0;
+          font-size: 10px;
+        }
+        .parameter-inputs {
+          gap: 4px;
+        }
+        .parameter-inputs input {
+          padding: 0 5px;
+        }
+        .parameter-inputs > span {
+          font-size: 10px;
+        }
+        .result-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .result-card {
+          padding: 12px;
+        }
+        .result-card .value {
+          font-size: 17px;
+        }
+        .editor-foot span:last-child {
+          font-size: 10px;
+        }
+        #highlight,
+        #equations {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+        .gutter {
+          flex-basis: 28px;
+          width: 28px;
+          padding-left: 2px;
+          padding-right: 6px;
+        }
+        .tag {
+          max-width: 155px;
+          text-align: right;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition: none !important;
+          animation: none !important;
         }
       }
       @page {
@@ -916,56 +1202,92 @@
         margin: 12mm;
       }
       @media print {
+        body {
+          min-width: 0;
+          min-height: 0;
+          background: #fff;
+          font-size: 11px;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        header,
+        .settings,
+        .tabs,
+        .intro .actions,
+        #input-panel,
+        .footer,
         .copy-tex,
         .toast,
         dialog,
         .result-actions,
-        .actions,
-        .tabs,
-        #save-status {
+        .actions {
           display: none !important;
         }
-        .formula {
-          border: 0;
-          overflow: visible;
-          break-inside: avoid;
-          padding: 5px 0;
-        }
-        .formula > .math {
-          overflow: visible;
+        .wrap {
           max-width: none;
+          padding: 0 !important;
         }
-        .math-block {
-          overflow: visible;
+        .intro {
+          display: block;
+          margin: 0 0 12px;
         }
-        .result-card {
-          break-inside: avoid;
+        .intro p,
+        .eyebrow {
+          display: none;
         }
-        .result-grid {
-          grid-template-columns: 1fr 1fr;
-        }
-        .katex-display {
-          font-size: 0.83em;
-        }
-        .solution-step summary {
-          font-size: 12px;
+        .workspace {
+          border: 0;
+          border-radius: 0;
+          box-shadow: none;
         }
         #results-panel,
         #solution-panel {
           display: block !important;
         }
-        .table-scroll {
-          overflow: visible;
-        }
-        table {
-          font-size: 10px;
-        }
-        td,
-        th {
-          padding: 6px;
-        }
         .card {
+          padding: 0;
+          margin-bottom: 16px;
           break-inside: auto;
+        }
+        .section-head {
+          margin-bottom: 8px;
+        }
+        .formula {
+          display: block;
+          padding: 4px 0;
+          margin: 6px 0;
+          background: transparent;
+          break-inside: avoid;
+        }
+        .math,
+        .table-scroll {
+          max-width: none;
+          overflow: visible;
+          border: 0;
+        }
+        .katex-display {
+          font-size: 0.83em;
+        }
+        .result-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 10px;
+        }
+        .result-card {
+          break-inside: avoid;
+        }
+        .result-card .value {
+          font-size: 14px;
+        }
+        .solution-step {
+          break-inside: avoid;
+        }
+        details > div {
+          display: block;
+        }
+        th,
+        td {
+          font-size: 10px;
+          padding: 6px 8px;
         }
       }
     </style>
@@ -973,14 +1295,24 @@
   <body>
     <header>
       <div class="wrap">
-        <div class="brand">∿ Фазор<span>.</span></div>
-        <div class="tag">ЕЛЕКТРОТЕХНІКА / КОМПЛЕКСНІ СИСТЕМИ</div>
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"
+            ><svg viewBox="0 0 24 24" fill="none">
+              <path
+                d="M2 12c3-12 7 12 10 0s7 12 10 0"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              /></svg></span
+          ><span>Фазор</span>
+        </div>
+        <div class="tag">Електротехніка · комплексні системи</div>
       </div>
     </header>
     <main class="wrap">
       <div class="intro">
         <div>
-          <div class="eyebrow">Від рівняння до розв’язку</div>
+          <div class="eyebrow">Робоча область / Розрахунок кола</div>
           <h1>Системи Кірхгофа</h1>
           <p class="muted">
             Складіть рівняння. Введіть параметри. Отримайте розв’язок із
@@ -988,192 +1320,203 @@
           </p>
         </div>
         <div class="actions">
-          <button id="share">Поділитися посиланням</button
-          ><button id="example">Завантажити приклад</button
+          <button id="share" title="Скопіювати посилання на поточний стан">
+            Поділитися</button
+          ><button
+            id="example"
+            title="Завантажити приклад для вибраного методу"
+          >
+            Приклад</button
           ><button id="clear">Очистити</button>
         </div>
       </div>
-      <div class="card settings">
-        <label
-          >Метод<select id="method">
-            <option value="branch">Рівняння Кірхгофа · I₁, I₂…</option>
-            <option value="mesh">Контурні струми · I₁₁, I₂₂…</option>
-            <option value="node">Вузлові напруги · U₁, U₂…</option>
-          </select></label
-        >
-        <label>Невідомих<select id="count"></select></label
-        ><label>Доступних опорів Z<select id="zcount"></select></label
-        ><label>Джерел напруги E<select id="ecount"></select></label>
-      </div>
-      <nav class="tabs" role="tablist" aria-label="Етапи розрахунку">
-        <button
-          role="tab"
-          id="input-tab"
-          aria-selected="true"
-          aria-controls="input-panel"
-          tabindex="0"
-          data-tab="input"
-        >
-          01 · Введення</button
-        ><button
-          role="tab"
-          id="results-tab"
-          aria-selected="false"
-          aria-controls="results-panel"
-          tabindex="-1"
-          data-tab="results"
-        >
-          02 · Результати</button
-        ><button
-          role="tab"
-          id="solution-tab"
-          aria-selected="false"
-          aria-controls="solution-panel"
-          tabindex="-1"
-          data-tab="solution"
-        >
-          03 · Розв’язок
-        </button>
-      </nav>
-      <section id="input-panel" role="tabpanel" aria-labelledby="input-tab">
-        <div class="card">
-          <div class="section-head">
-            <h2><span class="step">1</span>Конструктор рівнянь</h2>
-            <span class="badge" id="syntax-status">Очікуємо рівняння</span>
-          </div>
-          <p class="muted tiny">
-            Одне рівняння на рядок. Можна писати Z1I1, 3j та (Z1+Z2)I1.
-            Натисніть символ для вставлення.
-          </p>
-          <div class="tokens" id="tokens"></div>
-          <div class="editor-shell">
-            <div class="editor-row">
-              <div class="gutter" id="gutter" aria-hidden="true">1</div>
-              <div class="edit-stack">
-                <pre id="highlight" aria-hidden="true"></pre>
-                <textarea
-                  id="equations"
-                  spellcheck="false"
-                  autocapitalize="off"
-                  autocomplete="off"
-                  aria-label="Система рівнянь"
-                  aria-describedby="syntax-help"
-                  placeholder="I1 - I2 = 0&#10;Z1*I1 + Z2*I2 = E1"
-                  maxlength="12000"
-                ></textarea>
+      <div class="workspace">
+        <div class="card settings">
+          <label
+            >Метод<select id="method">
+              <option value="branch">Рівняння Кірхгофа · I₁, I₂…</option>
+              <option value="mesh">Контурні струми · I₁₁, I₂₂…</option>
+              <option value="node">Вузлові напруги · U₁, U₂…</option>
+            </select></label
+          >
+          <label>Невідомих<select id="count"></select></label
+          ><label>Опорів Z<select id="zcount"></select></label
+          ><label>Джерел E<select id="ecount"></select></label>
+        </div>
+        <nav class="tabs" role="tablist" aria-label="Етапи розрахунку">
+          <button
+            role="tab"
+            id="input-tab"
+            aria-selected="true"
+            aria-controls="input-panel"
+            tabindex="0"
+            data-tab="input"
+          >
+            01 · Введення</button
+          ><button
+            role="tab"
+            id="results-tab"
+            aria-selected="false"
+            aria-controls="results-panel"
+            tabindex="-1"
+            data-tab="results"
+          >
+            02 · Результати</button
+          ><button
+            role="tab"
+            id="solution-tab"
+            aria-selected="false"
+            aria-controls="solution-panel"
+            tabindex="-1"
+            data-tab="solution"
+          >
+            03 · Розв’язок
+          </button>
+        </nav>
+        <section id="input-panel" role="tabpanel" aria-labelledby="input-tab">
+          <div class="card">
+            <div class="section-head">
+              <h2><span class="step">1</span>Конструктор рівнянь</h2>
+              <span class="badge" id="syntax-status">Очікуємо рівняння</span>
+            </div>
+            <p class="muted tiny">
+              Одне рівняння на рядок. Можна писати Z1I1, 3j та (Z1+Z2)I1.
+              Натисніть символ для вставлення.
+            </p>
+            <div class="tokens" id="tokens"></div>
+            <div class="editor-shell">
+              <div class="editor-row">
+                <div class="gutter" id="gutter" aria-hidden="true">1</div>
+                <div class="edit-stack">
+                  <pre id="highlight" aria-hidden="true"></pre>
+                  <textarea
+                    id="equations"
+                    spellcheck="false"
+                    autocapitalize="off"
+                    autocomplete="off"
+                    aria-label="Система рівнянь"
+                    autocorrect="off"
+                    wrap="off"
+                    inputmode="text"
+                    enterkeyhint="enter"
+                    aria-describedby="syntax-help"
+                    placeholder="I1 - I2 = 0&#10;Z1*I1 + Z2*I2 = E1"
+                    maxlength="12000"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="editor-foot">
+                <span id="line-count">0 рівнянь</span
+                ><span>+ − * / ( ) = · десяткові кома або крапка</span>
               </div>
             </div>
-            <div class="editor-foot">
-              <span id="line-count">0 рівнянь</span
-              ><span>+ − * / ( ) = · десяткові кома або крапка</span>
+            <div id="errors" aria-live="polite"></div>
+            <p id="example-note" class="notice" style="margin-top: 12px" hidden>
+              Навчальна схема: 5 гілок, 3 контури та 2 вузлові напруги. Джерела
+              E введені в алгебраїчній формі без округлення. Приклад для
+              вибраного методу розраховується автоматично.
+            </p>
+            <div id="symbolic" class="math-block" hidden></div>
+            <details class="help">
+              <summary>Правила введення та позначення</summary>
+              <div id="syntax-help">
+                <p>
+                  Невідомі: I1… I8 (гілки), I11… I88 (контури), U1… U8 (вузли).
+                  Їхня кількість задається зверху. Параметри: Z1… Z8 (Ом), Y1…
+                  Y8 (См), E1… E5 (В), J1… J5 (А). Регістр літер неважливий;
+                  уявна одиниця — j, без індексу.
+                </p>
+                <p>
+                  Неявне множення: <code>3j</code>, <code>2I1</code>,
+                  <code>Z1I1</code>, <code>Z1 I1</code>, <code>5(I1+I2)</code>,
+                  <code>(Z1+Z2)I1</code>. Множення й ділення мають однаковий
+                  пріоритет і виконуються зліва направо:
+                  <code>I1/2Z1</code> означає <code>(I1/2)*Z1</code>; для
+                  знаменника добутком пишіть <code>I1/(2Z1)</code>.
+                </p>
+                <p>
+                  Дозволені + − * / та дужки. Система має бути лінійною: добуток
+                  невідомих і невідома в знаменнику не підтримуються. Для
+                  вузлів, наприклад: <code>Y1 U1 + Y2(U1-U2)=J1;</code>. Крапка
+                  чи ; наприкінці рядка ігноруються.
+                </p>
+                <p>
+                  Десяткові кома й крапка рівнозначні. Науковий запис:
+                  <code>1e-3</code> (мала e); <code>2E1</code> означає
+                  <code>2*E1</code>. Модулі невід’ємні; від’ємний знак задається
+                  фазою. Джерела напруги й струму — діючі значення.
+                </p>
+                <p>
+                  Порожнє поле не дорівнює нулю. Дані автоматично зберігаються
+                  лише в цьому браузері. Посилання містить знімок усієї системи.
+                  Рівняння за схемою ви складаєте самостійно.
+                </p>
+              </div>
+            </details>
+          </div>
+          <div class="card" id="parameter-section" hidden>
+            <div class="section-head">
+              <h2><span class="step">2</span>Параметри системи</h2>
+              <span class="badge" id="param-count"></span>
+            </div>
+            <p class="muted tiny">
+              Кожен параметр вводиться один раз. Кнопка ⇄ перемикає форму з
+              перерахунком значень; кути — у градусах.
+            </p>
+            <div id="parameter-equations" class="parameter-grid"></div>
+            <div id="numeric-status" class="notice" role="status"></div>
+            <div id="substituted" class="math-block" hidden></div>
+            <div style="margin-top: 12px" class="actions">
+              <button class="primary" id="show-results">
+                Переглянути результати →</button
+              ><span class="live-note" id="auto-note"></span>
             </div>
           </div>
-          <div id="errors" aria-live="polite"></div>
-          <p id="example-note" class="notice" style="margin-top: 12px" hidden>
-            Навчальна схема: 5 гілок, 3 контури та 2 вузлові напруги. Джерела E
-            введені в алгебраїчній формі без округлення. Приклад для вибраного
-            методу розраховується автоматично.
-          </p>
-          <div id="symbolic" class="math-block" hidden></div>
-          <details class="help" style="margin-top: 16px">
-            <summary>Правила введення та позначення</summary>
-            <div id="syntax-help">
-              <p>
-                Невідомі: I1… I8 (гілки), I11… I88 (контури), U1… U8 (вузли).
-                Їхня кількість задається зверху. Параметри: Z1… Z8 (Ом), Y1… Y8
-                (См), E1… E5 (В), J1… J5 (А). Регістр літер неважливий; уявна
-                одиниця — j, без індексу.
-              </p>
-              <p>
-                Неявне множення: <code>3j</code>, <code>2I1</code>,
-                <code>Z1I1</code>, <code>Z1 I1</code>, <code>5(I1+I2)</code>,
-                <code>(Z1+Z2)I1</code>. Множення й ділення мають однаковий
-                пріоритет і виконуються зліва направо:
-                <code>I1/2Z1</code> означає <code>(I1/2)*Z1</code>; для
-                знаменника добутком пишіть <code>I1/(2Z1)</code>.
-              </p>
-              <p>
-                Дозволені + − * / та дужки. Система має бути лінійною: добуток
-                невідомих і невідома в знаменнику не підтримуються. Для вузлів,
-                наприклад: <code>Y1 U1 + Y2(U1-U2)=J1;</code>. Крапка чи ;
-                наприкінці рядка ігноруються.
-              </p>
-              <p>
-                Десяткові кома й крапка рівнозначні. Науковий запис:
-                <code>1e-3</code> (мала e); <code>2E1</code> означає
-                <code>2*E1</code>. Модулі невід’ємні; від’ємний знак задається
-                фазою. Джерела напруги й струму — діючі значення.
-              </p>
-              <p>
-                Порожнє поле не дорівнює нулю. Дані автоматично зберігаються
-                лише в цьому браузері. Посилання містить знімок усієї системи.
-                Рівняння за схемою ви складаєте самостійно.
-              </p>
+        </section>
+        <section
+          id="results-panel"
+          role="tabpanel"
+          aria-labelledby="results-tab"
+          hidden
+        >
+          <div class="card">
+            <div class="section-head">
+              <h2>Результати розрахунку</h2>
+              <div class="result-actions">
+                <button id="copy-results" disabled>Копіювати результати</button
+                ><label class="precision"
+                  >Знаків після коми<select id="precision">
+                    <option>3</option>
+                    <option selected>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    <option>8</option>
+                  </select></label
+                >
+              </div>
             </div>
-          </details>
-        </div>
-        <div class="card" id="parameter-section" hidden>
-          <div class="section-head">
-            <h2><span class="step">2</span>Параметри системи</h2>
-            <span class="badge" id="param-count"></span>
+            <div id="results-content"></div>
           </div>
-          <p class="muted tiny">
-            Кожен параметр вводиться один раз. Кнопка ⇄ перемикає форму з
-            перерахунком значень; кути — у градусах.
-          </p>
-          <div id="parameter-equations" class="parameter-grid"></div>
-          <div id="numeric-status" class="notice" role="status"></div>
-          <div id="substituted" class="math-block" hidden></div>
-          <div style="margin-top: 16px" class="actions">
-            <button class="primary" id="show-results">
-              Перейти до результатів →</button
-            ><span class="live-note" id="auto-note"></span>
+          <div class="actions">
+            <button id="back-input">← До рівнянь</button
+            ><button id="print">Друк / PDF</button>
           </div>
-        </div>
-      </section>
-      <section
-        id="results-panel"
-        role="tabpanel"
-        aria-labelledby="results-tab"
-        hidden
-      >
-        <div class="card">
-          <div class="section-head">
-            <h2>Результати розрахунку</h2>
-            <div class="result-actions">
-              <button id="copy-results" disabled>Копіювати результати</button
-              ><label class="precision"
-                >Знаків після коми<select id="precision">
-                  <option>3</option>
-                  <option selected>4</option>
-                  <option>5</option>
-                  <option>6</option>
-                  <option>8</option>
-                </select></label
-              >
+        </section>
+        <section
+          id="solution-panel"
+          role="tabpanel"
+          aria-labelledby="solution-tab"
+          hidden
+        >
+          <div class="card">
+            <div class="section-head">
+              <h2>Покроковий розв’язок</h2>
+              <span class="badge">Метод Гауса · вибір головного елемента</span>
             </div>
+            <div id="solution-content"></div>
           </div>
-          <div id="results-content"></div>
-        </div>
-        <div class="actions">
-          <button id="back-input">← До рівнянь</button
-          ><button id="print">Друк / PDF</button>
-        </div>
-      </section>
-      <section
-        id="solution-panel"
-        role="tabpanel"
-        aria-labelledby="solution-tab"
-        hidden
-      >
-        <div class="card">
-          <div class="section-head">
-            <h2>Покроковий розв’язок</h2>
-            <span class="badge">Метод Гауса · вибір головного елемента</span>
-          </div>
-          <div id="solution-content"></div>
-        </div>
-      </section>
+        </section>
+      </div>
       <footer class="footer">
         <span
           >2–8 невідомих · Z/Y до 8 · E/J до 5<br /><span id="save-status"
@@ -1195,7 +1538,7 @@
     </dialog>
     <script>
 
-      'use strict';const _0x52a25f=_0x4fed;(function(_0x468bb4,_0x108fe5){const _0x3ca0bd=_0x4fed,_0x2a711e=_0x468bb4();while(!![]){try{const _0x46b5f8=-parseInt(_0x3ca0bd(0x1b3))/0x1*(parseInt(_0x3ca0bd(0x245))/0x2)+-parseInt(_0x3ca0bd(0x244))/0x3+-parseInt(_0x3ca0bd(0x261))/0x4+parseInt(_0x3ca0bd(0x20e))/0x5+parseInt(_0x3ca0bd(0x22d))/0x6*(parseInt(_0x3ca0bd(0x248))/0x7)+-parseInt(_0x3ca0bd(0x178))/0x8+-parseInt(_0x3ca0bd(0x1a0))/0x9*(-parseInt(_0x3ca0bd(0x251))/0xa);if(_0x46b5f8===_0x108fe5)break;else _0x2a711e['push'](_0x2a711e['shift']());}catch(_0x2b4a9f){_0x2a711e['push'](_0x2a711e['shift']());}}}(_0x4518,0x88d48));const $=_0x1b5782=>document['getElementById'](_0x1b5782),esc=_0x4c94bf=>String(_0x4c94bf)[_0x52a25f(0x1d5)](/[&<>"']/g,_0x11beae=>({'&':_0x52a25f(0x1bc),'<':_0x52a25f(0x20f),'>':'&gt;','\x22':'&quot;','\x27':_0x52a25f(0x1e5)}[_0x11beae])),STORAGE_KEY='phasor.state.v2',MAX_TEXT=0x2ee0,PARAM_ID=/^(?:[ZY][1-8]|[EJ][1-5])$/,DEFAULT_CONFIG={'method':_0x52a25f(0x13a),'n':0x5,'z':0x5,'e':0x3};let config={...DEFAULT_CONFIG},params=Object['create'](null),system=null,outcome=null,parseTimer,toastTimer;const copyFeedback=new WeakMap();let storageAvailable=!![],lastErrors=[];const C=(_0x21b8e5=0x0,_0x3f6f58=0x0)=>({'r':_0x21b8e5,'i':_0x3f6f58}),add=(_0x4648ed,_0x5c629f)=>C(_0x4648ed['r']+_0x5c629f['r'],_0x4648ed['i']+_0x5c629f['i']),neg=_0x1f5911=>C(-_0x1f5911['r'],-_0x1f5911['i']),sub=(_0x5b80a,_0x56b529)=>add(_0x5b80a,neg(_0x56b529)),mul=(_0x5e89d8,_0x381632)=>C(_0x5e89d8['r']*_0x381632['r']-_0x5e89d8['i']*_0x381632['i'],_0x5e89d8['r']*_0x381632['i']+_0x5e89d8['i']*_0x381632['r']),abs=_0x45656a=>Math[_0x52a25f(0x22e)](_0x45656a['r'],_0x45656a['i']),finite=_0x287352=>Number[_0x52a25f(0x1d0)](_0x287352['r'])&&Number[_0x52a25f(0x1d0)](_0x287352['i']);function div(_0x36ca71,_0xaf5af2){const _0x5e8393=_0x52a25f,_0x40507c=Math[_0x5e8393(0x168)](Math[_0x5e8393(0x1ea)](_0xaf5af2['r']),Math[_0x5e8393(0x1ea)](_0xaf5af2['i']));if(!_0x40507c)throw Error(_0x5e8393(0x121));const _0x2ffa25=_0xaf5af2['r']/_0x40507c,_0x2a1e60=_0xaf5af2['i']/_0x40507c,_0xbe5793=_0x2ffa25*_0x2ffa25+_0x2a1e60*_0x2a1e60;return C((_0x36ca71['r']/_0x40507c*_0x2ffa25+_0x36ca71['i']/_0x40507c*_0x2a1e60)/_0xbe5793,(_0x36ca71['i']/_0x40507c*_0x2ffa25-_0x36ca71['r']/_0x40507c*_0x2a1e60)/_0xbe5793);}function names(){const _0x2dae66=_0x52a25f;return Array[_0x2dae66(0x1dc)]({'length':config['n']},(_0x2e2560,_0x4581ae)=>config[_0x2dae66(0x20b)]==='node'?'U'+(_0x4581ae+0x1):config[_0x2dae66(0x20b)]===_0x2dae66(0x1ac)?'I'+(_0x4581ae+0x1)+(_0x4581ae+0x1):'I'+(_0x4581ae+0x1));}const displayName=_0x30d62f=>esc(_0x30d62f)['replace'](/^([IUZYEJ])(\d+)$/,'$1<sub>$2</sub>'),texName=_0x26482e=>_0x26482e['replace'](/^([IUZYEJ])(\d+)$/,_0x52a25f(0x267)),unitFor=_0x8caf1f=>({'Z':'Ом','Y':'См','E':'В','J':'А'}[_0x8caf1f[0x0]]),defaultForm=_0x5d01cc=>/^[EJ]/[_0x52a25f(0x12c)](_0x5d01cc)?_0x52a25f(0x19b):_0x52a25f(0x189);function getParam(_0x15ebe9){return params[_0x15ebe9]??={'form':defaultForm(_0x15ebe9),'a':'','b':''};}function numberValue(_0x34a8e0){const _0x5b54db=_0x52a25f,_0x2c635c=String(_0x34a8e0??'')[_0x5b54db(0x18a)]()['replace'](/−/g,'-')['replace'](',','.');if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/[_0x5b54db(0x12c)](_0x2c635c))return null;const _0x147094=Number(_0x2c635c);return Number[_0x5b54db(0x1d0)](_0x147094)?_0x147094:null;}function parameterValue(_0x24c25b){const _0x56be28=_0x52a25f,_0x71ff6a=getParam(_0x24c25b),_0x3d582c=numberValue(_0x71ff6a['a']),_0x54a5eb=numberValue(_0x71ff6a['b']);if(_0x3d582c===null||_0x54a5eb===null)throw Error(_0x56be28(0x14e)+_0x24c25b+'.');if(_0x71ff6a[_0x56be28(0x16c)]===_0x56be28(0x189))return C(_0x3d582c,_0x54a5eb);if(_0x3d582c<0x0)throw Error('Модуль\x20'+_0x24c25b+_0x56be28(0x1a3));const _0x5b8518=_0x54a5eb%0x168*Math['PI']/0xb4;return C(_0x3d582c*Math[_0x56be28(0x1e0)](_0x5b8518),_0x3d582c*Math[_0x56be28(0x1bd)](_0x5b8518));}function fullNumber(_0x501f9b){const _0x44c6fb=_0x52a25f;return _0x501f9b===0x0?'0':String(Number(_0x501f9b[_0x44c6fb(0x110)](0xf)));}class ParseError extends Error{constructor(_0x44c18f,_0x1a73f5=0x0,_0x8dd687=0x1){const _0xdfefa2=_0x52a25f;super(_0x44c18f),this[_0xdfefa2(0x148)]=_0x1a73f5,this[_0xdfefa2(0x146)]=_0x8dd687;}}function tokenize(_0x5cd3ea){const _0x1604b1=_0x52a25f,_0x4396f1=_0x5cd3ea[_0x1604b1(0x1d5)](/[;.]+\s*$/,''),_0x547b74=[];let _0x54d63a=0x0;while(_0x54d63a<_0x4396f1[_0x1604b1(0x1e8)]){if(/\s/[_0x1604b1(0x12c)](_0x4396f1[_0x54d63a])){_0x54d63a++;continue;}const _0xd83912=_0x4396f1[_0x1604b1(0x24c)](_0x54d63a);let _0x4a3b03;if(_0x4a3b03=_0xd83912[_0x1604b1(0x174)](/^(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:(?:e[+-]?|E[+-])\d+)?/)){const _0x5c79d6=Number(_0x4a3b03[0x0][_0x1604b1(0x1d5)](',','.'));if(!Number['isFinite'](_0x5c79d6))throw new ParseError(_0x1604b1(0x16d),_0x54d63a,_0x4a3b03[0x0]['length']);_0x547b74['push']({'type':_0x1604b1(0x222),'value':_0x5c79d6,'pos':_0x54d63a,'len':_0x4a3b03[0x0][_0x1604b1(0x1e8)]}),_0x54d63a+=_0x4a3b03[0x0]['length'];}else{if(_0x4a3b03=_0xd83912['match'](/^[IUZYEJ]\d+/i))_0x547b74[_0x1604b1(0x13e)]({'type':'id','value':_0x4a3b03[0x0]['toUpperCase'](),'pos':_0x54d63a,'len':_0x4a3b03[0x0][_0x1604b1(0x1e8)]}),_0x54d63a+=_0x4a3b03[0x0][_0x1604b1(0x1e8)];else{if(/^[jJ]/[_0x1604b1(0x12c)](_0xd83912))_0x547b74[_0x1604b1(0x13e)]({'type':'id','value':'j','pos':_0x54d63a,'len':0x1}),_0x54d63a++;else{if(_0x4a3b03=_0xd83912['match'](/^[a-zA-Z_][a-zA-Z0-9_]*/))_0x547b74['push']({'type':'id','value':_0x4a3b03[0x0][_0x1604b1(0x1f6)](),'pos':_0x54d63a,'len':_0x4a3b03[0x0][_0x1604b1(0x1e8)]}),_0x54d63a+=_0x4a3b03[0x0][_0x1604b1(0x1e8)];else{if(_0x1604b1(0x177)['includes'](_0x4396f1[_0x54d63a])||_0x4396f1[_0x54d63a]==='−')_0x547b74[_0x1604b1(0x13e)]({'type':_0x4396f1[_0x54d63a]==='−'?'-':_0x4396f1[_0x54d63a],'pos':_0x54d63a,'len':0x1}),_0x54d63a++;else throw new ParseError('Недопустимий\x20символ\x20«'+_0x4396f1[_0x54d63a]+'».\x20Використовуйте\x20латинські\x20позначення.',_0x54d63a);}}}}if(_0x547b74[_0x1604b1(0x1e8)]>0x190)throw new ParseError(_0x1604b1(0x190),0x0,_0x5cd3ea[_0x1604b1(0x1e8)]);}const _0x2cc36a=[];for(const _0x1345cf of _0x547b74){const _0x48ad48=_0x2cc36a['at'](-0x1),_0x3245f4=_0x48ad48&&[_0x1604b1(0x222),'id',')'][_0x1604b1(0x13f)](_0x48ad48[_0x1604b1(0x130)]),_0x27a30e=['id','('][_0x1604b1(0x13f)](_0x1345cf[_0x1604b1(0x130)]);if(_0x3245f4&&_0x27a30e)_0x2cc36a['push']({'type':'*','pos':_0x1345cf['pos'],'len':_0x1345cf['len'],'implicit':!![]});_0x2cc36a['push'](_0x1345cf);}return _0x2cc36a[_0x1604b1(0x13e)]({'type':_0x1604b1(0x1d8),'pos':_0x4396f1[_0x1604b1(0x1e8)],'len':0x1}),_0x2cc36a;}function parseEquation(_0x4f99fa){const _0x1ce723=_0x52a25f;if(_0x4f99fa[_0x1ce723(0x1e8)]>0x5dc)throw new ParseError(_0x1ce723(0x1bb),0x0,_0x4f99fa['length']);const _0x4db3dc=tokenize(_0x4f99fa),_0x4317de=names(),_0x18f75a=new Set();let _0x59bf86=0x0,_0x21c9f8=0x0;const _0x5a1560=()=>_0x4db3dc[_0x59bf86];function _0x548f23(_0x39caa5){const _0x4d7a40=_0x1ce723;if(_0x5a1560()[_0x4d7a40(0x130)]!==_0x39caa5)throw new ParseError(_0x39caa5===')'?_0x4d7a40(0x15c):_0x4d7a40(0x129)+_0x39caa5+'».',_0x5a1560()[_0x4d7a40(0x148)],_0x5a1560()['len']);return _0x4db3dc[_0x59bf86++];}function _0x146484(){const _0x3a18a3=_0x1ce723,_0x421cd7=_0x5a1560();if(++_0x21c9f8>0x50)throw new ParseError(_0x3a18a3(0x166),_0x421cd7[_0x3a18a3(0x148)]);let _0x5abd6a;if(_0x421cd7[_0x3a18a3(0x130)]===_0x3a18a3(0x222))_0x59bf86++,_0x5abd6a={'type':_0x3a18a3(0x222),'value':_0x421cd7[_0x3a18a3(0x1a8)],'dependent':![]};else{if(_0x421cd7[_0x3a18a3(0x130)]==='id'){_0x59bf86++;const _0x54f3ee=_0x4317de[_0x3a18a3(0x13f)](_0x421cd7[_0x3a18a3(0x1a8)]);if(!_0x54f3ee&&_0x421cd7[_0x3a18a3(0x1a8)]!=='j'&&!PARAM_ID[_0x3a18a3(0x12c)](_0x421cd7['value']))throw new ParseError(_0x3a18a3(0x199)+_0x421cd7[_0x3a18a3(0x1a8)]+_0x3a18a3(0x139)+_0x4317de[_0x3a18a3(0x120)](',\x20')+'.',_0x421cd7[_0x3a18a3(0x148)],_0x421cd7[_0x3a18a3(0x146)]);if(/^Z/['test'](_0x421cd7[_0x3a18a3(0x1a8)])&&Number(_0x421cd7['value'][_0x3a18a3(0x24c)](0x1))>config['z'])throw new ParseError(_0x3a18a3(0x15b)+_0x421cd7['value']+_0x3a18a3(0x1d4),_0x421cd7[_0x3a18a3(0x148)],_0x421cd7['len']);if(/^E/[_0x3a18a3(0x12c)](_0x421cd7['value'])&&Number(_0x421cd7[_0x3a18a3(0x1a8)][_0x3a18a3(0x24c)](0x1))>config['e'])throw new ParseError(_0x3a18a3(0x250)+_0x421cd7['value']+'\x20недоступне.\x20Збільште\x20кількість\x20E.',_0x421cd7[_0x3a18a3(0x148)],_0x421cd7[_0x3a18a3(0x146)]);if(PARAM_ID[_0x3a18a3(0x12c)](_0x421cd7[_0x3a18a3(0x1a8)]))_0x18f75a[_0x3a18a3(0x11d)](_0x421cd7['value']);_0x5abd6a={'type':'id','name':_0x421cd7[_0x3a18a3(0x1a8)],'dependent':_0x54f3ee};}else{if(_0x421cd7[_0x3a18a3(0x130)]==='('){_0x59bf86++;const _0x1a8118=_0x451d60();_0x548f23(')'),_0x5abd6a={'type':'group','child':_0x1a8118,'dependent':_0x1a8118[_0x3a18a3(0x1c2)]};}else{if(_0x421cd7['type']==='+'||_0x421cd7[_0x3a18a3(0x130)]==='-'){_0x59bf86++;const _0x47f5bf=_0x146484();_0x5abd6a={'type':'unary','op':_0x421cd7[_0x3a18a3(0x130)],'child':_0x47f5bf,'dependent':_0x47f5bf[_0x3a18a3(0x1c2)]};}else throw new ParseError(_0x421cd7[_0x3a18a3(0x130)]===_0x3a18a3(0x1d8)?'Незавершене\x20рівняння.':_0x3a18a3(0x1c4),_0x421cd7[_0x3a18a3(0x148)],_0x421cd7[_0x3a18a3(0x146)]);}}}return _0x21c9f8--,_0x5abd6a;}function _0x37423c(){const _0x20a7b2=_0x1ce723;let _0x52754b=_0x146484();while(_0x5a1560()[_0x20a7b2(0x130)]==='*'||_0x5a1560()['type']==='/'){const _0x446e3a=_0x4db3dc[_0x59bf86++],_0x19dc31=_0x146484();if(_0x446e3a['type']==='*'&&_0x52754b[_0x20a7b2(0x1c2)]&&_0x19dc31[_0x20a7b2(0x1c2)])throw new ParseError('Нелінійний\x20вираз:\x20добуток\x20двох\x20невідомих.',_0x446e3a[_0x20a7b2(0x148)],_0x446e3a[_0x20a7b2(0x146)]);if(_0x446e3a['type']==='/'&&_0x19dc31[_0x20a7b2(0x1c2)])throw new ParseError(_0x20a7b2(0x1cd),_0x446e3a[_0x20a7b2(0x148)],_0x446e3a[_0x20a7b2(0x146)]);_0x52754b={'type':_0x20a7b2(0x10e),'op':_0x446e3a['type'],'left':_0x52754b,'right':_0x19dc31,'dependent':_0x52754b[_0x20a7b2(0x1c2)]||_0x19dc31[_0x20a7b2(0x1c2)]};}return _0x52754b;}function _0x451d60(){const _0xa476aa=_0x1ce723;let _0x64e9c=_0x37423c();while(_0x5a1560()[_0xa476aa(0x130)]==='+'||_0x5a1560()[_0xa476aa(0x130)]==='-'){const _0x35e806=_0x4db3dc[_0x59bf86++],_0x2fe13f=_0x37423c();_0x64e9c={'type':'binary','op':_0x35e806[_0xa476aa(0x130)],'left':_0x64e9c,'right':_0x2fe13f,'dependent':_0x64e9c[_0xa476aa(0x1c2)]||_0x2fe13f[_0xa476aa(0x1c2)]};}return _0x64e9c;}const _0x12fd20=_0x451d60();_0x548f23('=');const _0x1848b0=_0x451d60();if(_0x5a1560()[_0x1ce723(0x130)]!=='end')throw new ParseError(_0x5a1560()[_0x1ce723(0x130)]==='='?'У\x20рядку\x20має\x20бути\x20один\x20знак\x20рівності.':_0x1ce723(0x216),_0x5a1560()[_0x1ce723(0x148)],_0x5a1560()['len']);return{'left':_0x12fd20,'right':_0x1848b0,'used':_0x18f75a,'text':_0x4f99fa};}function affine(_0x49ed97){const _0x57e843=_0x52a25f,_0x18d808=()=>({'c':C(),'a':Array[_0x57e843(0x1dc)]({'length':config['n']},()=>C())});if(_0x49ed97[_0x57e843(0x130)]==='num')return{..._0x18d808(),'c':C(_0x49ed97['value'])};if(_0x49ed97[_0x57e843(0x130)]==='id'){const _0x685720=_0x18d808(),_0x4f798a=names()[_0x57e843(0x262)](_0x49ed97['name']);if(_0x4f798a>=0x0)_0x685720['a'][_0x4f798a]=C(0x1);else _0x685720['c']=_0x49ed97[_0x57e843(0x133)]==='j'?C(0x0,0x1):parameterValue(_0x49ed97['name']);return _0x685720;}if(_0x49ed97[_0x57e843(0x130)]==='group')return affine(_0x49ed97[_0x57e843(0x197)]);if(_0x49ed97[_0x57e843(0x130)]==='unary'){const _0x2d4ea3=affine(_0x49ed97[_0x57e843(0x197)]);return _0x49ed97['op']==='-'?{'c':neg(_0x2d4ea3['c']),'a':_0x2d4ea3['a'][_0x57e843(0x1fd)](neg)}:_0x2d4ea3;}const _0x440c15=affine(_0x49ed97[_0x57e843(0x12f)]),_0x431e7e=affine(_0x49ed97['right']);if(_0x49ed97['op']==='+')return{'c':add(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a'][_0x57e843(0x1fd)]((_0x1104ec,_0x7119d8)=>add(_0x1104ec,_0x431e7e['a'][_0x7119d8]))};if(_0x49ed97['op']==='-')return{'c':sub(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a']['map']((_0x12176e,_0x2f65e0)=>sub(_0x12176e,_0x431e7e['a'][_0x2f65e0]))};if(_0x49ed97['op']==='/')return{'c':div(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a'][_0x57e843(0x1fd)](_0x259f17=>div(_0x259f17,_0x431e7e['c']))};return _0x49ed97[_0x57e843(0x12f)]['dependent']?{'c':mul(_0x440c15['c'],_0x431e7e['c']),'a':_0x440c15['a']['map'](_0x9a8b2=>mul(_0x9a8b2,_0x431e7e['c']))}:{'c':mul(_0x440c15['c'],_0x431e7e['c']),'a':_0x431e7e['a'][_0x57e843(0x1fd)](_0x5bbbd8=>mul(_0x5bbbd8,_0x440c15['c']))};}function solve(_0x57ebb6,_0x2a158e){const _0x3f00aa=_0x52a25f,_0x4cdf0d=_0x57ebb6['length'],_0x1a03bb=1e-12;if(!_0x4cdf0d||_0x4cdf0d>0x8||_0x2a158e['length']!==_0x4cdf0d||_0x57ebb6[_0x3f00aa(0x25d)](_0x3315b9=>_0x3315b9[_0x3f00aa(0x1e8)]!==_0x4cdf0d))throw Error(_0x3f00aa(0x272));if([..._0x57ebb6['flat'](),..._0x2a158e][_0x3f00aa(0x25d)](_0x128e7d=>!finite(_0x128e7d)))throw Error(_0x3f00aa(0x264));const _0x5d9a27=_0x57ebb6[_0x3f00aa(0x1fd)]((_0x2df1fe,_0x21c40e)=>_0x2df1fe[_0x3f00aa(0x1fd)](_0x15ee53=>({..._0x15ee53}))[_0x3f00aa(0x126)]([{..._0x2a158e[_0x21c40e]}])),_0x445a2c=[],_0x500a2c=[];for(let _0x536c3c=0x0;_0x536c3c<_0x4cdf0d;_0x536c3c++){const _0x56c79c=Math[_0x3f00aa(0x168)](..._0x57ebb6[_0x536c3c][_0x3f00aa(0x1fd)](abs)),_0x59b666=_0x56c79c||abs(_0x2a158e[_0x536c3c])||0x1;_0x445a2c[_0x3f00aa(0x13e)](_0x59b666),_0x5d9a27[_0x536c3c]=_0x5d9a27[_0x536c3c]['map'](_0x36386d=>div(_0x36386d,C(_0x59b666)));}const _0x5611bb=_0x5d9a27['map'](_0xf44c08=>abs(_0xf44c08[_0x4cdf0d])),_0x38ed12=()=>_0x5d9a27[_0x3f00aa(0x1fd)](_0x20c7cf=>_0x20c7cf['map'](_0x349700=>({..._0x349700})));_0x500a2c[_0x3f00aa(0x13e)]({'label':_0x3f00aa(0x127),'matrix':_0x38ed12()});let _0x411218=0x0;for(let _0x53f54f=0x0;_0x53f54f<_0x4cdf0d&&_0x411218<_0x4cdf0d;_0x53f54f++){let _0xf2ab5b=_0x411218;for(let _0x46deca=_0x411218+0x1;_0x46deca<_0x4cdf0d;_0x46deca++)if(abs(_0x5d9a27[_0x46deca][_0x53f54f])>abs(_0x5d9a27[_0xf2ab5b][_0x53f54f]))_0xf2ab5b=_0x46deca;if(abs(_0x5d9a27[_0xf2ab5b][_0x53f54f])<=_0x1a03bb)continue;const _0x52c89c=[];_0xf2ab5b!==_0x411218&&([_0x5d9a27[_0x411218],_0x5d9a27[_0xf2ab5b]]=[_0x5d9a27[_0xf2ab5b],_0x5d9a27[_0x411218]],[_0x5611bb[_0x411218],_0x5611bb[_0xf2ab5b]]=[_0x5611bb[_0xf2ab5b],_0x5611bb[_0x411218]],_0x52c89c[_0x3f00aa(0x13e)]('R_{'+(_0x411218+0x1)+_0x3f00aa(0x1d9)+(_0xf2ab5b+0x1)+'}'));const _0x594173=_0x5d9a27[_0x411218][_0x53f54f];for(let _0x14fba4=_0x411218+0x1;_0x14fba4<_0x4cdf0d;_0x14fba4++){const _0x7fb5a4=div(_0x5d9a27[_0x14fba4][_0x53f54f],_0x594173);if(abs(_0x7fb5a4)===0x0)continue;_0x5611bb[_0x14fba4]+=abs(_0x7fb5a4)*_0x5611bb[_0x411218];for(let _0x583a9b=_0x53f54f+0x1;_0x583a9b<=_0x4cdf0d;_0x583a9b++)_0x5d9a27[_0x14fba4][_0x583a9b]=sub(_0x5d9a27[_0x14fba4][_0x583a9b],mul(_0x7fb5a4,_0x5d9a27[_0x411218][_0x583a9b]));_0x5d9a27[_0x14fba4][_0x53f54f]=C(),_0x52c89c['push'](_0x3f00aa(0x213)+(_0x14fba4+0x1)+_0x3f00aa(0x16a)+(_0x14fba4+0x1)+'}-('+complexTex(_0x7fb5a4)+_0x3f00aa(0x223)+(_0x411218+0x1)+'}');}_0x411218++,_0x500a2c['push']({'label':_0x3f00aa(0x1fc)+(names()[_0x53f54f]||'x'+(_0x53f54f+0x1)),'operations':_0x52c89c,'matrix':_0x38ed12()});}if(_0x5d9a27['flat']()[_0x3f00aa(0x25d)](_0x556707=>!finite(_0x556707))||_0x5611bb[_0x3f00aa(0x25d)](_0x557577=>!Number['isFinite'](_0x557577)))throw Error(_0x3f00aa(0x226));for(let _0xa6c1a3=_0x411218;_0xa6c1a3<_0x4cdf0d;_0xa6c1a3++){if(abs(_0x5d9a27[_0xa6c1a3][_0x4cdf0d])>_0x1a03bb*_0x5611bb[_0xa6c1a3])return{'kind':_0x3f00aa(0x1f7),'rank':_0x411218,'steps':_0x500a2c,'scales':_0x445a2c};}if(_0x411218<_0x4cdf0d)return{'kind':'dependent','rank':_0x411218,'steps':_0x500a2c,'scales':_0x445a2c};const _0x11c1cf=Array[_0x3f00aa(0x1dc)]({'length':_0x4cdf0d},()=>C()),_0x225154=[];for(let _0x11c75a=_0x4cdf0d-0x1;_0x11c75a>=0x0;_0x11c75a--){let _0x4e5771=_0x5d9a27[_0x11c75a][_0x4cdf0d];for(let _0x1f893d=_0x11c75a+0x1;_0x1f893d<_0x4cdf0d;_0x1f893d++)_0x4e5771=sub(_0x4e5771,mul(_0x5d9a27[_0x11c75a][_0x1f893d],_0x11c1cf[_0x1f893d]));_0x11c1cf[_0x11c75a]=div(_0x4e5771,_0x5d9a27[_0x11c75a][_0x11c75a]),_0x225154[_0x3f00aa(0x13e)]({'i':_0x11c75a,'numerator':_0x4e5771,'denominator':_0x5d9a27[_0x11c75a][_0x11c75a],'value':_0x11c1cf[_0x11c75a]});}if(_0x11c1cf[_0x3f00aa(0x25d)](_0x14c1dd=>!finite(_0x14c1dd)))throw Error(_0x3f00aa(0x144));const _0x4517f1=_0x57ebb6[_0x3f00aa(0x1fd)]((_0x29067f,_0x270589)=>sub(_0x29067f[_0x3f00aa(0x229)]((_0x2b75d8,_0x35536c,_0xb1c326)=>add(_0x2b75d8,mul(_0x35536c,_0x11c1cf[_0xb1c326])),C()),_0x2a158e[_0x270589]));if(_0x4517f1[_0x3f00aa(0x25d)](_0x5dd5a6=>!finite(_0x5dd5a6)))throw Error(_0x3f00aa(0x17c));const _0x4f988e=_0x4517f1['map']((_0x2d3c68,_0x4aa10a)=>{const _0x2d7508=_0x3f00aa,_0x5f4b6a=_0x57ebb6[_0x4aa10a][_0x2d7508(0x229)]((_0x435e2a,_0x5576b5,_0x55bc66)=>_0x435e2a+abs(_0x5576b5)*abs(_0x11c1cf[_0x55bc66]),abs(_0x2a158e[_0x4aa10a]));if(!Number[_0x2d7508(0x1d0)](_0x5f4b6a))throw Error(_0x2d7508(0x26d));return _0x5f4b6a?abs(_0x2d3c68)/_0x5f4b6a:abs(_0x2d3c68);});return{'kind':'unique','rank':_0x411218,'x':_0x11c1cf,'back':_0x225154,'steps':_0x500a2c,'scales':_0x445a2c,'residual':_0x4517f1,'relative':Math[_0x3f00aa(0x168)](..._0x4f988e),'ill':_0x5d9a27[_0x3f00aa(0x25d)]((_0xa8000e,_0x15a105)=>abs(_0xa8000e[_0x15a105])<1e-8)};}function _0x4fed(_0x1a2d5c,_0x4e6856){_0x1a2d5c=_0x1a2d5c-0x108;const _0x45183e=_0x4518();let _0x4fed1b=_0x45183e[_0x1a2d5c];return _0x4fed1b;}function fmt(_0xf5c938,_0x6a0640=Number($(_0x52a25f(0x1ab))[_0x52a25f(0x1a8)])){const _0x4f15ad=_0x52a25f;if(_0xf5c938===0x0)return'0';const _0x4afa80=Math[_0x4f15ad(0x1ea)](_0xf5c938);if(_0x4afa80>=0x3b9aca00||_0x4afa80<0xa**-_0x6a0640)return _0xf5c938[_0x4f15ad(0x22b)](Math['min'](_0x6a0640,0x5))['replace']('.',',');return _0xf5c938['toFixed'](_0x6a0640)[_0x4f15ad(0x1d5)](/\.?0+$/,'')[_0x4f15ad(0x1d5)]('.',',');}function cleanComplex(_0x1865b3){const _0x581a99=_0x52a25f,_0x2a6657=0x20*Number['EPSILON']*abs(_0x1865b3);return C(Math['abs'](_0x1865b3['r'])<_0x2a6657?0x0:_0x1865b3['r'],Math[_0x581a99(0x1ea)](_0x1865b3['i'])<_0x2a6657?0x0:_0x1865b3['i']);}function _0x4518(){const _0x413626=['isArray','\x22><div\x20class=\x22parameter-top\x22><strong>','rect','trim','✓\x20Скопійовано','Рівняння\x20Кірхгофа','\x20=\x20','ill','|c}','Рівняння\x20надто\x20складне:\x20скоротіть\x20кількість\x20доданків.','params','Вузлові\x20напруги','focus','htmlAndMathml','afterprint','solution-content','child','Введіть\x20обидві\x20складові','Невідоме\x20позначення\x20','\x20=\x200\x0a(Z1+Z2)','polar','setRangeText','</td></tr>','click','parameter-equations','6305706qnlDtf','clipboard-fallback','\x20=\x20E1','\x20має\x20бути\x20невід’ємним.\x20Знак\x20задайте\x20фазою.','Спочатку\x20заповніть\x20обидва\x20коректні\x20поля\x20','scrollTop','addEventListener','className','value','matches','\x20⇄</button></div><div\x20class=\x22parameter-inputs\x22><label>','precision','mesh','Є\x20нескінченна\x20кількість\x20розв’язків\x20у\x20межах\x20числової\x20точності.','Модуль,\x20','\x22\x20aria-label=\x22Змінити\x20форму\x20','readOnly','close','Посилання\x20сформовано;\x20адресний\x20рядок\x20не\x20вдалося\x20оновити.','325310xWlzFb','show-results','✓\x20Обчислено\x20автоматично','group','tokens','param','display','used','Рівняння\x20задовге:\x20максимум\x201500\x20символів.','&amp;','sin','atan2','function','Не\x20вдалося\x20прочитати\x20стан\x20із\x20посилання.\x20Перевіряю\x20локальне\x20збереження.','[data-param]','dependent','aria-invalid','Очікується\x20число,\x20параметр,\x20невідома\x20або\x20дужка.','✓\x20Перевірка\x20підстановкою\x20пройдена.','\x20/\x20','Після\x20виключення\x20отримано\x20рядок\x200\x20=\x20b,\x20де\x20b\x20≠\x200\x20у\x20межах\x20допуску.','parse','matrix','setItem','unique','badge\x20','Нелінійний\x20вираз:\x20невідома\x20в\x20знаменнику.','activeElement','back','isFinite','</mark>','-j\x5c,','\x5cleft(','\x20недоступний.\x20Збільште\x20кількість\x20Z.','replace','\x20·\x20e<sup>j(','innerHTML','end','}\x5cleftrightarrow\x20R_{','removeAttribute','back-input','from','Нескінченна\x20кількість\x20розв’язків.\x20Рівняння\x20не\x20визначають\x20усі\x20невідомі.','unary','timer','cos','beforeprint','\x5c;\x5ctext{','math-status','\x20Відносна\x20нев’язка:\x20','&#39;','\x5cright)','input','length','LaTeX\x20скопійовано','abs','target','<tr><td>','scrollLeft','symbolic','operations','\x22\x20aria-label=\x22Вставити\x20','append','getItem','<h3>1.\x20Початкова\x20система</h3>','</summary><div>','line-count','toUpperCase','inconsistent','\x22\x20data-part=\x22a\x22\x20aria-label=\x22','Ранг\x20менший\x20за\x20кількість\x20невідомих:\x20є\x20вільні\x20змінні.','Некоректні\x20налаштування\x20у\x20збережених\x20даних.','notice\x20','Виключення\x20','map','</span><label>','\x5cleft[\x5cbegin{array}{','</div></details>','Потрібно\x20','insert','\x22></label></div><div\x20class=\x22parameter-preview\x22\x20data-param-preview=\x22','param-count','φ,\x20°','Модуль\x20має\x20бути\x20невід’ємним.\x20Напрямок\x20задайте\x20фазою.','href','Посилання\x20містить\x20пошкоджений\x20або\x20непідтримуваний\x20стан.','Система\x20записана\x20коректно','numeric-status','method','<h3>3.\x20Розширена\x20матриця\x20[A\x20|\x20b]</h3>','style','1762345RHauXj','&lt;','<details\x20class=\x22extra-tokens\x22><summary>Провідності\x20Y\x20та\x20джерела\x20струму\x20J</summary><div>','-panel','closest','R_{','selectionEnd','\x20рівнянь','Зайвий\x20символ\x20або\x20пропущений\x20оператор.','ArrowRight','right','textContent','setSelectionRange','toast','isConnected','offset','<h3>2.\x20Параметри\x20та\x20підстановка</h3>','<button\x20type=\x22button\x22\x20data-insert=\x22','[data-toggle-form=\x22','Результати\x20скопійовано','num',')R_{','Некоректні\x20параметри\x20стану.','Re\x20+\x20j·Im','Переповнення\x20під\x20час\x20обчислень.\x20Перевірте\x20масштаб\x20значень.','</button>','Спочатку\x20складіть\x20коректну\x20систему\x20рівнянь.','reduce','\x20параметрів','toExponential','createElement','30PRtHwc','hypot','message','residual','\x5cleft\x5c{\x5cbegin{aligned}','<div\x20class=\x22formula\x22><button\x20class=\x22copy-tex\x22\x20type=\x22button\x22\x20data-copy-tex\x20aria-label=\x22Копіювати\x20LaTeX\x22>Копіювати\x20LaTeX</button>','currentTarget','phasor','onclick','\x5cfrac{','[data-error]','.</div>','save-status','showModal','\x20∠\x20','querySelectorAll','<p\x20class=\x22notice\x22>Матриця\x20близька\x20до\x20виродженої:\x20результат\x20чутливий\x20до\x20точності\x20даних.</p>','</small></strong><button\x20type=\x22button\x22\x20class=\x22form-toggle\x22\x20data-toggle-form=\x22','ecount','tab','</td><td>','Максимальна\x20відносна\x20нев’язка:\x20','><summary>','2615736JrUwud','4ibAtrU','querySelector','error','1063783vNZozt','relative','Фазор\x20—\x20','label','slice','</div><div\x20class=\x22value\x22>','\x20error','Phasor','Джерело\x20','30ilptwB','ArrowLeft','copy-results','execCommand','Re,\x20','set','\x20-\x20','KaTeX\x20недоступний:\x20показано\x20LaTeX.\x20Обчислення\x20працюють.','Скопійовано','share','get',',\x20позиція\x20','some','Автокопіювання\x20недоступне.\x20Скопіюйте\x20текст\x20із\x20відкритого\x20поля.','hash','select','1135888phPVGz','indexOf','flatMap','Некоректні\x20або\x20завеликі\x20коефіцієнти.','модуль','.\x20Нуль\x20введіть\x20явно.','$1_{$2}','уявна\x20частина','open','example-note','<input\x20type=\x22text\x22\x20maxlength=\x22120\x22\x20inputmode=\x22decimal\x22\x20autocomplete=\x22off\x22\x20data-param=\x22','Автозбереження\x20недоступне\x20у\x20цьому\x20браузері','Завеликий\x20масштаб\x20для\x20достовірної\x20перевірки.','=\x5cfrac{','split','Непідтримуваний\x20або\x20пошкоджений\x20формат\x20стану.','Залишилося\x20заповнити\x20полів:\x20','Некоректний\x20розмір\x20матриці.','<article\x20class=\x22parameter-card\x20','End','has','string','(1/Z2+1/Z3+1/Z5)*U1\x20-\x20U2/Z5\x20=\x20-E2/Z2+E3/Z3\x0a(1/Z1+1/Z4+1/Z5)*U2\x20-\x20U1/Z5\x20=\x20E1/Z1','Заповніть\x20усі\x20параметри\x20на\x20вкладці\x20«Введення».','toggleForm','close-copy','binary','remove','toPrecision','Система\x20суперечлива:\x20розв’язків\x20немає\x20у\x20межах\x20числової\x20точності.','width','katex','mathLoadFailed','denominator','writeText','highlight','<div\x20class=\x22result-card\x22><div\x20class=\x22name\x22>','key','Модуль\x20∠\x20φ','stringify','body','add','</div>','gutter','join','Ділення\x20на\x20нуль.\x20Перевірте\x20знаменник\x20і\x20значення\x20параметрів.','clipboard','I2\x20-\x20I3\x20+\x20I5\x20=\x200\x0a-I1\x20+\x20I4\x20-\x20I5\x20=\x200\x0aZ2*I2\x20+\x20Z3*I3\x20=\x20E2\x20+\x20E3\x0aZ3*I3\x20+\x20Z5*I5\x20-\x20Z1*I1\x20=\x20E3\x20-\x20E1\x0aZ1*I1\x20+\x20Z4*I4\x20=\x20E1','<h3>4.\x20Прямий\x20хід\x20методу\x20Гауса</h3><p\x20class=\x22muted\x20tiny\x22>Ділимо\x20кожен\x20рядок\x20разом\x20із\x20правою\x20частиною\x20на\x20найбільший\x20модуль\x20коефіцієнта\x20A.\x20Для\x20нульового\x20рядка\x20—\x20на\x20|b|\x20(або\x201).\x20Для\x20кожного\x20стовпця\x20обираємо\x20найбільший\x20головний\x20елемент.\x20Допуск\x20правої\x20частини\x20переноситься\x20й\x20накопичується\x20окремо\x20для\x20кожного\x20рядка.</p>','\x5ccdot10^{$1}','concat','Однакове\x20масштабування\x20коефіцієнтів\x20і\x20правих\x20частин','\x20<small>','Очікується\x20«','node','.\x20Допуск\x20після\x20масштабування:\x2010⁻¹².</p>','test','resize','disabled','left','type','\x22\x20title=\x22Перетворити\x20введені\x20значення\x20в\x20іншу\x20форму\x22>','Перевірте\x20дані:\x20завелика\x20похибка.','name','setAttribute','forEach','Досягнуто\x20обмеження\x20довжини\x20системи.','kind','change','.\x20Невідомі:\x20','branch','mathfailed','equations','tex','push','includes','\x20+\x20j·','</div><div\x20class=\x22polar\x22>','part','<div\x20class=\x22result-grid\x22>','Результат\x20виходить\x20за\x20числовий\x20діапазон.','substituted','len','<div\x20class=\x22empty\x22><div\x20class=\x22empty-symbol\x22>∑</div>','pos','line','onchange','observe','\x20−\x20j·','copy','Заповніть\x20обидва\x20поля\x20','config','errors','copy-dialog','</tbody></table></div><p\x20class=\x22muted\x20tiny\x22>Перевірка\x20підтверджує\x20розв’язок\x20введеної\x20системи.\x20Правильність\x20складання\x20рівнянь\x20за\x20схемою\x20перевіряється\x20окремо.</p>','[data-param-preview=\x22','Некоректні\x20дані\x20параметра\x20','success','</div><p\x20class=\x22muted\x20tiny\x22>Ранг\x20матриці:\x20','Результати\x20округлено\x20для\x20відображення.','\x5c\x5c[3pt]','<p\x20class=\x22notice\x20success\x22>Максимальна\x20відносна\x20нев’язка:\x20','Розв’язок\x20обчислено.\x20Результати\x20та\x20кроки\x20оновлено\x20автоматично.','Опір\x20','Не\x20закрито\x20дужку.','dataset','textarea','hidden','Y1\x20U1\x20+\x20Y2(U1-U2)\x20=\x20J1\x0aY3\x20U2\x20+\x20Y2(U2-U1)\x20=\x200','кут','count','\x22></div></article>','clientHeight','placeholder','Забагато\x20вкладених\x20дужок.','notice','max','preventDefault','}\x5cleftarrow\x20R_{','.</p>','form','Число\x20завелике\x20або\x20некоректне.','[role=tab]','original','\x22></label><span>','sort','selectionStart','parameter-section','match','example','replaceState','+-*/()=','6778048KgMbmb','—\x20(фаза\x20не\x20визначена)','°)</sup>','\x22\x20value=\x22','Переповнення\x20при\x20перевірці\x20результату.','\x20або\x20очистіть\x20їх.','\x20·\x20','create','copy-manual','steps','false','#solution-content\x20details','<div\x20class=\x22notice\x20error\x22>','Розв’язків\x20немає:\x20рівняння\x20суперечать\x20одне\x20одному.','syntax-status'];_0x4518=function(){return _0x413626;};return _0x4518();}function complexText(_0x5c9d56){const _0x39edf3=_0x52a25f,_0xd47728=cleanComplex(_0x5c9d56);return fmt(_0xd47728['r'])+(_0xd47728['i']<0x0?_0x39edf3(0x14c):_0x39edf3(0x140))+fmt(Math[_0x39edf3(0x1ea)](_0xd47728['i']));}function complexTex(_0x466c41){const _0x5e5157=_0x52a25f,_0xfdafee=cleanComplex(_0x466c41),_0x1daea9=_0x3ac0cc=>fmt(_0x3ac0cc)[_0x5e5157(0x1d5)](',','.')[_0x5e5157(0x1d5)](/e([+-]?\d+)/,_0x5e5157(0x125));return _0x1daea9(_0xfdafee['r'])+(_0xfdafee['i']<0x0?_0x5e5157(0x1d2):'+j\x5c,')+_0x1daea9(Math['abs'](_0xfdafee['i']));}function polarText(_0x41493c){const _0x3e8602=_0x52a25f;return fmt(abs(_0x41493c))+_0x3e8602(0x23b)+(abs(_0x41493c)===0x0?_0x3e8602(0x179):fmt(Math[_0x3e8602(0x1be)](_0x41493c['i'],_0x41493c['r'])*0xb4/Math['PI'])+'°');}function tex(_0x15c60c,_0x421838=![]){const _0x2d01b5=_0x52a25f;if(_0x15c60c['type']===_0x2d01b5(0x222))return String(_0x15c60c[_0x2d01b5(0x1a8)])[_0x2d01b5(0x1d5)](/e([+-]?\d+)/,_0x2d01b5(0x125));if(_0x15c60c[_0x2d01b5(0x130)]==='id')return _0x421838&&PARAM_ID[_0x2d01b5(0x12c)](_0x15c60c[_0x2d01b5(0x133)])?_0x2d01b5(0x1d3)+complexTex(parameterValue(_0x15c60c[_0x2d01b5(0x133)]))+_0x2d01b5(0x1e6):texName(_0x15c60c['name']);if(_0x15c60c['type']===_0x2d01b5(0x1b6))return _0x2d01b5(0x1d3)+tex(_0x15c60c['child'],_0x421838)+'\x5cright)';if(_0x15c60c[_0x2d01b5(0x130)]===_0x2d01b5(0x1de))return _0x15c60c['op']+tex(_0x15c60c[_0x2d01b5(0x197)],_0x421838);if(_0x15c60c['op']==='/')return _0x2d01b5(0x236)+tex(_0x15c60c[_0x2d01b5(0x12f)],_0x421838)+'}{'+tex(_0x15c60c[_0x2d01b5(0x218)],_0x421838)+'}';return'{'+tex(_0x15c60c[_0x2d01b5(0x12f)],_0x421838)+'}'+(_0x15c60c['op']==='*'?'\x5c,':_0x15c60c['op'])+'{'+tex(_0x15c60c['right'],_0x421838)+'}';}function systemTex(_0xa87481,_0x154522=![]){const _0x43a705=_0x52a25f;return _0x43a705(0x231)+_0xa87481[_0x43a705(0x1fd)](_0x545821=>tex(_0x545821['left'],_0x154522)+'&='+tex(_0x545821[_0x43a705(0x218)],_0x154522))[_0x43a705(0x120)]('\x5c\x5c[5pt]')+'\x5cend{aligned}\x5cright.';}function matrixTex(_0x156990){const _0x2557e3=_0x52a25f;return _0x2557e3(0x1ff)+'c'['repeat'](_0x156990[0x0]['length']-0x1)+_0x2557e3(0x18f)+_0x156990[_0x2557e3(0x1fd)](_0xfc7ba9=>_0xfc7ba9['map'](complexTex)['join']('&'))[_0x2557e3(0x120)](_0x2557e3(0x158))+'\x5cend{array}\x5cright]';}function mathMarkup(_0x29f2ca,_0x234f64=!![]){const _0x145a0b=_0x52a25f;return _0x145a0b(0x232)+'<div\x20class=\x22math\x22\x20data-display=\x22'+_0x234f64+'\x22\x20data-tex=\x22'+esc(_0x29f2ca)+'\x22>'+esc(_0x29f2ca)+'</div></div>';}function renderMath(_0x1d2b66=document){const _0x19e2b3=_0x52a25f;if(!window[_0x19e2b3(0x113)])return;_0x1d2b66[_0x19e2b3(0x23c)]('[data-tex]')['forEach'](_0x3ade6a=>{const _0x12ba15=_0x19e2b3;try{window[_0x12ba15(0x113)]['render'](_0x3ade6a[_0x12ba15(0x15d)][_0x12ba15(0x13d)],_0x3ade6a,{'displayMode':_0x3ade6a[_0x12ba15(0x15d)][_0x12ba15(0x1b9)]!==_0x12ba15(0x182),'throwOnError':![],'trust':![],'strict':'ignore','output':_0x12ba15(0x194)});}catch{_0x3ade6a['textContent']=_0x3ade6a['dataset'][_0x12ba15(0x13d)];}});}window[_0x52a25f(0x1a6)]('mathready',()=>{const _0x47af89=_0x52a25f;renderMath(),$(_0x47af89(0x1e3))['textContent']='Формули\x20·\x20KaTeX';}),window['addEventListener'](_0x52a25f(0x13b),()=>{const _0x4f9282=_0x52a25f;$(_0x4f9282(0x1e3))[_0x4f9282(0x219)]='KaTeX\x20недоступний:\x20показано\x20LaTeX.\x20Обчислення\x20працюють.';});function paramWidget(_0x34dfce){const _0x2e1856=_0x52a25f,_0x242b76=getParam(_0x34dfce),_0x152308=_0x242b76['form']===_0x2e1856(0x19b),_0x23dde5=unitFor(_0x34dfce);return _0x2e1856(0x273)+_0x34dfce[0x0]['toLowerCase']()+_0x2e1856(0x188)+displayName(_0x34dfce)+_0x2e1856(0x128)+_0x23dde5+_0x2e1856(0x23e)+_0x34dfce+_0x2e1856(0x1af)+_0x34dfce+_0x2e1856(0x131)+(_0x152308?_0x2e1856(0x11a):_0x2e1856(0x225))+_0x2e1856(0x1aa)+(_0x152308?_0x2e1856(0x1ae)+_0x23dde5:_0x2e1856(0x255)+_0x23dde5)+_0x2e1856(0x26b)+_0x34dfce+_0x2e1856(0x1f8)+_0x34dfce+'\x20'+(_0x152308?_0x2e1856(0x265):'дійсна\x20частина')+_0x2e1856(0x17b)+esc(_0x242b76['a'])+_0x2e1856(0x170)+(_0x152308?'∠':'+\x20j·')+_0x2e1856(0x1fe)+(_0x152308?_0x2e1856(0x205):'Im,\x20'+_0x23dde5)+_0x2e1856(0x26b)+_0x34dfce+'\x22\x20data-part=\x22b\x22\x20aria-label=\x22'+_0x34dfce+'\x20'+(_0x152308?_0x2e1856(0x161):_0x2e1856(0x268))+_0x2e1856(0x17b)+esc(_0x242b76['b'])+_0x2e1856(0x203)+_0x34dfce+_0x2e1856(0x163);}function renderParameterGrid(){const _0xb1f0ea=_0x52a25f;$(_0xb1f0ea(0x19f))[_0xb1f0ea(0x1d7)]=system[_0xb1f0ea(0x1ba)][_0xb1f0ea(0x1fd)](paramWidget)[_0xb1f0ea(0x120)]('');}function toggleForm(_0x4763d0){const _0x425336=_0x52a25f,_0x21d519=getParam(_0x4763d0),_0x451758=_0x21d519[_0x425336(0x16c)]===_0x425336(0x19b)?_0x425336(0x189):'polar',_0x2e193f=!_0x21d519['a'][_0x425336(0x18a)](),_0x2de84c=!_0x21d519['b'][_0x425336(0x18a)]();if(!(_0x2e193f&&_0x2de84c)){let _0x4c7230;try{_0x4c7230=parameterValue(_0x4763d0);}catch(_0x1c037b){return showToast(_0x425336(0x1a4)+_0x4763d0+_0x425336(0x17d),!![]),![];}_0x451758===_0x425336(0x189)?(_0x21d519['a']=fullNumber(_0x4c7230['r']),_0x21d519['b']=fullNumber(_0x4c7230['i'])):(_0x21d519['a']=fullNumber(abs(_0x4c7230)),_0x21d519['b']=fullNumber(abs(_0x4c7230)===0x0?0x0:Math[_0x425336(0x1be)](_0x4c7230['i'],_0x4c7230['r'])*0xb4/Math['PI']));}return _0x21d519[_0x425336(0x16c)]=_0x451758,renderParameterGrid(),calculate(),saveState(),document[_0x425336(0x246)](_0x425336(0x220)+_0x4763d0+'\x22]')?.[_0x425336(0x193)](),!![];}function updateTokens(){const _0x1c8742=_0x52a25f,_0x44f43a=_0x234755=>Array[_0x1c8742(0x1dc)]({'length':_0x234755==='Z'?config['z']:_0x234755==='E'?config['e']:_0x234755==='Y'?0x8:0x5},(_0x28368c,_0x157553)=>_0x234755+(_0x157553+0x1)),_0x914a0a=config[_0x1c8742(0x20b)]===_0x1c8742(0x12a)?[...names(),..._0x44f43a('Y'),..._0x44f43a('J'),..._0x44f43a('Z'),..._0x44f43a('E')]:[...names(),..._0x44f43a('Z'),..._0x44f43a('E')],_0x4a61d5=_0x123c6f=>_0x1c8742(0x21f)+_0x123c6f+_0x1c8742(0x1f0)+_0x123c6f+'\x22>'+displayName(_0x123c6f)+_0x1c8742(0x227);$(_0x1c8742(0x1b7))[_0x1c8742(0x1d7)]=_0x914a0a[_0x1c8742(0x126)](['j','+','-','*','/','(',')','='])[_0x1c8742(0x1fd)](_0x4a61d5)['join']('')+(config[_0x1c8742(0x20b)]==='node'?'':_0x1c8742(0x210)+[..._0x44f43a('Y'),..._0x44f43a('J')][_0x1c8742(0x1fd)](_0x4a61d5)['join']('')+_0x1c8742(0x200)),$(_0x1c8742(0x13c))[_0x1c8742(0x165)]=config[_0x1c8742(0x20b)]===_0x1c8742(0x12a)?_0x1c8742(0x160):names()[0x0]+_0x1c8742(0x257)+names()[0x1]+_0x1c8742(0x19a)+names()[0x0]+_0x1c8742(0x1a2);}function syncEditorGeometry(){const _0x1db63d=_0x52a25f,_0x299e9c=$(_0x1db63d(0x13c)),_0x43e41e=$(_0x1db63d(0x117));_0x43e41e['style'][_0x1db63d(0x112)]=_0x299e9c['clientWidth']+'px',_0x43e41e[_0x1db63d(0x20d)]['height']=_0x299e9c[_0x1db63d(0x164)]+'px',_0x43e41e['scrollTop']=_0x299e9c[_0x1db63d(0x1a5)],_0x43e41e['scrollLeft']=_0x299e9c[_0x1db63d(0x1ed)],$(_0x1db63d(0x11f))[_0x1db63d(0x1a5)]=_0x299e9c[_0x1db63d(0x1a5)];}function validate(){const _0x158434=_0x52a25f;clearTimeout(parseTimer),system=null,outcome=null;const _0x3824aa=$('equations')[_0x158434(0x1a8)],_0x49e101=_0x3824aa[_0x158434(0x26f)]('\x0a'),_0x440d4d=[],_0xab9f2c=[];let _0x3847b7=0x0;_0x49e101['forEach']((_0x2b832d,_0x229429)=>{const _0x4dc164=_0x158434;if(_0x2b832d[_0x4dc164(0x18a)]())try{_0x440d4d['push']({...parseEquation(_0x2b832d),'line':_0x229429+0x1});}catch(_0x24d0ee){_0xab9f2c[_0x4dc164(0x13e)]({'message':_0x24d0ee[_0x4dc164(0x22f)],'line':_0x229429+0x1,'pos':_0x24d0ee[_0x4dc164(0x148)]??0x0,'len':_0x24d0ee[_0x4dc164(0x146)]??0x1,'offset':_0x3847b7});}_0x3847b7+=_0x2b832d[_0x4dc164(0x1e8)]+0x1;}),lastErrors=_0xab9f2c,$(_0x158434(0x11f))[_0x158434(0x219)]=_0x49e101[_0x158434(0x1fd)]((_0x18bbb6,_0x1d099c)=>_0x1d099c+0x1)[_0x158434(0x120)]('\x0a'),$(_0x158434(0x1f5))[_0x158434(0x219)]=_0x440d4d[_0x158434(0x1e8)]+_0x158434(0x1c6)+config['n']+'\x20рівнянь';const _0x5d4454=new Map(_0xab9f2c[_0x158434(0x1fd)](_0x254261=>[_0x254261['line'],_0x254261]));$(_0x158434(0x117))[_0x158434(0x1d7)]=_0x49e101[_0x158434(0x1fd)]((_0x54040e,_0x3e7edf)=>{const _0x2008ff=_0x158434,_0x108b02=_0x5d4454[_0x2008ff(0x25b)](_0x3e7edf+0x1);return!_0x108b02?esc(_0x54040e):esc(_0x54040e['slice'](0x0,_0x108b02[_0x2008ff(0x148)]))+'<mark>'+esc(_0x54040e[_0x2008ff(0x24c)](_0x108b02[_0x2008ff(0x148)],_0x108b02[_0x2008ff(0x148)]+_0x108b02[_0x2008ff(0x146)])||'\x20')+_0x2008ff(0x1d1)+esc(_0x54040e[_0x2008ff(0x24c)](_0x108b02[_0x2008ff(0x148)]+_0x108b02[_0x2008ff(0x146)]));})[_0x158434(0x120)]('\x0a')+'\x0a',syncEditorGeometry(),$(_0x158434(0x150))['innerHTML']=_0xab9f2c['map']((_0xc32cc6,_0x230abb)=>'<button\x20class=\x22err-item\x22\x20data-error=\x22'+_0x230abb+'\x22>Рядок\x20'+_0xc32cc6[_0x158434(0x149)]+_0x158434(0x25c)+(_0xc32cc6['pos']+0x1)+':\x20'+esc(_0xc32cc6[_0x158434(0x22f)])+_0x158434(0x227))[_0x158434(0x120)]('');const _0x34b40c=!_0xab9f2c['length']&&_0x440d4d[_0x158434(0x1e8)]===config['n'];$(_0x158434(0x186))[_0x158434(0x1a7)]=_0x158434(0x1cc)+(_0xab9f2c[_0x158434(0x1e8)]?'bad':_0x34b40c?'ok':''),$('syntax-status')[_0x158434(0x219)]=_0xab9f2c[_0x158434(0x1e8)]?'Помилок:\x20'+_0xab9f2c[_0x158434(0x1e8)]:_0x34b40c?_0x158434(0x209):_0x158434(0x201)+config['n']+_0x158434(0x215),$(_0x158434(0x1ee))[_0x158434(0x15f)]=!_0x440d4d['length']||!!_0xab9f2c[_0x158434(0x1e8)];!$(_0x158434(0x1ee))[_0x158434(0x15f)]&&($(_0x158434(0x1ee))['innerHTML']=mathMarkup(systemTex(_0x440d4d)),renderMath($(_0x158434(0x1ee))));$(_0x158434(0x173))[_0x158434(0x15f)]=!_0x34b40c;if(_0x34b40c){system=_0x440d4d;const _0x5cb020={'Z':0x0,'Y':0x1,'E':0x2,'J':0x3};system[_0x158434(0x1ba)]=[...new Set(_0x440d4d[_0x158434(0x263)](_0x3704a4=>[..._0x3704a4[_0x158434(0x1ba)]]))][_0x158434(0x171)]((_0x2708e0,_0x2dbb12)=>_0x5cb020[_0x2708e0[0x0]]-_0x5cb020[_0x2dbb12[0x0]]||Number(_0x2708e0[_0x158434(0x24c)](0x1))-Number(_0x2dbb12[_0x158434(0x24c)](0x1))),$(_0x158434(0x204))[_0x158434(0x219)]=system[_0x158434(0x1ba)][_0x158434(0x1e8)]+_0x158434(0x22a),renderParameterGrid(),calculate();}else renderOutcome(),$('auto-note')[_0x158434(0x219)]='';}function calculate(){const _0x4642eb=_0x52a25f;outcome=null,$(_0x4642eb(0x145))[_0x4642eb(0x15f)]=!![],$('auto-note')[_0x4642eb(0x219)]='';if(!system){renderOutcome();return;}let _0xa3fcf=0x0,_0x41c934=0x0,_0x5695d1=![];document[_0x4642eb(0x23c)]('[data-param]')[_0x4642eb(0x135)](_0x2dc0f9=>{const _0x2d31e9=_0x4642eb,_0x5ddbcb=getParam(_0x2dc0f9[_0x2d31e9(0x15d)][_0x2d31e9(0x1b8)]),_0x3b7933=numberValue(_0x2dc0f9[_0x2d31e9(0x1a8)]),_0x44e059=!_0x2dc0f9['value'][_0x2d31e9(0x18a)](),_0x16c238=_0x5ddbcb['form']===_0x2d31e9(0x19b)&&_0x2dc0f9[_0x2d31e9(0x15d)][_0x2d31e9(0x142)]==='a'&&_0x3b7933!==null&&_0x3b7933<0x0,_0x41a4b0=!_0x44e059&&(_0x3b7933===null||_0x16c238);_0x2dc0f9[_0x2d31e9(0x134)](_0x2d31e9(0x1c3),String(_0x41a4b0));if(_0x44e059)_0xa3fcf++;if(_0x41a4b0)_0x41c934++;if(_0x16c238)_0x5695d1=!![];});for(const _0x14c01f of system[_0x4642eb(0x1ba)]){const _0x54d3c2=document['querySelector'](_0x4642eb(0x153)+_0x14c01f+'\x22]');try{const _0x568b3c=parameterValue(_0x14c01f);_0x54d3c2[_0x4642eb(0x219)]=getParam(_0x14c01f)['form']===_0x4642eb(0x19b)?complexText(_0x568b3c)+'\x20'+unitFor(_0x14c01f):polarText(_0x568b3c)+'\x20'+unitFor(_0x14c01f);}catch{_0x54d3c2[_0x4642eb(0x219)]=_0x4642eb(0x198);}}if(_0xa3fcf||_0x41c934){$(_0x4642eb(0x20a))[_0x4642eb(0x1a7)]=_0x4642eb(0x167)+(_0x41c934?_0x4642eb(0x24e):''),$(_0x4642eb(0x20a))[_0x4642eb(0x219)]=_0x5695d1?_0x4642eb(0x206):_0x41c934?'Виправте\x20виділені\x20поля.\x20Числа:\x20−20,5\x20або\x201e-3.':_0x4642eb(0x271)+_0xa3fcf+_0x4642eb(0x266),renderOutcome();return;}try{const _0x1878ad=[],_0x2aee93=[];for(const _0x4df593 of system){const _0x481c58=affine(_0x4df593[_0x4642eb(0x12f)]),_0x58ea02=affine(_0x4df593[_0x4642eb(0x218)]);_0x1878ad[_0x4642eb(0x13e)](_0x481c58['a'][_0x4642eb(0x1fd)]((_0x26d46e,_0x4377f9)=>sub(_0x26d46e,_0x58ea02['a'][_0x4377f9]))),_0x2aee93[_0x4642eb(0x13e)](sub(_0x58ea02['c'],_0x481c58['c']));}outcome={...solve(_0x1878ad,_0x2aee93),'A':_0x1878ad,'b':_0x2aee93},$(_0x4642eb(0x145))['hidden']=![],$('substituted')[_0x4642eb(0x1d7)]='<div\x20class=\x22tiny\x20muted\x22>Система\x20після\x20підстановки\x20·\x20числа\x20округлено\x20лише\x20для\x20показу</div>'+mathMarkup(systemTex(system,!![])),renderMath($(_0x4642eb(0x145))),$('numeric-status')['className']=_0x4642eb(0x1fb)+(outcome[_0x4642eb(0x137)]===_0x4642eb(0x1cb)?_0x4642eb(0x155):_0x4642eb(0x247)),$('numeric-status')[_0x4642eb(0x219)]=outcome[_0x4642eb(0x137)]===_0x4642eb(0x1cb)?_0x4642eb(0x15a):outcome[_0x4642eb(0x137)]===_0x4642eb(0x1c2)?_0x4642eb(0x1ad):_0x4642eb(0x111),$('auto-note')[_0x4642eb(0x219)]=outcome['kind']==='unique'?_0x4642eb(0x1b5):'';}catch(_0x38c1a1){outcome={'kind':_0x4642eb(0x247),'message':_0x38c1a1['message']},$('numeric-status')['className']='notice\x20error',$(_0x4642eb(0x20a))['textContent']=_0x38c1a1[_0x4642eb(0x22f)];}renderOutcome();}function renderOutcome(){const _0x5583dd=_0x52a25f,_0x400fc1=$('results-content'),_0x150cce=$(_0x5583dd(0x196));$(_0x5583dd(0x253))[_0x5583dd(0x12e)]=outcome?.[_0x5583dd(0x137)]!==_0x5583dd(0x1cb);if(!outcome){const _0x439206=!system?_0x5583dd(0x228):_0x5583dd(0x10b);_0x400fc1[_0x5583dd(0x1d7)]=_0x150cce[_0x5583dd(0x1d7)]=_0x5583dd(0x147)+_0x439206+'</div>';return;}if(outcome[_0x5583dd(0x137)]===_0x5583dd(0x247)){_0x400fc1[_0x5583dd(0x1d7)]=_0x150cce[_0x5583dd(0x1d7)]='<div\x20class=\x22notice\x20error\x22>'+esc(outcome[_0x5583dd(0x22f)])+_0x5583dd(0x11e);return;}const _0x2d31fb=outcome,_0xf76293=config['method']===_0x5583dd(0x12a)?'В':'А',_0x5af65f=names();_0x2d31fb[_0x5583dd(0x137)]!==_0x5583dd(0x1cb)?_0x400fc1[_0x5583dd(0x1d7)]='<div\x20class=\x22notice\x20error\x22>'+(_0x2d31fb[_0x5583dd(0x137)]===_0x5583dd(0x1c2)?_0x5583dd(0x1dd):_0x5583dd(0x185))+_0x5583dd(0x156)+_0x2d31fb['rank']+'\x20із\x20'+config['n']+_0x5583dd(0x12b):_0x400fc1[_0x5583dd(0x1d7)]='<div\x20class=\x22notice\x20'+(_0x2d31fb[_0x5583dd(0x249)]<1e-8?_0x5583dd(0x155):_0x5583dd(0x247))+'\x22>'+(_0x2d31fb[_0x5583dd(0x249)]<1e-8?_0x5583dd(0x1c5):_0x5583dd(0x132))+_0x5583dd(0x1e4)+_0x2d31fb[_0x5583dd(0x249)][_0x5583dd(0x22b)](0x2)+_0x5583dd(0x238)+(_0x2d31fb[_0x5583dd(0x18e)]?_0x5583dd(0x23d):'')+_0x5583dd(0x143)+_0x2d31fb['x']['map']((_0xb4f3c9,_0x13b328)=>_0x5583dd(0x118)+displayName(_0x5af65f[_0x13b328])+_0x5583dd(0x17e)+_0xf76293+_0x5583dd(0x24d)+complexText(_0xb4f3c9)+_0x5583dd(0x141)+polarText(_0xb4f3c9)+'<br>'+(abs(_0xb4f3c9)===0x0?'Для\x20нуля\x20фаза\x20не\x20визначена.':fmt(abs(_0xb4f3c9))+_0x5583dd(0x1d6)+fmt(Math[_0x5583dd(0x1be)](_0xb4f3c9['i'],_0xb4f3c9['r'])*0xb4/Math['PI'])+_0x5583dd(0x17a))+'</div></div>')[_0x5583dd(0x120)]('')+'</div><h3>Перевірка\x20кожного\x20рівняння</h3><p\x20class=\x22muted\x20tiny\x22>Залишок\x20—\x20ліва\x20частина\x20мінус\x20права.\x20Перевірка\x20виконується\x20до\x20округлення.</p>'+'<div\x20class=\x22table-scroll\x22><table><thead><tr><th>Рівняння</th><th>Ліва\x20частина</th><th>Права\x20частина</th><th>|Залишок|</th></tr></thead><tbody>'+system[_0x5583dd(0x1fd)]((_0x363466,_0x373ca9)=>{const _0x52d3b5=_0x5583dd,_0x15e47e=_0x26d8e8=>{const _0x543d2d=_0x4fed,_0x3d74df=affine(_0x26d8e8);return _0x3d74df['a'][_0x543d2d(0x229)]((_0x5bb2cc,_0x3a8c8e,_0x32f12b)=>add(_0x5bb2cc,mul(_0x3a8c8e,_0x2d31fb['x'][_0x32f12b])),_0x3d74df['c']);};return _0x52d3b5(0x1ec)+(_0x373ca9+0x1)+'</td><td>'+complexText(_0x15e47e(_0x363466[_0x52d3b5(0x12f)]))+'</td><td>'+complexText(_0x15e47e(_0x363466['right']))+_0x52d3b5(0x241)+abs(_0x2d31fb[_0x52d3b5(0x230)][_0x373ca9])[_0x52d3b5(0x22b)](0x2)+_0x52d3b5(0x19d);})[_0x5583dd(0x120)]('')+_0x5583dd(0x152),_0x150cce['innerHTML']=_0x5583dd(0x1f3)+mathMarkup(systemTex(system))+_0x5583dd(0x21e)+system[_0x5583dd(0x1ba)]['map'](_0x2e3a20=>mathMarkup(texName(_0x2e3a20)+'='+complexTex(parameterValue(_0x2e3a20))+_0x5583dd(0x1e2)+unitFor(_0x2e3a20)+'}',![]))[_0x5583dd(0x120)]('')+mathMarkup(systemTex(system,!![]))+_0x5583dd(0x20c)+mathMarkup(matrixTex(_0x2d31fb['A']['map']((_0x22177d,_0xa60c82)=>[..._0x22177d,_0x2d31fb['b'][_0xa60c82]])))+_0x5583dd(0x124)+_0x2d31fb[_0x5583dd(0x181)][_0x5583dd(0x1fd)]((_0x3992ba,_0x385de2)=>'<details\x20class=\x22solution-step\x22\x20'+(_0x385de2===0x0?_0x5583dd(0x269):'')+_0x5583dd(0x243)+esc(_0x3992ba[_0x5583dd(0x24b)])+_0x5583dd(0x1f4)+(_0x3992ba[_0x5583dd(0x1ef)]||[])['map'](_0x581249=>mathMarkup(_0x581249,![]))['join']('')+mathMarkup(matrixTex(_0x3992ba[_0x5583dd(0x1c9)]))+_0x5583dd(0x200))['join'](''),_0x2d31fb[_0x5583dd(0x137)]==='unique'?_0x150cce[_0x5583dd(0x1d7)]+='<h3>5.\x20Зворотна\x20підстановка</h3>'+_0x2d31fb[_0x5583dd(0x1cf)][_0x5583dd(0x1fd)](_0x5e22ff=>mathMarkup(texName(_0x5af65f[_0x5e22ff['i']])+_0x5583dd(0x26e)+complexTex(_0x5e22ff['numerator'])+'}{'+complexTex(_0x5e22ff[_0x5583dd(0x115)])+'}='+complexTex(_0x5e22ff[_0x5583dd(0x1a8)])+'\x5c;\x5ctext{'+_0xf76293+'}'))[_0x5583dd(0x120)]('')+_0x5583dd(0x159)+_0x2d31fb[_0x5583dd(0x249)][_0x5583dd(0x22b)](0x3)+_0x5583dd(0x16b):_0x150cce[_0x5583dd(0x1d7)]+=_0x5583dd(0x184)+(_0x2d31fb[_0x5583dd(0x137)]===_0x5583dd(0x1c2)?_0x5583dd(0x1f9):_0x5583dd(0x1c7))+_0x5583dd(0x11e),renderMath(_0x400fc1),renderMath(_0x150cce);}function switchTab(_0x44145a){const _0xc4af83=_0x52a25f;document['querySelectorAll'](_0xc4af83(0x16e))[_0xc4af83(0x135)](_0xacad0b=>{const _0x3ba176=_0xc4af83,_0x4a8337=_0xacad0b[_0x3ba176(0x15d)][_0x3ba176(0x240)]===_0x44145a;_0xacad0b['setAttribute']('aria-selected',String(_0x4a8337)),_0xacad0b['tabIndex']=_0x4a8337?0x0:-0x1,$(_0xacad0b[_0x3ba176(0x15d)][_0x3ba176(0x240)]+_0x3ba176(0x211))[_0x3ba176(0x15f)]=!_0x4a8337;});if(_0x44145a===_0xc4af83(0x1e7))syncEditorGeometry();}function fillExampleParams(){const _0x428801=_0x52a25f;params=Object[_0x428801(0x17f)](null),[[0xa,0x5],[0x14,0xa],[0xf,-0xf],[0x19,0xf],[0xa,0x14]]['forEach']((_0x4675e6,_0x105247)=>{const _0x2d3407=_0x428801;params['Z'+(_0x105247+0x1)]={'form':_0x2d3407(0x189),'a':String(_0x4675e6[0x0]),'b':String(_0x4675e6[0x1])};}),[[0x69,0x4b],[0x5,0x2d],[0x2d,-0x2d]][_0x428801(0x135)]((_0x4e8023,_0x52ee59)=>{params['E'+(_0x52ee59+0x1)]={'form':'rect','a':String(_0x4e8023[0x0]),'b':String(_0x4e8023[0x1])};});}function loadExample(){const _0x2fa686=_0x52a25f;config['z']=0x5,config['e']=0x3;if(config[_0x2fa686(0x20b)]===_0x2fa686(0x13a))config['n']=0x5,$('equations')[_0x2fa686(0x1a8)]=_0x2fa686(0x123);else config['method']==='mesh'?(config['n']=0x3,$(_0x2fa686(0x13c))[_0x2fa686(0x1a8)]='(Z2+Z3)*I11\x20-\x20Z3*I22\x20=\x20-E2-E3\x0a(Z1+Z3+Z5)*I22\x20-\x20Z3*I11\x20-\x20Z1*I33\x20=\x20E3-E1\x0a(Z1+Z4)*I33\x20-\x20Z1*I22\x20=\x20E1'):(config['n']=0x2,$(_0x2fa686(0x13c))['value']=_0x2fa686(0x10a));fillExampleParams(),syncConfig(),updateTokens(),validate(),switchTab(_0x2fa686(0x1e7)),saveState(),$(_0x2fa686(0x26a))['hidden']=![];}function syncConfig(){const _0x8e8985=_0x52a25f;$(_0x8e8985(0x20b))[_0x8e8985(0x1a8)]=config['method'],$(_0x8e8985(0x162))[_0x8e8985(0x1a8)]=config['n'],$('zcount')[_0x8e8985(0x1a8)]=config['z'],$(_0x8e8985(0x23f))[_0x8e8985(0x1a8)]=config['e'];}function exportState(){const _0x376e95=_0x52a25f;return{'version':0x2,'config':{...config},'equations':$(_0x376e95(0x13c))[_0x376e95(0x1a8)],'params':params,'precision':Number($(_0x376e95(0x1ab))[_0x376e95(0x1a8)])};}function sanitizeState(_0x1fd52f){const _0x30087a=_0x52a25f;if(!_0x1fd52f||_0x1fd52f['version']!==0x2||!_0x1fd52f[_0x30087a(0x14f)]||typeof _0x1fd52f[_0x30087a(0x13c)]!=='string'||_0x1fd52f[_0x30087a(0x13c)][_0x30087a(0x1e8)]>MAX_TEXT)throw Error(_0x30087a(0x270));const _0x47cf73=_0x1fd52f[_0x30087a(0x14f)];if(![_0x30087a(0x13a),'mesh',_0x30087a(0x12a)][_0x30087a(0x13f)](_0x47cf73['method'])||!Number['isInteger'](_0x47cf73['n'])||_0x47cf73['n']<0x2||_0x47cf73['n']>0x8||!Number['isInteger'](_0x47cf73['z'])||_0x47cf73['z']<0x0||_0x47cf73['z']>0x8||!Number['isInteger'](_0x47cf73['e'])||_0x47cf73['e']<0x0||_0x47cf73['e']>0x5)throw Error(_0x30087a(0x1fa));if(!_0x1fd52f[_0x30087a(0x191)]||typeof _0x1fd52f['params']!=='object'||Array[_0x30087a(0x187)](_0x1fd52f[_0x30087a(0x191)]))throw Error(_0x30087a(0x224));const _0x4a94f9=Object[_0x30087a(0x17f)](null);for(const [_0x6e5bbb,_0x37ef3a]of Object['entries'](_0x1fd52f[_0x30087a(0x191)])){if(!PARAM_ID['test'](_0x6e5bbb))continue;if(!_0x37ef3a||!['rect',_0x30087a(0x19b)]['includes'](_0x37ef3a[_0x30087a(0x16c)])||typeof _0x37ef3a['a']!==_0x30087a(0x109)||typeof _0x37ef3a['b']!==_0x30087a(0x109)||_0x37ef3a['a'][_0x30087a(0x1e8)]>0x78||_0x37ef3a['b'][_0x30087a(0x1e8)]>0x78)throw Error(_0x30087a(0x154)+_0x6e5bbb+'.');_0x4a94f9[_0x6e5bbb]={'form':_0x37ef3a[_0x30087a(0x16c)],'a':_0x37ef3a['a'],'b':_0x37ef3a['b']};}return{'version':0x2,'config':{'method':_0x47cf73[_0x30087a(0x20b)],'n':_0x47cf73['n'],'z':_0x47cf73['z'],'e':_0x47cf73['e']},'equations':_0x1fd52f[_0x30087a(0x13c)],'params':_0x4a94f9,'precision':[0x3,0x4,0x5,0x6,0x8][_0x30087a(0x13f)](_0x1fd52f[_0x30087a(0x1ab)])?_0x1fd52f[_0x30087a(0x1ab)]:0x4};}function sharedState(){const _0x272f55=_0x52a25f,_0x232767=location[_0x272f55(0x25f)][_0x272f55(0x24c)](0x1);if(!_0x232767)return null;if(_0x232767['length']>0x27100)throw Error('Посилання\x20надто\x20довге.');const _0x2d8803=new URLSearchParams(_0x232767)[_0x272f55(0x25b)](_0x272f55(0x234));return _0x2d8803===null?null:sanitizeState(JSON['parse'](_0x2d8803));}function applyState(_0x15d94f){const _0x163273=_0x52a25f;config=_0x15d94f[_0x163273(0x14f)],params=_0x15d94f[_0x163273(0x191)],$('equations')['value']=_0x15d94f[_0x163273(0x13c)],$(_0x163273(0x1ab))[_0x163273(0x1a8)]=_0x15d94f[_0x163273(0x1ab)],syncConfig(),updateTokens(),validate(),switchTab(_0x163273(0x1e7)),$(_0x163273(0x26a))[_0x163273(0x15f)]=!![];}function saveState(_0x24ea4c=!![]){const _0x3f9cb2=_0x52a25f;try{localStorage[_0x3f9cb2(0x1ca)](STORAGE_KEY,JSON[_0x3f9cb2(0x11b)](exportState())),storageAvailable=!![],$(_0x3f9cb2(0x239))[_0x3f9cb2(0x219)]='✓\x20Збережено\x20у\x20цьому\x20браузері';}catch{storageAvailable=![],$(_0x3f9cb2(0x239))[_0x3f9cb2(0x219)]=_0x3f9cb2(0x26c);}if(_0x24ea4c&&new URLSearchParams(location['hash'][_0x3f9cb2(0x24c)](0x1))[_0x3f9cb2(0x108)]('phasor'))try{const _0x5537cd=new URL(location[_0x3f9cb2(0x207)]);_0x5537cd['hash']=storageAvailable?'':new URLSearchParams({'phasor':JSON[_0x3f9cb2(0x11b)](exportState())})['toString'](),history['replaceState'](null,'',_0x5537cd[_0x3f9cb2(0x207)]);}catch{}}function restoreInitialState(){const _0x5be677=_0x52a25f;let _0xdfa9c2=null;try{_0xdfa9c2=sharedState();}catch{showToast(_0x5be677(0x1c0),!![]);}if(!_0xdfa9c2)try{const _0x44bbf6=localStorage[_0x5be677(0x1f2)](STORAGE_KEY);if(_0x44bbf6)_0xdfa9c2=sanitizeState(JSON[_0x5be677(0x1c8)](_0x44bbf6));}catch{$(_0x5be677(0x239))[_0x5be677(0x219)]='Локальне\x20збереження\x20недоступне\x20або\x20пошкоджене';}_0xdfa9c2?(applyState(_0xdfa9c2),saveState(![])):(syncConfig(),updateTokens(),validate());}function showToast(_0x32a1e8,_0x41ff93=![]){const _0x3e65a6=_0x52a25f;clearTimeout(toastTimer),$(_0x3e65a6(0x21b))[_0x3e65a6(0x219)]=_0x32a1e8,$(_0x3e65a6(0x21b))[_0x3e65a6(0x1a7)]=_0x3e65a6(0x21b)+(_0x41ff93?_0x3e65a6(0x24e):''),$('toast')[_0x3e65a6(0x15f)]=![],toastTimer=setTimeout(()=>{const _0x3caf41=_0x3e65a6;$(_0x3caf41(0x21b))['hidden']=!![];},0x1194);}async function copyText(_0x3bac2a,_0x1d6812,_0x44120d=_0x52a25f(0x259)){const _0x38c0ce=_0x52a25f;let _0x43f3b2=![];try{navigator[_0x38c0ce(0x122)]?.[_0x38c0ce(0x116)]&&(await navigator[_0x38c0ce(0x122)]['writeText'](_0x3bac2a),_0x43f3b2=!![]);}catch{}if(!_0x43f3b2){const _0x266110=document[_0x38c0ce(0x1ce)],_0x2525e2=document[_0x38c0ce(0x22c)](_0x38c0ce(0x15e));_0x2525e2['value']=_0x3bac2a,_0x2525e2[_0x38c0ce(0x1b0)]=!![],_0x2525e2['className']=_0x38c0ce(0x1a1),document[_0x38c0ce(0x11c)][_0x38c0ce(0x1f1)](_0x2525e2),_0x2525e2['select']();try{_0x43f3b2=Boolean(document[_0x38c0ce(0x254)]?.(_0x38c0ce(0x14d)));}catch{_0x43f3b2=![];}_0x2525e2[_0x38c0ce(0x10f)](),_0x266110?.[_0x38c0ce(0x193)]();}if(_0x43f3b2){if(_0x1d6812?.[_0x38c0ce(0x21c)]){const _0x4c7088=copyFeedback[_0x38c0ce(0x25b)](_0x1d6812),_0x2bce80=_0x4c7088?.[_0x38c0ce(0x16f)]??_0x1d6812[_0x38c0ce(0x219)];clearTimeout(_0x4c7088?.[_0x38c0ce(0x1df)]),_0x1d6812[_0x38c0ce(0x219)]=_0x38c0ce(0x18b);const _0x55cea3=setTimeout(()=>{const _0x64d411=_0x38c0ce;if(_0x1d6812['isConnected'])_0x1d6812[_0x64d411(0x219)]=_0x2bce80;copyFeedback['delete'](_0x1d6812);},0x708);copyFeedback[_0x38c0ce(0x256)](_0x1d6812,{'original':_0x2bce80,'timer':_0x55cea3});}return showToast(_0x44120d),!![];}$(_0x38c0ce(0x180))[_0x38c0ce(0x1a8)]=_0x3bac2a;const _0x125e33=$(_0x38c0ce(0x151));if(typeof _0x125e33[_0x38c0ce(0x23a)]===_0x38c0ce(0x1bf)){if(!_0x125e33[_0x38c0ce(0x269)])_0x125e33['showModal']();}else _0x125e33[_0x38c0ce(0x134)](_0x38c0ce(0x269),'');return $('copy-manual')['focus'](),$('copy-manual')[_0x38c0ce(0x260)](),showToast(_0x38c0ce(0x25e),!![]),![];}async function shareState(_0x22cc39){const _0x4b6a81=_0x52a25f,_0x55fdaa=new URL(location[_0x4b6a81(0x207)]);_0x55fdaa[_0x4b6a81(0x25f)]=new URLSearchParams({'phasor':JSON[_0x4b6a81(0x11b)](exportState())})['toString']();try{history[_0x4b6a81(0x176)](null,'',_0x55fdaa[_0x4b6a81(0x207)]);}catch{showToast(_0x4b6a81(0x1b2),!![]);}await copyText(_0x55fdaa['href'],_0x22cc39,'Посилання\x20на\x20поточний\x20стан\x20скопійовано');}function resultsReport(){const _0x14bded=_0x52a25f;if(outcome?.[_0x14bded(0x137)]!=='unique')return'';const _0x17fbc9={'branch':_0x14bded(0x18c),'mesh':'Контурні\x20струми','node':_0x14bded(0x192)}[config[_0x14bded(0x20b)]],_0x4e3396=config[_0x14bded(0x20b)]===_0x14bded(0x12a)?'В':'А';return[_0x14bded(0x24a)+_0x17fbc9,'',...outcome['x'][_0x14bded(0x1fd)]((_0x2c3b47,_0x1bfb2a)=>names()[_0x1bfb2a]+_0x14bded(0x18d)+complexText(_0x2c3b47)+'\x20'+_0x4e3396+_0x14bded(0x18d)+polarText(_0x2c3b47)+'\x20'+_0x4e3396),'',_0x14bded(0x242)+outcome[_0x14bded(0x249)]['toExponential'](0x3),_0x14bded(0x157)][_0x14bded(0x120)]('\x0a');}for(const [id,min,max,value]of[[_0x52a25f(0x162),0x2,0x8,0x5],['zcount',0x0,0x8,0x5],[_0x52a25f(0x23f),0x0,0x5,0x3]]){for(let i=min;i<=max;i++)$(id)['add'](new Option(i,i));$(id)[_0x52a25f(0x1a8)]=value;}[_0x52a25f(0x20b),_0x52a25f(0x162),'zcount',_0x52a25f(0x23f)][_0x52a25f(0x135)](_0x111033=>$(_0x111033)[_0x52a25f(0x1a6)](_0x52a25f(0x138),()=>{const _0x46c6dd=_0x52a25f;config={'method':$(_0x46c6dd(0x20b))['value'],'n':Number($(_0x46c6dd(0x162))['value']),'z':Number($('zcount')[_0x46c6dd(0x1a8)]),'e':Number($(_0x46c6dd(0x23f))[_0x46c6dd(0x1a8)])},$(_0x46c6dd(0x26a))[_0x46c6dd(0x15f)]=!![],updateTokens(),validate(),saveState();})),$(_0x52a25f(0x13c))[_0x52a25f(0x1a6)]('input',()=>{const _0x3574fe=_0x52a25f;$(_0x3574fe(0x26a))['hidden']=!![],saveState(),clearTimeout(parseTimer),system=null,outcome=null,$(_0x3574fe(0x173))[_0x3574fe(0x15f)]=!![],$('symbolic')[_0x3574fe(0x15f)]=!![],renderOutcome(),parseTimer=setTimeout(validate,0x8c),syncEditorGeometry();}),$(_0x52a25f(0x13c))[_0x52a25f(0x1a6)]('scroll',syncEditorGeometry);if(typeof ResizeObserver===_0x52a25f(0x1bf))new ResizeObserver(syncEditorGeometry)[_0x52a25f(0x14b)]($(_0x52a25f(0x13c)));window[_0x52a25f(0x1a6)](_0x52a25f(0x12d),syncEditorGeometry),$(_0x52a25f(0x1b7))[_0x52a25f(0x1a6)](_0x52a25f(0x19e),_0x115010=>{const _0x5ae898=_0x52a25f,_0x5a0bf6=_0x115010[_0x5ae898(0x1eb)][_0x5ae898(0x212)]('[data-insert]');if(!_0x5a0bf6)return;const _0x65c285=$(_0x5ae898(0x13c)),_0x522f61=_0x5a0bf6[_0x5ae898(0x15d)][_0x5ae898(0x202)];if(_0x65c285[_0x5ae898(0x1a8)][_0x5ae898(0x1e8)]-(_0x65c285['selectionEnd']-_0x65c285[_0x5ae898(0x172)])+_0x522f61[_0x5ae898(0x1e8)]>MAX_TEXT){showToast(_0x5ae898(0x136),!![]);return;}_0x65c285[_0x5ae898(0x19c)](_0x522f61,_0x65c285[_0x5ae898(0x172)],_0x65c285[_0x5ae898(0x214)],_0x5ae898(0x1d8)),_0x65c285[_0x5ae898(0x193)](),$(_0x5ae898(0x26a))[_0x5ae898(0x15f)]=!![],validate(),saveState();}),$(_0x52a25f(0x150))[_0x52a25f(0x1a6)]('click',_0x453478=>{const _0x5a42e4=_0x52a25f,_0x34c313=_0x453478['target'][_0x5a42e4(0x212)](_0x5a42e4(0x237));if(!_0x34c313)return;const _0x53afa2=lastErrors[Number(_0x34c313[_0x5a42e4(0x15d)][_0x5a42e4(0x247)])];if(!_0x53afa2)return;$(_0x5a42e4(0x13c))['focus'](),$(_0x5a42e4(0x13c))[_0x5a42e4(0x21a)](_0x53afa2[_0x5a42e4(0x21d)]+_0x53afa2[_0x5a42e4(0x148)],_0x53afa2[_0x5a42e4(0x21d)]+_0x53afa2[_0x5a42e4(0x148)]+_0x53afa2[_0x5a42e4(0x146)]);}),$(_0x52a25f(0x19f))[_0x52a25f(0x1a6)](_0x52a25f(0x1e7),_0x57ef54=>{const _0x35b213=_0x52a25f,_0x177bcf=_0x57ef54[_0x35b213(0x1eb)];if(!_0x177bcf[_0x35b213(0x1a9)](_0x35b213(0x1c1)))return;getParam(_0x177bcf[_0x35b213(0x15d)][_0x35b213(0x1b8)])[_0x177bcf[_0x35b213(0x15d)]['part']]=_0x177bcf[_0x35b213(0x1a8)],$('example-note')['hidden']=!![],calculate(),saveState();}),$(_0x52a25f(0x19f))[_0x52a25f(0x1a6)](_0x52a25f(0x19e),_0x464533=>{const _0x153e1a=_0x52a25f,_0x372642=_0x464533[_0x153e1a(0x1eb)][_0x153e1a(0x212)]('[data-toggle-form]');if(_0x372642)toggleForm(_0x372642['dataset'][_0x153e1a(0x10c)]);}),document['addEventListener'](_0x52a25f(0x19e),_0x123bd1=>{const _0x4727bb=_0x52a25f,_0x31782e=_0x123bd1['target'][_0x4727bb(0x212)]('[data-copy-tex]');if(_0x31782e)void copyText(_0x31782e[_0x4727bb(0x212)]('.formula')[_0x4727bb(0x246)]('[data-tex]')[_0x4727bb(0x15d)]['tex'],_0x31782e,_0x4727bb(0x1e9));}),document[_0x52a25f(0x23c)](_0x52a25f(0x16e))['forEach'](_0x3a8e32=>{const _0xd702d0=_0x52a25f;_0x3a8e32[_0xd702d0(0x1a6)]('click',()=>switchTab(_0x3a8e32[_0xd702d0(0x15d)][_0xd702d0(0x240)])),_0x3a8e32[_0xd702d0(0x1a6)]('keydown',_0x1245b1=>{const _0x408f1b=_0xd702d0,_0x4006bd=[...document['querySelectorAll'](_0x408f1b(0x16e))],_0x43c648=_0x4006bd[_0x408f1b(0x262)](_0x3a8e32),_0x26ceb1=_0x1245b1['key']===_0x408f1b(0x217)?_0x4006bd[(_0x43c648+0x1)%_0x4006bd[_0x408f1b(0x1e8)]]:_0x1245b1[_0x408f1b(0x119)]===_0x408f1b(0x252)?_0x4006bd[(_0x43c648+_0x4006bd[_0x408f1b(0x1e8)]-0x1)%_0x4006bd[_0x408f1b(0x1e8)]]:_0x1245b1[_0x408f1b(0x119)]==='Home'?_0x4006bd[0x0]:_0x1245b1[_0x408f1b(0x119)]===_0x408f1b(0x274)?_0x4006bd['at'](-0x1):null;_0x26ceb1&&(_0x1245b1[_0x408f1b(0x169)](),switchTab(_0x26ceb1[_0x408f1b(0x15d)]['tab']),_0x26ceb1[_0x408f1b(0x193)]());});}),$(_0x52a25f(0x1b4))[_0x52a25f(0x235)]=()=>switchTab('results'),$(_0x52a25f(0x1db))[_0x52a25f(0x235)]=()=>switchTab(_0x52a25f(0x1e7)),$(_0x52a25f(0x175))[_0x52a25f(0x235)]=loadExample,$('clear')[_0x52a25f(0x235)]=()=>{const _0x3ab6fa=_0x52a25f;params=Object[_0x3ab6fa(0x17f)](null),$(_0x3ab6fa(0x26a))[_0x3ab6fa(0x15f)]=!![],$(_0x3ab6fa(0x13c))[_0x3ab6fa(0x1a8)]='',validate(),switchTab(_0x3ab6fa(0x1e7)),saveState(),$(_0x3ab6fa(0x13c))[_0x3ab6fa(0x193)]();},$(_0x52a25f(0x1ab))[_0x52a25f(0x14a)]=()=>{if(system)calculate();saveState();},$(_0x52a25f(0x25a))[_0x52a25f(0x235)]=_0x198b21=>{const _0x52227b=_0x52a25f;void shareState(_0x198b21[_0x52227b(0x233)]);},$(_0x52a25f(0x253))[_0x52a25f(0x235)]=_0x3b89bd=>{const _0x3b81b3=_0x52a25f,_0x3e3508=resultsReport();if(_0x3e3508)void copyText(_0x3e3508,_0x3b89bd['currentTarget'],_0x3b81b3(0x221));},$(_0x52a25f(0x10d))[_0x52a25f(0x235)]=()=>{const _0x4d19f0=_0x52a25f,_0x29930a=$(_0x4d19f0(0x151));if(typeof _0x29930a['close']===_0x4d19f0(0x1bf))_0x29930a[_0x4d19f0(0x1b1)]();else _0x29930a[_0x4d19f0(0x1da)](_0x4d19f0(0x269));},window['addEventListener']('hashchange',()=>{const _0x16e61e=_0x52a25f;try{const _0x42706d=sharedState();_0x42706d&&(applyState(_0x42706d),saveState(![]),showToast('Стан\x20із\x20посилання\x20відновлено'));}catch{showToast(_0x16e61e(0x208),!![]);}});let printDetails=[];window[_0x52a25f(0x1a6)](_0x52a25f(0x1e1),()=>{const _0x33054c=_0x52a25f;printDetails=[...document[_0x33054c(0x23c)](_0x33054c(0x183))][_0x33054c(0x1fd)](_0x5e7382=>({'element':_0x5e7382,'open':_0x5e7382[_0x33054c(0x269)]})),printDetails[_0x33054c(0x135)](({element:_0xfefc36})=>{_0xfefc36['open']=!![];});}),window[_0x52a25f(0x1a6)](_0x52a25f(0x195),()=>{const _0x452be6=_0x52a25f;printDetails[_0x452be6(0x135)](({element:_0x4c6cad,open:_0x5f5613})=>{const _0x163af9=_0x452be6;_0x4c6cad[_0x163af9(0x269)]=_0x5f5613;}),printDetails=[];}),$('print')[_0x52a25f(0x235)]=()=>window['print'](),window[_0x52a25f(0x24f)]={'tokenize':tokenize,'parseEquation':parseEquation,'affine':affine,'solve':solve,'C':C,'add':add,'sub':sub,'mul':mul,'div':div,'validate':validate,'calculate':calculate,'parameterValue':parameterValue,'toggleForm':toggleForm,'exportState':exportState,'sanitizeState':sanitizeState,'applyState':applyState,'resultsReport':resultsReport,get 'config'(){return config;},get 'params'(){return params;},get 'outcome'(){return outcome;},get 'system'(){return system;}},restoreInitialState();if(window[_0x52a25f(0x113)])renderMath(),$(_0x52a25f(0x1e3))['textContent']='Формули\x20·\x20KaTeX';else{if(window[_0x52a25f(0x114)])$(_0x52a25f(0x1e3))[_0x52a25f(0x219)]=_0x52a25f(0x258);}
+      'use strict';const _0x4f9eb3=_0x1450;(function(_0x20f964,_0xbb8e90){const _0x3aa467=_0x1450,_0x343aaf=_0x20f964();while(!![]){try{const _0x296dd1=-parseInt(_0x3aa467(0x28e))/0x1+parseInt(_0x3aa467(0x25c))/0x2+parseInt(_0x3aa467(0x291))/0x3+parseInt(_0x3aa467(0x240))/0x4+-parseInt(_0x3aa467(0x283))/0x5*(-parseInt(_0x3aa467(0x292))/0x6)+parseInt(_0x3aa467(0x1fe))/0x7*(parseInt(_0x3aa467(0x271))/0x8)+parseInt(_0x3aa467(0x2eb))/0x9*(-parseInt(_0x3aa467(0x22f))/0xa);if(_0x296dd1===_0xbb8e90)break;else _0x343aaf['push'](_0x343aaf['shift']());}catch(_0x206fd6){_0x343aaf['push'](_0x343aaf['shift']());}}}(_0xef53,0x8e330));const $=_0x2791d9=>document[_0x4f9eb3(0x28c)](_0x2791d9),esc=_0x13db93=>String(_0x13db93)['replace'](/[&<>"']/g,_0x33a7cd=>({'&':_0x4f9eb3(0x27b),'<':_0x4f9eb3(0x27f),'>':_0x4f9eb3(0x1d0),'\x22':_0x4f9eb3(0x1fa),'\x27':_0x4f9eb3(0x1c7)}[_0x33a7cd])),STORAGE_KEY=_0x4f9eb3(0x1bf),MAX_TEXT=0x2ee0,PARAM_ID=/^(?:[ZY][1-8]|[EJ][1-5])$/,DEFAULT_CONFIG={'method':'branch','n':0x5,'z':0x5,'e':0x3};let config={...DEFAULT_CONFIG},params=Object[_0x4f9eb3(0x21e)](null),system=null,outcome=null,parseTimer,toastTimer;const copyFeedback=new WeakMap();let storageAvailable=!![],lastErrors=[];const C=(_0x35a746=0x0,_0x115d87=0x0)=>({'r':_0x35a746,'i':_0x115d87}),add=(_0x3a8107,_0x4aa9b1)=>C(_0x3a8107['r']+_0x4aa9b1['r'],_0x3a8107['i']+_0x4aa9b1['i']),neg=_0x4ac6b3=>C(-_0x4ac6b3['r'],-_0x4ac6b3['i']),sub=(_0x535e16,_0x760773)=>add(_0x535e16,neg(_0x760773)),mul=(_0x3dd03f,_0x5ec4b4)=>C(_0x3dd03f['r']*_0x5ec4b4['r']-_0x3dd03f['i']*_0x5ec4b4['i'],_0x3dd03f['r']*_0x5ec4b4['i']+_0x3dd03f['i']*_0x5ec4b4['r']),abs=_0x2b7730=>Math[_0x4f9eb3(0x1ae)](_0x2b7730['r'],_0x2b7730['i']),finite=_0x351465=>Number[_0x4f9eb3(0x1e9)](_0x351465['r'])&&Number[_0x4f9eb3(0x1e9)](_0x351465['i']);function div(_0x5a10c8,_0x49ba20){const _0x3bff83=_0x4f9eb3,_0x29cad5=Math[_0x3bff83(0x1b5)](Math[_0x3bff83(0x2de)](_0x49ba20['r']),Math[_0x3bff83(0x2de)](_0x49ba20['i']));if(!_0x29cad5)throw Error(_0x3bff83(0x293));const _0x4b7ccc=_0x49ba20['r']/_0x29cad5,_0x4b2e8c=_0x49ba20['i']/_0x29cad5,_0x485155=_0x4b7ccc*_0x4b7ccc+_0x4b2e8c*_0x4b2e8c;return C((_0x5a10c8['r']/_0x29cad5*_0x4b7ccc+_0x5a10c8['i']/_0x29cad5*_0x4b2e8c)/_0x485155,(_0x5a10c8['i']/_0x29cad5*_0x4b7ccc-_0x5a10c8['r']/_0x29cad5*_0x4b2e8c)/_0x485155);}function names(){const _0x11f715=_0x4f9eb3;return Array['from']({'length':config['n']},(_0x1a1f82,_0x257369)=>config[_0x11f715(0x2c8)]===_0x11f715(0x23d)?'U'+(_0x257369+0x1):config[_0x11f715(0x2c8)]===_0x11f715(0x1d6)?'I'+(_0x257369+0x1)+(_0x257369+0x1):'I'+(_0x257369+0x1));}const displayName=_0x468c96=>esc(_0x468c96)[_0x4f9eb3(0x25f)](/^([IUZYEJ])(\d+)$/,_0x4f9eb3(0x25b)),texName=_0x5e117c=>_0x5e117c[_0x4f9eb3(0x25f)](/^([IUZYEJ])(\d+)$/,_0x4f9eb3(0x1d2)),unitFor=_0x5be8dd=>({'Z':'Ом','Y':'См','E':'В','J':'А'}[_0x5be8dd[0x0]]),defaultForm=_0x100945=>/^[EJ]/[_0x4f9eb3(0x264)](_0x100945)?_0x4f9eb3(0x1bd):_0x4f9eb3(0x2d2);function getParam(_0x4581c2){return params[_0x4581c2]??={'form':defaultForm(_0x4581c2),'a':'','b':''};}function numberValue(_0x3fd1f7){const _0x539f63=_0x4f9eb3,_0xb7923a=String(_0x3fd1f7??'')['trim']()[_0x539f63(0x25f)](/−/g,'-')[_0x539f63(0x25f)](',','.');if(!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$/[_0x539f63(0x264)](_0xb7923a))return null;const _0x37666b=Number(_0xb7923a);return Number[_0x539f63(0x1e9)](_0x37666b)?_0x37666b:null;}function parameterValue(_0x586b4b){const _0x2691de=_0x4f9eb3,_0x175320=getParam(_0x586b4b),_0x111bda=numberValue(_0x175320['a']),_0x5cdf27=numberValue(_0x175320['b']);if(_0x111bda===null||_0x5cdf27===null)throw Error('Заповніть\x20обидва\x20поля\x20'+_0x586b4b+'.');if(_0x175320[_0x2691de(0x255)]===_0x2691de(0x2d2))return C(_0x111bda,_0x5cdf27);if(_0x111bda<0x0)throw Error(_0x2691de(0x266)+_0x586b4b+_0x2691de(0x1b4));const _0x1c830c=_0x5cdf27%0x168*Math['PI']/0xb4;return C(_0x111bda*Math[_0x2691de(0x248)](_0x1c830c),_0x111bda*Math[_0x2691de(0x272)](_0x1c830c));}function fullNumber(_0x207314){const _0xacd7a4=_0x4f9eb3;return _0x207314===0x0?'0':String(Number(_0x207314[_0xacd7a4(0x270)](0xf)));}class ParseError extends Error{constructor(_0x238205,_0xb4a173=0x0,_0x2b3019=0x1){const _0xcf56ee=_0x4f9eb3;super(_0x238205),this['pos']=_0xb4a173,this[_0xcf56ee(0x24e)]=_0x2b3019;}}function tokenize(_0x17f0cd){const _0x461ac9=_0x4f9eb3,_0x59bd16=_0x17f0cd[_0x461ac9(0x25f)](/[;.]+\s*$/,''),_0x39359d=[];let _0x404825=0x0;while(_0x404825<_0x59bd16[_0x461ac9(0x1e0)]){if(/\s/[_0x461ac9(0x264)](_0x59bd16[_0x404825])){_0x404825++;continue;}const _0x47000f=_0x59bd16[_0x461ac9(0x25e)](_0x404825);let _0x4cef9e;if(_0x4cef9e=_0x47000f[_0x461ac9(0x235)](/^(?:\d+(?:[.,]\d*)?|[.,]\d+)(?:(?:e[+-]?|E[+-])\d+)?/)){const _0x233de9=Number(_0x4cef9e[0x0]['replace'](',','.'));if(!Number[_0x461ac9(0x1e9)](_0x233de9))throw new ParseError(_0x461ac9(0x246),_0x404825,_0x4cef9e[0x0][_0x461ac9(0x1e0)]);_0x39359d['push']({'type':_0x461ac9(0x2dc),'value':_0x233de9,'pos':_0x404825,'len':_0x4cef9e[0x0][_0x461ac9(0x1e0)]}),_0x404825+=_0x4cef9e[0x0][_0x461ac9(0x1e0)];}else{if(_0x4cef9e=_0x47000f[_0x461ac9(0x235)](/^[IUZYEJ]\d+/i))_0x39359d[_0x461ac9(0x2b0)]({'type':'id','value':_0x4cef9e[0x0]['toUpperCase'](),'pos':_0x404825,'len':_0x4cef9e[0x0][_0x461ac9(0x1e0)]}),_0x404825+=_0x4cef9e[0x0][_0x461ac9(0x1e0)];else{if(/^[jJ]/['test'](_0x47000f))_0x39359d['push']({'type':'id','value':'j','pos':_0x404825,'len':0x1}),_0x404825++;else{if(_0x4cef9e=_0x47000f['match'](/^[a-zA-Z_][a-zA-Z0-9_]*/))_0x39359d[_0x461ac9(0x2b0)]({'type':'id','value':_0x4cef9e[0x0][_0x461ac9(0x1cf)](),'pos':_0x404825,'len':_0x4cef9e[0x0][_0x461ac9(0x1e0)]}),_0x404825+=_0x4cef9e[0x0][_0x461ac9(0x1e0)];else{if('+-*/()='[_0x461ac9(0x214)](_0x59bd16[_0x404825])||_0x59bd16[_0x404825]==='−')_0x39359d[_0x461ac9(0x2b0)]({'type':_0x59bd16[_0x404825]==='−'?'-':_0x59bd16[_0x404825],'pos':_0x404825,'len':0x1}),_0x404825++;else throw new ParseError(_0x461ac9(0x26f)+_0x59bd16[_0x404825]+_0x461ac9(0x297),_0x404825);}}}}if(_0x39359d['length']>0x190)throw new ParseError(_0x461ac9(0x1a7),0x0,_0x17f0cd[_0x461ac9(0x1e0)]);}const _0x4dd4c5=[];for(const _0x2fea23 of _0x39359d){const _0x469169=_0x4dd4c5[_0x4dd4c5['length']-0x1],_0x2a2887=_0x469169&&['num','id',')'][_0x461ac9(0x214)](_0x469169[_0x461ac9(0x26d)]),_0x37ca99=['id','('][_0x461ac9(0x214)](_0x2fea23[_0x461ac9(0x26d)]);if(_0x2a2887&&_0x37ca99)_0x4dd4c5[_0x461ac9(0x2b0)]({'type':'*','pos':_0x2fea23[_0x461ac9(0x22a)],'len':_0x2fea23['len'],'implicit':!![]});_0x4dd4c5[_0x461ac9(0x2b0)](_0x2fea23);}return _0x4dd4c5[_0x461ac9(0x2b0)]({'type':_0x461ac9(0x1e4),'pos':_0x59bd16[_0x461ac9(0x1e0)],'len':0x1}),_0x4dd4c5;}function parseEquation(_0xd454d){const _0x2f6451=_0x4f9eb3;if(_0xd454d[_0x2f6451(0x1e0)]>0x5dc)throw new ParseError(_0x2f6451(0x213),0x0,_0xd454d[_0x2f6451(0x1e0)]);const _0xabdea3=tokenize(_0xd454d),_0x1dd818=names(),_0x18c63d=new Set();let _0x4f8ca6=0x0,_0x43265b=0x0;const _0x303166=()=>_0xabdea3[_0x4f8ca6];function _0x52acdc(_0xd44e30){const _0x4b4f73=_0x2f6451;if(_0x303166()[_0x4b4f73(0x26d)]!==_0xd44e30)throw new ParseError(_0xd44e30===')'?_0x4b4f73(0x2a3):_0x4b4f73(0x2e6)+_0xd44e30+'».',_0x303166()[_0x4b4f73(0x22a)],_0x303166()[_0x4b4f73(0x24e)]);return _0xabdea3[_0x4f8ca6++];}function _0x3353fb(){const _0x4746ae=_0x2f6451,_0x47c1cd=_0x303166();if(++_0x43265b>0x50)throw new ParseError('Забагато\x20вкладених\x20дужок.',_0x47c1cd['pos']);let _0x5c50d4;if(_0x47c1cd[_0x4746ae(0x26d)]===_0x4746ae(0x2dc))_0x4f8ca6++,_0x5c50d4={'type':_0x4746ae(0x2dc),'value':_0x47c1cd[_0x4746ae(0x2cc)],'dependent':![]};else{if(_0x47c1cd[_0x4746ae(0x26d)]==='id'){_0x4f8ca6++;const _0x5d4b4b=_0x1dd818[_0x4746ae(0x214)](_0x47c1cd[_0x4746ae(0x2cc)]);if(!_0x5d4b4b&&_0x47c1cd['value']!=='j'&&!PARAM_ID[_0x4746ae(0x264)](_0x47c1cd[_0x4746ae(0x2cc)]))throw new ParseError(_0x4746ae(0x2fc)+_0x47c1cd['value']+_0x4746ae(0x242)+_0x1dd818[_0x4746ae(0x27e)](',\x20')+'.',_0x47c1cd[_0x4746ae(0x22a)],_0x47c1cd[_0x4746ae(0x24e)]);if(/^Z/[_0x4746ae(0x264)](_0x47c1cd[_0x4746ae(0x2cc)])&&Number(_0x47c1cd[_0x4746ae(0x2cc)]['slice'](0x1))>config['z'])throw new ParseError('Опір\x20'+_0x47c1cd[_0x4746ae(0x2cc)]+_0x4746ae(0x2b4),_0x47c1cd[_0x4746ae(0x22a)],_0x47c1cd['len']);if(/^E/['test'](_0x47c1cd['value'])&&Number(_0x47c1cd[_0x4746ae(0x2cc)][_0x4746ae(0x25e)](0x1))>config['e'])throw new ParseError(_0x4746ae(0x2ad)+_0x47c1cd[_0x4746ae(0x2cc)]+_0x4746ae(0x2ac),_0x47c1cd['pos'],_0x47c1cd[_0x4746ae(0x24e)]);if(PARAM_ID[_0x4746ae(0x264)](_0x47c1cd[_0x4746ae(0x2cc)]))_0x18c63d['add'](_0x47c1cd[_0x4746ae(0x2cc)]);_0x5c50d4={'type':'id','name':_0x47c1cd[_0x4746ae(0x2cc)],'dependent':_0x5d4b4b};}else{if(_0x47c1cd[_0x4746ae(0x26d)]==='('){_0x4f8ca6++;const _0x2adf33=_0x424e0a();_0x52acdc(')'),_0x5c50d4={'type':_0x4746ae(0x19d),'child':_0x2adf33,'dependent':_0x2adf33[_0x4746ae(0x2a6)]};}else{if(_0x47c1cd[_0x4746ae(0x26d)]==='+'||_0x47c1cd[_0x4746ae(0x26d)]==='-'){_0x4f8ca6++;const _0xad3b25=_0x3353fb();_0x5c50d4={'type':'unary','op':_0x47c1cd['type'],'child':_0xad3b25,'dependent':_0xad3b25[_0x4746ae(0x2a6)]};}else throw new ParseError(_0x47c1cd[_0x4746ae(0x26d)]==='end'?_0x4746ae(0x195):'Очікується\x20число,\x20параметр,\x20невідома\x20або\x20дужка.',_0x47c1cd[_0x4746ae(0x22a)],_0x47c1cd[_0x4746ae(0x24e)]);}}}return _0x43265b--,_0x5c50d4;}function _0x226385(){const _0x43a243=_0x2f6451;let _0x19fa7c=_0x3353fb();while(_0x303166()[_0x43a243(0x26d)]==='*'||_0x303166()['type']==='/'){const _0xa1d00b=_0xabdea3[_0x4f8ca6++],_0x34f3ae=_0x3353fb();if(_0xa1d00b[_0x43a243(0x26d)]==='*'&&_0x19fa7c[_0x43a243(0x2a6)]&&_0x34f3ae[_0x43a243(0x2a6)])throw new ParseError(_0x43a243(0x21f),_0xa1d00b[_0x43a243(0x22a)],_0xa1d00b[_0x43a243(0x24e)]);if(_0xa1d00b['type']==='/'&&_0x34f3ae[_0x43a243(0x2a6)])throw new ParseError('Нелінійний\x20вираз:\x20невідома\x20в\x20знаменнику.',_0xa1d00b[_0x43a243(0x22a)],_0xa1d00b[_0x43a243(0x24e)]);_0x19fa7c={'type':_0x43a243(0x197),'op':_0xa1d00b[_0x43a243(0x26d)],'left':_0x19fa7c,'right':_0x34f3ae,'dependent':_0x19fa7c[_0x43a243(0x2a6)]||_0x34f3ae[_0x43a243(0x2a6)]};}return _0x19fa7c;}function _0x424e0a(){const _0x5138ca=_0x2f6451;let _0x412df8=_0x226385();while(_0x303166()[_0x5138ca(0x26d)]==='+'||_0x303166()[_0x5138ca(0x26d)]==='-'){const _0x3e6edf=_0xabdea3[_0x4f8ca6++],_0x38a1cf=_0x226385();_0x412df8={'type':_0x5138ca(0x197),'op':_0x3e6edf[_0x5138ca(0x26d)],'left':_0x412df8,'right':_0x38a1cf,'dependent':_0x412df8[_0x5138ca(0x2a6)]||_0x38a1cf[_0x5138ca(0x2a6)]};}return _0x412df8;}const _0x3b6965=_0x424e0a();_0x52acdc('=');const _0x1937be=_0x424e0a();if(_0x303166()[_0x2f6451(0x26d)]!==_0x2f6451(0x1e4))throw new ParseError(_0x303166()['type']==='='?'У\x20рядку\x20має\x20бути\x20один\x20знак\x20рівності.':'Зайвий\x20символ\x20або\x20пропущений\x20оператор.',_0x303166()[_0x2f6451(0x22a)],_0x303166()[_0x2f6451(0x24e)]);return{'left':_0x3b6965,'right':_0x1937be,'used':_0x18c63d,'text':_0xd454d};}function affine(_0x369e57){const _0x23f270=_0x4f9eb3,_0x3cad0a=()=>({'c':C(),'a':Array['from']({'length':config['n']},()=>C())});if(_0x369e57[_0x23f270(0x26d)]==='num')return{..._0x3cad0a(),'c':C(_0x369e57['value'])};if(_0x369e57[_0x23f270(0x26d)]==='id'){const _0x333da9=_0x3cad0a(),_0x1369b9=names()[_0x23f270(0x1cd)](_0x369e57['name']);if(_0x1369b9>=0x0)_0x333da9['a'][_0x1369b9]=C(0x1);else _0x333da9['c']=_0x369e57[_0x23f270(0x1f9)]==='j'?C(0x0,0x1):parameterValue(_0x369e57[_0x23f270(0x1f9)]);return _0x333da9;}if(_0x369e57[_0x23f270(0x26d)]===_0x23f270(0x19d))return affine(_0x369e57[_0x23f270(0x1ef)]);if(_0x369e57['type']===_0x23f270(0x23e)){const _0x10510a=affine(_0x369e57[_0x23f270(0x1ef)]);return _0x369e57['op']==='-'?{'c':neg(_0x10510a['c']),'a':_0x10510a['a']['map'](neg)}:_0x10510a;}const _0x4a3c36=affine(_0x369e57[_0x23f270(0x233)]),_0x51ac05=affine(_0x369e57[_0x23f270(0x25d)]);if(_0x369e57['op']==='+')return{'c':add(_0x4a3c36['c'],_0x51ac05['c']),'a':_0x4a3c36['a']['map']((_0x5d199d,_0x4bda82)=>add(_0x5d199d,_0x51ac05['a'][_0x4bda82]))};if(_0x369e57['op']==='-')return{'c':sub(_0x4a3c36['c'],_0x51ac05['c']),'a':_0x4a3c36['a'][_0x23f270(0x2cd)]((_0x2c66fa,_0x30946f)=>sub(_0x2c66fa,_0x51ac05['a'][_0x30946f]))};if(_0x369e57['op']==='/')return{'c':div(_0x4a3c36['c'],_0x51ac05['c']),'a':_0x4a3c36['a']['map'](_0x7c68f=>div(_0x7c68f,_0x51ac05['c']))};return _0x369e57[_0x23f270(0x233)][_0x23f270(0x2a6)]?{'c':mul(_0x4a3c36['c'],_0x51ac05['c']),'a':_0x4a3c36['a'][_0x23f270(0x2cd)](_0x4c4e52=>mul(_0x4c4e52,_0x51ac05['c']))}:{'c':mul(_0x4a3c36['c'],_0x51ac05['c']),'a':_0x51ac05['a']['map'](_0x580141=>mul(_0x580141,_0x4a3c36['c']))};}function solve(_0x2b9f0e,_0x575174){const _0x585aa5=_0x4f9eb3,_0x19f5ae=_0x2b9f0e[_0x585aa5(0x1e0)],_0x3c76af=1e-12;if(!_0x19f5ae||_0x19f5ae>0x8||_0x575174['length']!==_0x19f5ae||_0x2b9f0e[_0x585aa5(0x2b6)](_0x305481=>_0x305481[_0x585aa5(0x1e0)]!==_0x19f5ae))throw Error(_0x585aa5(0x234));if([..._0x2b9f0e['flat'](),..._0x575174]['some'](_0x594e38=>!finite(_0x594e38)))throw Error(_0x585aa5(0x2f3));const _0x131cb0=_0x2b9f0e[_0x585aa5(0x2cd)]((_0x47c257,_0x1987f2)=>_0x47c257['map'](_0x65cf23=>({..._0x65cf23}))[_0x585aa5(0x250)]([{..._0x575174[_0x1987f2]}])),_0x1394f7=[],_0x1d58aa=[];for(let _0x53f169=0x0;_0x53f169<_0x19f5ae;_0x53f169++){const _0x2c6a0f=Math[_0x585aa5(0x1b5)](..._0x2b9f0e[_0x53f169]['map'](abs)),_0x543870=_0x2c6a0f||abs(_0x575174[_0x53f169])||0x1;_0x1394f7['push'](_0x543870),_0x131cb0[_0x53f169]=_0x131cb0[_0x53f169]['map'](_0x39563f=>div(_0x39563f,C(_0x543870)));}const _0x2967e8=_0x131cb0[_0x585aa5(0x2cd)](_0x4e89f1=>abs(_0x4e89f1[_0x19f5ae])),_0x545778=()=>_0x131cb0[_0x585aa5(0x2cd)](_0x12d112=>_0x12d112[_0x585aa5(0x2cd)](_0x4ae85a=>({..._0x4ae85a})));_0x1d58aa['push']({'label':_0x585aa5(0x1b7),'matrix':_0x545778()});let _0x412654=0x0;for(let _0x127d71=0x0;_0x127d71<_0x19f5ae&&_0x412654<_0x19f5ae;_0x127d71++){let _0x2621fa=_0x412654;for(let _0x2feae4=_0x412654+0x1;_0x2feae4<_0x19f5ae;_0x2feae4++)if(abs(_0x131cb0[_0x2feae4][_0x127d71])>abs(_0x131cb0[_0x2621fa][_0x127d71]))_0x2621fa=_0x2feae4;if(abs(_0x131cb0[_0x2621fa][_0x127d71])<=_0x3c76af)continue;const _0x5d759f=[];_0x2621fa!==_0x412654&&([_0x131cb0[_0x412654],_0x131cb0[_0x2621fa]]=[_0x131cb0[_0x2621fa],_0x131cb0[_0x412654]],[_0x2967e8[_0x412654],_0x2967e8[_0x2621fa]]=[_0x2967e8[_0x2621fa],_0x2967e8[_0x412654]],_0x5d759f[_0x585aa5(0x2b0)](_0x585aa5(0x27d)+(_0x412654+0x1)+_0x585aa5(0x2f7)+(_0x2621fa+0x1)+'}'));const _0x4de2e6=_0x131cb0[_0x412654][_0x127d71];for(let _0x16e32b=_0x412654+0x1;_0x16e32b<_0x19f5ae;_0x16e32b++){const _0x21f80b=div(_0x131cb0[_0x16e32b][_0x127d71],_0x4de2e6);if(abs(_0x21f80b)===0x0)continue;_0x2967e8[_0x16e32b]+=abs(_0x21f80b)*_0x2967e8[_0x412654];for(let _0x39e74d=_0x127d71+0x1;_0x39e74d<=_0x19f5ae;_0x39e74d++)_0x131cb0[_0x16e32b][_0x39e74d]=sub(_0x131cb0[_0x16e32b][_0x39e74d],mul(_0x21f80b,_0x131cb0[_0x412654][_0x39e74d]));_0x131cb0[_0x16e32b][_0x127d71]=C(),_0x5d759f[_0x585aa5(0x2b0)](_0x585aa5(0x27d)+(_0x16e32b+0x1)+_0x585aa5(0x227)+(_0x16e32b+0x1)+_0x585aa5(0x2a9)+complexTex(_0x21f80b)+_0x585aa5(0x1f7)+(_0x412654+0x1)+'}');}_0x412654++,_0x1d58aa[_0x585aa5(0x2b0)]({'label':_0x585aa5(0x1c5)+(names()[_0x127d71]||'x'+(_0x127d71+0x1)),'operations':_0x5d759f,'matrix':_0x545778()});}if(_0x131cb0[_0x585aa5(0x22d)]()['some'](_0x916a74=>!finite(_0x916a74))||_0x2967e8[_0x585aa5(0x2b6)](_0x2fef34=>!Number[_0x585aa5(0x1e9)](_0x2fef34)))throw Error(_0x585aa5(0x29c));for(let _0x4a8688=_0x412654;_0x4a8688<_0x19f5ae;_0x4a8688++){if(abs(_0x131cb0[_0x4a8688][_0x19f5ae])>_0x3c76af*_0x2967e8[_0x4a8688])return{'kind':_0x585aa5(0x19c),'rank':_0x412654,'steps':_0x1d58aa,'scales':_0x1394f7};}if(_0x412654<_0x19f5ae)return{'kind':_0x585aa5(0x2a6),'rank':_0x412654,'steps':_0x1d58aa,'scales':_0x1394f7};const _0x2eb8ac=Array[_0x585aa5(0x1ff)]({'length':_0x19f5ae},()=>C()),_0x5ef9d8=[];for(let _0x4e5df9=_0x19f5ae-0x1;_0x4e5df9>=0x0;_0x4e5df9--){let _0x4d7ab7=_0x131cb0[_0x4e5df9][_0x19f5ae];for(let _0x4de9c0=_0x4e5df9+0x1;_0x4de9c0<_0x19f5ae;_0x4de9c0++)_0x4d7ab7=sub(_0x4d7ab7,mul(_0x131cb0[_0x4e5df9][_0x4de9c0],_0x2eb8ac[_0x4de9c0]));_0x2eb8ac[_0x4e5df9]=div(_0x4d7ab7,_0x131cb0[_0x4e5df9][_0x4e5df9]),_0x5ef9d8['push']({'i':_0x4e5df9,'numerator':_0x4d7ab7,'denominator':_0x131cb0[_0x4e5df9][_0x4e5df9],'value':_0x2eb8ac[_0x4e5df9]});}if(_0x2eb8ac[_0x585aa5(0x2b6)](_0xabc05e=>!finite(_0xabc05e)))throw Error(_0x585aa5(0x203));const _0x25de66=_0x2b9f0e[_0x585aa5(0x2cd)]((_0x16fe66,_0x51fae3)=>sub(_0x16fe66[_0x585aa5(0x2ec)]((_0x2b85f4,_0x5bf4ad,_0x39145a)=>add(_0x2b85f4,mul(_0x5bf4ad,_0x2eb8ac[_0x39145a])),C()),_0x575174[_0x51fae3]));if(_0x25de66['some'](_0x63c16a=>!finite(_0x63c16a)))throw Error('Переповнення\x20при\x20перевірці\x20результату.');const _0xfe0ca=_0x25de66[_0x585aa5(0x2cd)]((_0x5503db,_0x37c8d6)=>{const _0x5a5981=_0x585aa5,_0x261f54=_0x2b9f0e[_0x37c8d6]['reduce']((_0x43c397,_0x5c5219,_0x8ef49f)=>_0x43c397+abs(_0x5c5219)*abs(_0x2eb8ac[_0x8ef49f]),abs(_0x575174[_0x37c8d6]));if(!Number[_0x5a5981(0x1e9)](_0x261f54))throw Error(_0x5a5981(0x1ea));return _0x261f54?abs(_0x5503db)/_0x261f54:abs(_0x5503db);});return{'kind':_0x585aa5(0x219),'rank':_0x412654,'x':_0x2eb8ac,'back':_0x5ef9d8,'steps':_0x1d58aa,'scales':_0x1394f7,'residual':_0x25de66,'relative':Math[_0x585aa5(0x1b5)](..._0xfe0ca),'ill':_0x131cb0[_0x585aa5(0x2b6)]((_0x322894,_0xa53542)=>abs(_0x322894[_0xa53542])<1e-8)};}function fmt(_0x217c12,_0x2de3f7=Number($('precision')[_0x4f9eb3(0x2cc)])){const _0x40de86=_0x4f9eb3;if(_0x217c12===0x0)return'0';const _0x2fe1fa=Math[_0x40de86(0x2de)](_0x217c12);if(_0x2fe1fa>=0x3b9aca00||_0x2fe1fa<0xa**-_0x2de3f7)return _0x217c12[_0x40de86(0x25a)](Math[_0x40de86(0x2aa)](_0x2de3f7,0x5))[_0x40de86(0x25f)]('.',',');return _0x217c12[_0x40de86(0x276)](_0x2de3f7)[_0x40de86(0x25f)](/\.?0+$/,'')[_0x40de86(0x25f)]('.',',');}function cleanComplex(_0x53dc66){const _0x4307bc=_0x4f9eb3,_0x37aa20=0x20*Number[_0x4307bc(0x277)]*abs(_0x53dc66);return C(Math[_0x4307bc(0x2de)](_0x53dc66['r'])<_0x37aa20?0x0:_0x53dc66['r'],Math[_0x4307bc(0x2de)](_0x53dc66['i'])<_0x37aa20?0x0:_0x53dc66['i']);}function complexText(_0x22d3bb){const _0x3e2096=_0x4f9eb3,_0x2ab444=cleanComplex(_0x22d3bb);return fmt(_0x2ab444['r'])+(_0x2ab444['i']<0x0?'\x20−\x20j·':_0x3e2096(0x2bc))+fmt(Math[_0x3e2096(0x2de)](_0x2ab444['i']));}function complexTex(_0x40e533){const _0x32a890=_0x4f9eb3,_0x3c1fbe=cleanComplex(_0x40e533),_0x530ad8=_0x1d8121=>fmt(_0x1d8121)[_0x32a890(0x25f)](',','.')[_0x32a890(0x25f)](/e([+-]?\d+)/,_0x32a890(0x209));return _0x530ad8(_0x3c1fbe['r'])+(_0x3c1fbe['i']<0x0?_0x32a890(0x2bf):'+j\x5c,')+_0x530ad8(Math[_0x32a890(0x2de)](_0x3c1fbe['i']));}function _0xef53(){const _0x5df3f3=['unary','[data-param-preview=\x22','3568460FNPEUb','aria-selected','.\x20Невідомі:\x20','I2\x20-\x20I3\x20+\x20I5\x20=\x200\x0a-I1\x20+\x20I4\x20-\x20I5\x20=\x200\x0aZ2*I2\x20+\x20Z3*I3\x20=\x20E2\x20+\x20E3\x0aZ3*I3\x20+\x20Z5*I5\x20-\x20Z1*I1\x20=\x20E3\x20-\x20E1\x0aZ1*I1\x20+\x20Z4*I4\x20=\x20E1','keydown','<div\x20class=\x22tiny\x20muted\x22>Система\x20після\x20підстановки\x20·\x20числа\x20округлено\x20лише\x20для\x20показу</div>','Число\x20завелике\x20або\x20некоректне.','\x20=\x200\x0a(Z1+Z2)','cos','Результати\x20скопійовано','tabIndex','scrollTop','Перевірте\x20дані:\x20завелика\x20похибка.',',\x20позиція\x20','len','atan2','concat','matrix','target','</div></div>','key','form','Вузлові\x20напруги','</tbody></table></div><p\x20class=\x22muted\x20tiny\x22>Перевірка\x20підтверджує\x20розв’язок\x20введеної\x20системи.\x20Правильність\x20складання\x20рівнянь\x20за\x20схемою\x20перевіряється\x20окремо.</p>','close','\x5cleft\x5c{\x5cbegin{aligned}','toExponential','$1<sub>$2</sub>','2070266HCXZYW','right','slice','replace','Стан\x20із\x20посилання\x20відновлено','repeat','✓\x20Обчислено\x20автоматично','line-count','test','steps','Модуль\x20','syntax-status','<mark>','</small></strong><button\x20type=\x22button\x22\x20class=\x22form-toggle\x22\x20data-toggle-form=\x22','blur','back','<div\x20class=\x22math\x22\x20tabindex=\x220\x22\x20role=\x22region\x22\x20aria-label=\x22Математичний\x20вираз.\x20Для\x20довгих\x20формул\x20доступна\x20горизонтальна\x20прокрутка\x22\x20data-display=\x22','type','trim','Недопустимий\x20символ\x20«','toPrecision','512SMfuUY','sin','✓\x20Збережено\x20у\x20цьому\x20браузері','open','katex','toFixed','EPSILON','<p\x20class=\x22notice\x20success\x22>Максимальна\x20відносна\x20нев’язка:\x20','setRangeText','Розв’язок\x20обчислено.\x20Результати\x20та\x20кроки\x20оновлено\x20автоматично.','&amp;','\x20<small>','R_{','join','&lt;','preventDefault','.</p>','readOnly','207420kvGsZI','toString','flatMap','example','✓\x20Скопійовано','activeElement','Некоректні\x20параметри\x20стану.','line','ArrowRight','getElementById','Модуль\x20має\x20бути\x20невід’ємним.\x20Напрямок\x20задайте\x20фазою.','263751WoZkPY','removeAttribute','errors','2169225ehtgQg','24tkuFUj','Ділення\x20на\x20нуль.\x20Перевірте\x20знаменник\x20і\x20значення\x20параметрів.','insert','replaceState','<div\x20class=\x22notice\x20','».\x20Використовуйте\x20латинські\x20позначення.','\x22\x20data-tex=\x22','matches','relative','<h3>4.\x20Прямий\x20хід\x20методу\x20Гауса</h3><p\x20class=\x22muted\x20tiny\x22>Ділимо\x20кожен\x20рядок\x20разом\x20із\x20правою\x20частиною\x20на\x20найбільший\x20модуль\x20коефіцієнта\x20A.\x20Для\x20нульового\x20рядка\x20—\x20на\x20|b|\x20(або\x201).\x20Для\x20кожного\x20стовпця\x20обираємо\x20найбільший\x20головний\x20елемент.\x20Допуск\x20правої\x20частини\x20переноситься\x20й\x20накопичується\x20окремо\x20для\x20кожного\x20рядка.</p>','Переповнення\x20під\x20час\x20обчислень.\x20Перевірте\x20масштаб\x20значень.','\x22>Рядок\x20','get','forEach','°)</sup>','innerHTML','\x20=\x20','Не\x20закрито\x20дужку.','has','notice\x20','dependent','getItem','phasor','}-(','min','Модуль,\x20','\x20недоступне.\x20Збільште\x20кількість\x20E.','Джерело\x20','модуль','substituted','push','\x5c;\x5ctext{','placeholder','<input\x20type=\x22text\x22\x20maxlength=\x22120\x22\x20inputmode=\x22text\x22\x20enterkeyhint=\x22next\x22\x20autocapitalize=\x22off\x22\x20autocorrect=\x22off\x22\x20spellcheck=\x22false\x22\x20autocomplete=\x22off\x22\x20data-param=\x22','\x20недоступний.\x20Збільште\x20кількість\x20Z.','mathfailed','some','KaTeX\x20недоступний:\x20показано\x20LaTeX.\x20Обчислення\x20працюють.','symbolic','\x22\x20data-part=\x22b\x22\x20aria-label=\x22','show-results','ecount','\x20+\x20j·','\x22\x20aria-label=\x22Змінити\x20форму\x20','Скопійовано','-j\x5c,','style','\x5cleft(','<p\x20class=\x22notice\x22>Матриця\x20близька\x20до\x20виродженої:\x20результат\x20чутливий\x20до\x20точності\x20даних.</p>','дійсна\x20частина','gutter','Рівняння\x20Кірхгофа','Після\x20виключення\x20отримано\x20рядок\x200\x20=\x20b,\x20де\x20b\x20≠\x200\x20у\x20межах\x20допуску.','Спочатку\x20складіть\x20коректну\x20систему\x20рівнянь.','method','Не\x20вдалося\x20прочитати\x20стан\x20із\x20посилання.\x20Перевіряю\x20локальне\x20збереження.','beforeprint','success','value','map','param-count','\x20⇄</button></div><div\x20class=\x22parameter-inputs\x22><label>','Нескінченна\x20кількість\x20розв’язків.\x20Рівняння\x20не\x20визначають\x20усі\x20невідомі.','tab','rect','\x5cright)','original','href','[data-error]','Y1\x20U1\x20+\x20Y2(U1-U2)\x20=\x20J1\x0aY3\x20U2\x20+\x20Y2(U2-U1)\x20=\x200','\x20-\x20','[role=tab]','bad','set','num','ArrowLeft','abs','mathready','isInteger','resize','kind','writeText','Re\x20+\x20j·Im','<div\x20class=\x22notice\x20error\x22>','Очікується\x20«','notice','Потрібно\x20','dataset','hidden','11610eQuvOQ','reduce','\x22\x20title=\x22Перетворити\x20введені\x20значення\x20в\x20іншу\x20форму\x22>','parameter-equations','<h3>1.\x20Початкова\x20система</h3>','version','branch','currentTarget','Некоректні\x20або\x20завеликі\x20коефіцієнти.','scrollLeft','param','Некоректні\x20налаштування\x20у\x20збережених\x20даних.','}\x5cleftrightarrow\x20R_{','<details\x20class=\x22solution-step\x22\x20','delete','Залишилося\x20заповнити\x20полів:\x20','tex','Невідоме\x20позначення\x20','zcount','selectionEnd','Некоректні\x20дані\x20параметра\x20','[data-param]','Ранг\x20менший\x20за\x20кількість\x20невідомих:\x20є\x20вільні\x20змінні.','.\x20Нуль\x20введіть\x20явно.','Im,\x20','\x20·\x20','clientWidth','Розв’язків\x20немає:\x20рівняння\x20суперечать\x20одне\x20одному.','<button\x20class=\x22err-item\x22\x20data-error=\x22','\x5c\x5c[3pt]','Незавершене\x20рівняння.','+\x20j·','binary','back-input','showModal','</button>','highlight','inconsistent','group','φ,\x20°','.\x20Допуск\x20після\x20масштабування:\x2010⁻¹².</p>','sort','notice\x20error','remove','Посилання\x20сформовано;\x20адресний\x20рядок\x20не\x20вдалося\x20оновити.','\x22></label></div><div\x20class=\x22parameter-preview\x22\x20data-param-preview=\x22','solution-content','function','Рівняння\x20надто\x20складне:\x20скоротіть\x20кількість\x20доданків.','Формули\x20·\x20KaTeX','[data-tex]','execCommand','className','numerator','</div><p\x20class=\x22muted\x20tiny\x22>Ранг\x20матриці:\x20','hypot','Посилання\x20містить\x20пошкоджений\x20або\x20непідтримуваний\x20стан.','render','</td><td>','focus','math-status','\x20має\x20бути\x20невід’ємним.\x20Знак\x20задайте\x20фазою.','max','select','Однакове\x20масштабування\x20коефіцієнтів\x20і\x20правих\x20частин','\x20error','\x22></label><span>','Посилання\x20на\x20поточний\x20стан\x20скопійовано','equations','example-note','polar','parameter-section','phasor.state.v2','object','✓\x20Перевірка\x20підстановкою\x20пройдена.','toast','add','\x20·\x20e<sup>j(','Виключення\x20','Модуль\x20∠\x20φ','&#39;','print','Результати\x20округлено\x20для\x20відображення.','clipboard-fallback','Home','scroll','indexOf','auto-note','toUpperCase','&gt;','toggleForm','$1_{$2}','\x20рівнянь','height','\x20=\x20E1','mesh','addEventListener','Автозбереження\x20недоступне\x20у\x20цьому\x20браузері','save-status','</div><h3>Перевірка\x20кожного\x20рівняння</h3><p\x20class=\x22muted\x20tiny\x22>Залишок\x20—\x20ліва\x20частина\x20мінус\x20права.\x20Перевірка\x20виконується\x20до\x20округлення.</p>','precision','Контурні\x20струми','error','Локальне\x20збереження\x20недоступне\x20або\x20пошкоджене','\x5cleft[\x5cbegin{array}{','length','copy-dialog','badge\x20','close-copy','end','уявна\x20частина','afterprint','[data-toggle-form]','<h3>2.\x20Параметри\x20та\x20підстановка</h3>','isFinite','Завеликий\x20масштаб\x20для\x20достовірної\x20перевірки.','\x5c\x5c[5pt]','hash','querySelectorAll','tokens','child','кут','\x5cend{aligned}\x5cright.','setItem','string','stringify','</div>','results-content',')R_{','Система\x20суперечлива:\x20розв’язків\x20немає\x20у\x20межах\x20числової\x20точності.','name','&quot;','Заповніть\x20усі\x20параметри\x20на\x20вкладці\x20«Введення».','click','querySelector','21280erMDtN','from','Enter','Є\x20нескінченна\x20кількість\x20розв’язків\x20у\x20межах\x20числової\x20точності.','textContent','Результат\x20виходить\x20за\x20числовий\x20діапазон.','<h3>5.\x20Зворотна\x20підстановка</h3>','params','Автокопіювання\x20недоступне.\x20Скопіюйте\x20текст\x20із\x20відкритого\x20поля.','\x22\x20value=\x22','results','\x5ccdot10^{$1}','setAttribute','\x22></div></article>','hashchange','</mark>','[data-copy-tex]','clear','timer','</td></tr>','textarea','Рівняння\x20задовге:\x20максимум\x201500\x20символів.','includes','=\x5cfrac{','part','[data-insert]','</summary><div>','unique','Спочатку\x20заповніть\x20обидва\x20коректні\x20поля\x20','<article\x20class=\x22parameter-card\x20','count','input','create','Нелінійний\x20вираз:\x20добуток\x20двох\x20невідомих.','change','onclick','Максимальна\x20відносна\x20нев’язка:\x20','Виправте\x20виділені\x20поля.\x20Числа:\x20−20,5\x20або\x201e-3.','share','numeric-status','operations','}\x5cleftarrow\x20R_{','used','body','pos','Помилок:\x20','denominator','flat','config','16780UhLibM','ill','\x20/\x20','message','left','Некоректний\x20розмір\x20матриці.','match','</div></details>','(1/Z2+1/Z3+1/Z5)*U1\x20-\x20U2/Z5\x20=\x20-E2/Z2+E3/Z3\x0a(1/Z1+1/Z4+1/Z5)*U2\x20-\x20U1/Z5\x20=\x20E1/Z1','closest','Введіть\x20обидві\x20складові','Посилання\x20надто\x20довге.','split','Система\x20записана\x20коректно','node'];_0xef53=function(){return _0x5df3f3;};return _0xef53();}function _0x1450(_0x30840a,_0x4f1f45){_0x30840a=_0x30840a-0x18f;const _0xef53cf=_0xef53();let _0x145023=_0xef53cf[_0x30840a];return _0x145023;}function polarText(_0x4aeec6){const _0x20e2ad=_0x4f9eb3;return fmt(abs(_0x4aeec6))+'\x20∠\x20'+(abs(_0x4aeec6)===0x0?'—\x20(фаза\x20не\x20визначена)':fmt(Math[_0x20e2ad(0x24f)](_0x4aeec6['i'],_0x4aeec6['r'])*0xb4/Math['PI'])+'°');}function tex(_0x151dca,_0x3fa901=![]){const _0xf8b819=_0x4f9eb3;if(_0x151dca['type']==='num')return String(_0x151dca[_0xf8b819(0x2cc)])['replace'](/e([+-]?\d+)/,_0xf8b819(0x209));if(_0x151dca['type']==='id')return _0x3fa901&&PARAM_ID[_0xf8b819(0x264)](_0x151dca[_0xf8b819(0x1f9)])?_0xf8b819(0x2c1)+complexTex(parameterValue(_0x151dca[_0xf8b819(0x1f9)]))+'\x5cright)':texName(_0x151dca[_0xf8b819(0x1f9)]);if(_0x151dca['type']===_0xf8b819(0x19d))return _0xf8b819(0x2c1)+tex(_0x151dca[_0xf8b819(0x1ef)],_0x3fa901)+_0xf8b819(0x2d3);if(_0x151dca['type']===_0xf8b819(0x23e))return _0x151dca['op']+tex(_0x151dca[_0xf8b819(0x1ef)],_0x3fa901);if(_0x151dca['op']==='/')return'\x5cfrac{'+tex(_0x151dca['left'],_0x3fa901)+'}{'+tex(_0x151dca[_0xf8b819(0x25d)],_0x3fa901)+'}';return'{'+tex(_0x151dca[_0xf8b819(0x233)],_0x3fa901)+'}'+(_0x151dca['op']==='*'?'\x5c,':_0x151dca['op'])+'{'+tex(_0x151dca[_0xf8b819(0x25d)],_0x3fa901)+'}';}function systemTex(_0x107aa5,_0x35e630=![]){const _0xace623=_0x4f9eb3;return _0xace623(0x259)+_0x107aa5['map'](_0x57e8ea=>tex(_0x57e8ea['left'],_0x35e630)+'&='+tex(_0x57e8ea['right'],_0x35e630))[_0xace623(0x27e)](_0xace623(0x1eb))+_0xace623(0x1f1);}function matrixTex(_0x4dd753){const _0x53013d=_0x4f9eb3;return _0x53013d(0x1df)+'c'[_0x53013d(0x261)](_0x4dd753[0x0][_0x53013d(0x1e0)]-0x1)+'|c}'+_0x4dd753[_0x53013d(0x2cd)](_0x5d561f=>_0x5d561f[_0x53013d(0x2cd)](complexTex)[_0x53013d(0x27e)]('&'))[_0x53013d(0x27e)](_0x53013d(0x194))+'\x5cend{array}\x5cright]';}function mathMarkup(_0x1420f1,_0x133feb=!![]){const _0x1b8a9d=_0x4f9eb3;return'<div\x20class=\x22formula\x22><button\x20class=\x22copy-tex\x22\x20type=\x22button\x22\x20data-copy-tex\x20aria-label=\x22Копіювати\x20LaTeX\x22>Копіювати\x20LaTeX</button>'+_0x1b8a9d(0x26c)+_0x133feb+_0x1b8a9d(0x298)+esc(_0x1420f1)+'\x22>'+esc(_0x1420f1)+_0x1b8a9d(0x253);}function renderMath(_0x5e7d6c=document){const _0x31a60e=_0x4f9eb3;if(!window[_0x31a60e(0x275)])return;_0x5e7d6c[_0x31a60e(0x1ed)](_0x31a60e(0x1a9))[_0x31a60e(0x29f)](_0xd433ac=>{const _0x3366e1=_0x31a60e;try{window[_0x3366e1(0x275)][_0x3366e1(0x1b0)](_0xd433ac[_0x3366e1(0x2e9)]['tex'],_0xd433ac,{'displayMode':_0xd433ac['dataset']['display']!=='false','throwOnError':![],'trust':![],'strict':'ignore','output':'htmlAndMathml'});}catch{_0xd433ac[_0x3366e1(0x202)]=_0xd433ac[_0x3366e1(0x2e9)][_0x3366e1(0x2fb)];}});}window[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x2df),()=>{const _0xdea20b=_0x4f9eb3;renderMath(),$(_0xdea20b(0x1b3))[_0xdea20b(0x202)]=_0xdea20b(0x1a8);}),window[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x2b5),()=>{const _0x5a5656=_0x4f9eb3;$('math-status')[_0x5a5656(0x202)]=_0x5a5656(0x2b7);});function paramWidget(_0x51001b){const _0x5d3d10=_0x4f9eb3,_0x55410c=getParam(_0x51001b),_0x5b36d6=_0x55410c[_0x5d3d10(0x255)]===_0x5d3d10(0x1bd),_0x563e52=unitFor(_0x51001b);return _0x5d3d10(0x21b)+_0x51001b[0x0]['toLowerCase']()+'\x22><div\x20class=\x22parameter-top\x22><strong>'+displayName(_0x51001b)+_0x5d3d10(0x27c)+_0x563e52+_0x5d3d10(0x269)+_0x51001b+_0x5d3d10(0x2bd)+_0x51001b+_0x5d3d10(0x2ed)+(_0x5b36d6?_0x5d3d10(0x1c6):_0x5d3d10(0x2e4))+_0x5d3d10(0x2cf)+(_0x5b36d6?_0x5d3d10(0x2ab)+_0x563e52:'Re,\x20'+_0x563e52)+_0x5d3d10(0x2b3)+_0x51001b+'\x22\x20data-part=\x22a\x22\x20aria-label=\x22'+_0x51001b+'\x20'+(_0x5b36d6?_0x5d3d10(0x2ae):_0x5d3d10(0x2c3))+'\x22\x20value=\x22'+esc(_0x55410c['a'])+_0x5d3d10(0x1b9)+(_0x5b36d6?'∠':_0x5d3d10(0x196))+'</span><label>'+(_0x5b36d6?_0x5d3d10(0x19e):_0x5d3d10(0x18f)+_0x563e52)+_0x5d3d10(0x2b3)+_0x51001b+_0x5d3d10(0x2b9)+_0x51001b+'\x20'+(_0x5b36d6?_0x5d3d10(0x1f0):_0x5d3d10(0x1e5))+_0x5d3d10(0x207)+esc(_0x55410c['b'])+_0x5d3d10(0x1a4)+_0x51001b+_0x5d3d10(0x20b);}function renderParameterGrid(){const _0xb53b9a=_0x4f9eb3;$(_0xb53b9a(0x2ee))[_0xb53b9a(0x2a1)]=system[_0xb53b9a(0x228)][_0xb53b9a(0x2cd)](paramWidget)[_0xb53b9a(0x27e)]('');}function toggleForm(_0x1ee5ae){const _0x55c371=_0x4f9eb3,_0x34e447=getParam(_0x1ee5ae),_0x420541=_0x34e447['form']==='polar'?_0x55c371(0x2d2):_0x55c371(0x1bd),_0x2aaf51=!_0x34e447['a'][_0x55c371(0x26e)](),_0x5e3336=!_0x34e447['b']['trim']();if(!(_0x2aaf51&&_0x5e3336)){let _0x17ab9e;try{_0x17ab9e=parameterValue(_0x1ee5ae);}catch(_0x443d53){return showToast(_0x55c371(0x21a)+_0x1ee5ae+'\x20або\x20очистіть\x20їх.',!![]),![];}_0x420541===_0x55c371(0x2d2)?(_0x34e447['a']=fullNumber(_0x17ab9e['r']),_0x34e447['b']=fullNumber(_0x17ab9e['i'])):(_0x34e447['a']=fullNumber(abs(_0x17ab9e)),_0x34e447['b']=fullNumber(abs(_0x17ab9e)===0x0?0x0:Math['atan2'](_0x17ab9e['i'],_0x17ab9e['r'])*0xb4/Math['PI']));}return _0x34e447[_0x55c371(0x255)]=_0x420541,renderParameterGrid(),calculate(),saveState(),document['querySelector']('[data-toggle-form=\x22'+_0x1ee5ae+'\x22]')?.[_0x55c371(0x1b2)](),!![];}function updateTokens(){const _0x2329b5=_0x4f9eb3,_0x28a18f=_0x5ccc4d=>Array[_0x2329b5(0x1ff)]({'length':_0x5ccc4d==='Z'?config['z']:_0x5ccc4d==='E'?config['e']:_0x5ccc4d==='Y'?0x8:0x5},(_0x43e1ee,_0xcdd00e)=>_0x5ccc4d+(_0xcdd00e+0x1)),_0x5a43e6=config['method']===_0x2329b5(0x23d)?[...names(),..._0x28a18f('Y'),..._0x28a18f('J'),..._0x28a18f('Z'),..._0x28a18f('E')]:[...names(),..._0x28a18f('Z'),..._0x28a18f('E')],_0x57425a=_0x2fbd29=>'<button\x20type=\x22button\x22\x20data-insert=\x22'+_0x2fbd29+'\x22\x20aria-label=\x22Вставити\x20'+_0x2fbd29+'\x22>'+displayName(_0x2fbd29)+'</button>';$(_0x2329b5(0x1ee))['innerHTML']=_0x5a43e6[_0x2329b5(0x250)](['j','+','-','*','/','(',')','='])[_0x2329b5(0x2cd)](_0x57425a)['join']('')+(config[_0x2329b5(0x2c8)]===_0x2329b5(0x23d)?'':'<details\x20class=\x22extra-tokens\x22><summary>Провідності\x20Y\x20та\x20джерела\x20струму\x20J</summary><div>'+[..._0x28a18f('Y'),..._0x28a18f('J')][_0x2329b5(0x2cd)](_0x57425a)[_0x2329b5(0x27e)]('')+_0x2329b5(0x236)),$('equations')[_0x2329b5(0x2b2)]=config[_0x2329b5(0x2c8)]===_0x2329b5(0x23d)?_0x2329b5(0x2d7):names()[0x0]+_0x2329b5(0x2d8)+names()[0x1]+_0x2329b5(0x247)+names()[0x0]+_0x2329b5(0x1d5);}function syncEditorGeometry(){const _0x2c82b9=_0x4f9eb3,_0x10603f=$('equations'),_0x4d8072=$(_0x2c82b9(0x19b));_0x4d8072['style']['width']=_0x10603f[_0x2c82b9(0x191)]+'px',_0x4d8072[_0x2c82b9(0x2c0)][_0x2c82b9(0x1d4)]=_0x10603f['clientHeight']+'px',_0x4d8072[_0x2c82b9(0x24b)]=_0x10603f[_0x2c82b9(0x24b)],_0x4d8072[_0x2c82b9(0x2f4)]=_0x10603f[_0x2c82b9(0x2f4)],$(_0x2c82b9(0x2c4))[_0x2c82b9(0x24b)]=_0x10603f[_0x2c82b9(0x24b)];}function validate(){const _0x5c5e2f=_0x4f9eb3;clearTimeout(parseTimer),system=null,outcome=null;const _0x5d58fd=$('equations')[_0x5c5e2f(0x2cc)],_0x4b9770=_0x5d58fd[_0x5c5e2f(0x23b)]('\x0a'),_0x1e2239=[],_0x502666=[];let _0x27a921=0x0;_0x4b9770[_0x5c5e2f(0x29f)]((_0x4a61a0,_0x473b55)=>{const _0x51917d=_0x5c5e2f;if(_0x4a61a0[_0x51917d(0x26e)]())try{_0x1e2239[_0x51917d(0x2b0)]({...parseEquation(_0x4a61a0),'line':_0x473b55+0x1});}catch(_0x5d1815){_0x502666['push']({'message':_0x5d1815[_0x51917d(0x232)],'line':_0x473b55+0x1,'pos':_0x5d1815[_0x51917d(0x22a)]??0x0,'len':_0x5d1815[_0x51917d(0x24e)]??0x1,'offset':_0x27a921});}_0x27a921+=_0x4a61a0[_0x51917d(0x1e0)]+0x1;}),lastErrors=_0x502666,$(_0x5c5e2f(0x2c4))[_0x5c5e2f(0x202)]=_0x4b9770[_0x5c5e2f(0x2cd)]((_0xe36570,_0x1e0ec6)=>_0x1e0ec6+0x1)[_0x5c5e2f(0x27e)]('\x0a'),$(_0x5c5e2f(0x263))[_0x5c5e2f(0x202)]=_0x1e2239[_0x5c5e2f(0x1e0)]+_0x5c5e2f(0x231)+config['n']+'\x20рівнянь';const _0x1d7224=new Map(_0x502666[_0x5c5e2f(0x2cd)](_0x463577=>[_0x463577[_0x5c5e2f(0x28a)],_0x463577]));$(_0x5c5e2f(0x19b))[_0x5c5e2f(0x2a1)]=_0x4b9770[_0x5c5e2f(0x2cd)]((_0x185e6a,_0x4651bf)=>{const _0x3cbbcb=_0x5c5e2f,_0x592923=_0x1d7224[_0x3cbbcb(0x29e)](_0x4651bf+0x1);return!_0x592923?esc(_0x185e6a):esc(_0x185e6a[_0x3cbbcb(0x25e)](0x0,_0x592923[_0x3cbbcb(0x22a)]))+_0x3cbbcb(0x268)+esc(_0x185e6a['slice'](_0x592923[_0x3cbbcb(0x22a)],_0x592923['pos']+_0x592923['len'])||'\x20')+_0x3cbbcb(0x20d)+esc(_0x185e6a[_0x3cbbcb(0x25e)](_0x592923[_0x3cbbcb(0x22a)]+_0x592923[_0x3cbbcb(0x24e)]));})['join']('\x0a')+'\x0a',syncEditorGeometry(),$(_0x5c5e2f(0x290))['innerHTML']=_0x502666[_0x5c5e2f(0x2cd)]((_0x4998e7,_0x314382)=>_0x5c5e2f(0x193)+_0x314382+_0x5c5e2f(0x29d)+_0x4998e7['line']+_0x5c5e2f(0x24d)+(_0x4998e7[_0x5c5e2f(0x22a)]+0x1)+':\x20'+esc(_0x4998e7[_0x5c5e2f(0x232)])+_0x5c5e2f(0x19a))[_0x5c5e2f(0x27e)]('');const _0x259fc0=!_0x502666[_0x5c5e2f(0x1e0)]&&_0x1e2239[_0x5c5e2f(0x1e0)]===config['n'];$(_0x5c5e2f(0x267))[_0x5c5e2f(0x1ab)]=_0x5c5e2f(0x1e2)+(_0x502666[_0x5c5e2f(0x1e0)]?_0x5c5e2f(0x2da):_0x259fc0?'ok':''),$('syntax-status')[_0x5c5e2f(0x202)]=_0x502666[_0x5c5e2f(0x1e0)]?_0x5c5e2f(0x22b)+_0x502666[_0x5c5e2f(0x1e0)]:_0x259fc0?_0x5c5e2f(0x23c):_0x5c5e2f(0x2e8)+config['n']+_0x5c5e2f(0x1d3),$('symbolic')[_0x5c5e2f(0x2ea)]=!_0x1e2239[_0x5c5e2f(0x1e0)]||!!_0x502666[_0x5c5e2f(0x1e0)];!$(_0x5c5e2f(0x2b8))[_0x5c5e2f(0x2ea)]&&($('symbolic')[_0x5c5e2f(0x2a1)]=mathMarkup(systemTex(_0x1e2239)),renderMath($(_0x5c5e2f(0x2b8))));$('parameter-section')[_0x5c5e2f(0x2ea)]=!_0x259fc0;if(_0x259fc0){system=_0x1e2239;const _0x53952c={'Z':0x0,'Y':0x1,'E':0x2,'J':0x3};system['used']=[...new Set(_0x1e2239[_0x5c5e2f(0x285)](_0x1e2193=>[..._0x1e2193[_0x5c5e2f(0x228)]]))][_0x5c5e2f(0x1a0)]((_0x592162,_0x26d395)=>_0x53952c[_0x592162[0x0]]-_0x53952c[_0x26d395[0x0]]||Number(_0x592162[_0x5c5e2f(0x25e)](0x1))-Number(_0x26d395[_0x5c5e2f(0x25e)](0x1))),$(_0x5c5e2f(0x2ce))[_0x5c5e2f(0x202)]=system[_0x5c5e2f(0x228)][_0x5c5e2f(0x1e0)]+'\x20параметрів',renderParameterGrid(),calculate();}else renderOutcome(),$('auto-note')[_0x5c5e2f(0x202)]='';}function calculate(){const _0x56218e=_0x4f9eb3;outcome=null,$('substituted')[_0x56218e(0x2ea)]=!![],$(_0x56218e(0x1ce))['textContent']='';if(!system){renderOutcome();return;}let _0x116383=0x0,_0x16c465=0x0,_0x4c8296=![];document['querySelectorAll'](_0x56218e(0x300))[_0x56218e(0x29f)](_0x1bd8d8=>{const _0x42dbb7=_0x56218e,_0x29616f=getParam(_0x1bd8d8[_0x42dbb7(0x2e9)][_0x42dbb7(0x2f5)]),_0x2b99e7=numberValue(_0x1bd8d8[_0x42dbb7(0x2cc)]),_0x321f6b=!_0x1bd8d8['value']['trim'](),_0x17ef56=_0x29616f['form']===_0x42dbb7(0x1bd)&&_0x1bd8d8[_0x42dbb7(0x2e9)]['part']==='a'&&_0x2b99e7!==null&&_0x2b99e7<0x0,_0x3e5b4c=!_0x321f6b&&(_0x2b99e7===null||_0x17ef56);_0x1bd8d8[_0x42dbb7(0x20a)]('aria-invalid',String(_0x3e5b4c));if(_0x321f6b)_0x116383++;if(_0x3e5b4c)_0x16c465++;if(_0x17ef56)_0x4c8296=!![];});for(const _0x597571 of system[_0x56218e(0x228)]){const _0x566122=document['querySelector'](_0x56218e(0x23f)+_0x597571+'\x22]');try{const _0x5e5860=parameterValue(_0x597571);_0x566122[_0x56218e(0x202)]=getParam(_0x597571)[_0x56218e(0x255)]===_0x56218e(0x1bd)?complexText(_0x5e5860)+'\x20'+unitFor(_0x597571):polarText(_0x5e5860)+'\x20'+unitFor(_0x597571);}catch{_0x566122['textContent']=_0x56218e(0x239);}}if(_0x116383||_0x16c465){$('numeric-status')[_0x56218e(0x1ab)]=_0x56218e(0x2e7)+(_0x16c465?_0x56218e(0x1b8):''),$(_0x56218e(0x225))[_0x56218e(0x202)]=_0x4c8296?_0x56218e(0x28d):_0x16c465?_0x56218e(0x223):_0x56218e(0x2fa)+_0x116383+_0x56218e(0x302),renderOutcome();return;}try{const _0x3f5554=[],_0x25de7d=[];for(const _0x99ac8b of system){const _0x5d9d73=affine(_0x99ac8b[_0x56218e(0x233)]),_0x556d78=affine(_0x99ac8b[_0x56218e(0x25d)]);_0x3f5554[_0x56218e(0x2b0)](_0x5d9d73['a'][_0x56218e(0x2cd)]((_0x2225b7,_0x19a836)=>sub(_0x2225b7,_0x556d78['a'][_0x19a836]))),_0x25de7d[_0x56218e(0x2b0)](sub(_0x556d78['c'],_0x5d9d73['c']));}outcome={...solve(_0x3f5554,_0x25de7d),'A':_0x3f5554,'b':_0x25de7d},$(_0x56218e(0x2af))[_0x56218e(0x2ea)]=![],$(_0x56218e(0x2af))['innerHTML']=_0x56218e(0x245)+mathMarkup(systemTex(system,!![])),renderMath($('substituted')),$('numeric-status')['className']=_0x56218e(0x2a5)+(outcome[_0x56218e(0x2e2)]===_0x56218e(0x219)?_0x56218e(0x2cb):'error'),$(_0x56218e(0x225))[_0x56218e(0x202)]=outcome['kind']==='unique'?_0x56218e(0x27a):outcome['kind']==='dependent'?_0x56218e(0x201):_0x56218e(0x1f8),$(_0x56218e(0x1ce))[_0x56218e(0x202)]=outcome[_0x56218e(0x2e2)]===_0x56218e(0x219)?_0x56218e(0x262):'';}catch(_0x1b0fee){outcome={'kind':'error','message':_0x1b0fee[_0x56218e(0x232)]},$('numeric-status')['className']=_0x56218e(0x1a1),$('numeric-status')[_0x56218e(0x202)]=_0x1b0fee[_0x56218e(0x232)];}renderOutcome();}function renderOutcome(){const _0x5de528=_0x4f9eb3,_0x3eab38=$(_0x5de528(0x1f6)),_0x306b69=$(_0x5de528(0x1a5));$('copy-results')['disabled']=outcome?.['kind']!==_0x5de528(0x219);if(!outcome){const _0x38cae8=!system?_0x5de528(0x2c7):_0x5de528(0x1fb);_0x3eab38[_0x5de528(0x2a1)]=_0x306b69[_0x5de528(0x2a1)]='<div\x20class=\x22empty\x22><div\x20class=\x22empty-symbol\x22>∑</div>'+_0x38cae8+_0x5de528(0x1f5);return;}if(outcome[_0x5de528(0x2e2)]===_0x5de528(0x1dd)){_0x3eab38[_0x5de528(0x2a1)]=_0x306b69[_0x5de528(0x2a1)]=_0x5de528(0x2e5)+esc(outcome[_0x5de528(0x232)])+_0x5de528(0x1f5);return;}const _0x2c49b4=outcome,_0x4b63f1=config[_0x5de528(0x2c8)]==='node'?'В':'А',_0x45e63b=names();_0x2c49b4[_0x5de528(0x2e2)]!=='unique'?_0x3eab38[_0x5de528(0x2a1)]=_0x5de528(0x2e5)+(_0x2c49b4[_0x5de528(0x2e2)]===_0x5de528(0x2a6)?_0x5de528(0x2d0):_0x5de528(0x192))+_0x5de528(0x1ad)+_0x2c49b4['rank']+'\x20із\x20'+config['n']+_0x5de528(0x19f):_0x3eab38[_0x5de528(0x2a1)]=_0x5de528(0x296)+(_0x2c49b4[_0x5de528(0x29a)]<1e-8?_0x5de528(0x2cb):_0x5de528(0x1dd))+'\x22>'+(_0x2c49b4[_0x5de528(0x29a)]<1e-8?_0x5de528(0x1c1):_0x5de528(0x24c))+'\x20Відносна\x20нев’язка:\x20'+_0x2c49b4['relative'][_0x5de528(0x25a)](0x2)+'.</div>'+(_0x2c49b4[_0x5de528(0x230)]?_0x5de528(0x2c2):'')+'<div\x20class=\x22result-grid\x22>'+_0x2c49b4['x']['map']((_0x408963,_0xc67005)=>'<div\x20class=\x22result-card\x22><div\x20class=\x22name\x22>'+displayName(_0x45e63b[_0xc67005])+_0x5de528(0x190)+_0x4b63f1+'</div><div\x20class=\x22value\x22>'+complexText(_0x408963)+'</div><div\x20class=\x22polar\x22>'+polarText(_0x408963)+'<br>'+(abs(_0x408963)===0x0?'Для\x20нуля\x20фаза\x20не\x20визначена.':fmt(abs(_0x408963))+_0x5de528(0x1c4)+fmt(Math[_0x5de528(0x24f)](_0x408963['i'],_0x408963['r'])*0xb4/Math['PI'])+_0x5de528(0x2a0))+_0x5de528(0x253))['join']('')+_0x5de528(0x1da)+'<div\x20class=\x22table-scroll\x22><table><thead><tr><th>Рівняння</th><th>Ліва\x20частина</th><th>Права\x20частина</th><th>|Залишок|</th></tr></thead><tbody>'+system[_0x5de528(0x2cd)]((_0x1a225f,_0x1bc4e6)=>{const _0x2cd7ad=_0x5de528,_0x1239a9=_0x1da1f1=>{const _0x26ea0b=_0x1450,_0x72114a=affine(_0x1da1f1);return _0x72114a['a'][_0x26ea0b(0x2ec)]((_0x3cd324,_0x2524fb,_0xbe9c49)=>add(_0x3cd324,mul(_0x2524fb,_0x2c49b4['x'][_0xbe9c49])),_0x72114a['c']);};return'<tr><td>'+(_0x1bc4e6+0x1)+_0x2cd7ad(0x1b1)+complexText(_0x1239a9(_0x1a225f[_0x2cd7ad(0x233)]))+_0x2cd7ad(0x1b1)+complexText(_0x1239a9(_0x1a225f[_0x2cd7ad(0x25d)]))+_0x2cd7ad(0x1b1)+abs(_0x2c49b4['residual'][_0x1bc4e6])[_0x2cd7ad(0x25a)](0x2)+_0x2cd7ad(0x211);})[_0x5de528(0x27e)]('')+_0x5de528(0x257),_0x306b69[_0x5de528(0x2a1)]=_0x5de528(0x2ef)+mathMarkup(systemTex(system))+_0x5de528(0x1e8)+system[_0x5de528(0x228)][_0x5de528(0x2cd)](_0x33035e=>mathMarkup(texName(_0x33035e)+'='+complexTex(parameterValue(_0x33035e))+'\x5c;\x5ctext{'+unitFor(_0x33035e)+'}',![]))[_0x5de528(0x27e)]('')+mathMarkup(systemTex(system,!![]))+'<h3>3.\x20Розширена\x20матриця\x20[A\x20|\x20b]</h3>'+mathMarkup(matrixTex(_0x2c49b4['A'][_0x5de528(0x2cd)]((_0x192e62,_0x53f9a0)=>[..._0x192e62,_0x2c49b4['b'][_0x53f9a0]])))+_0x5de528(0x29b)+_0x2c49b4[_0x5de528(0x265)][_0x5de528(0x2cd)]((_0x9bc052,_0x23a02c)=>_0x5de528(0x2f8)+(_0x23a02c===0x0?_0x5de528(0x274):'')+'><summary>'+esc(_0x9bc052['label'])+_0x5de528(0x218)+(_0x9bc052[_0x5de528(0x226)]||[])['map'](_0x12f664=>mathMarkup(_0x12f664,![]))[_0x5de528(0x27e)]('')+mathMarkup(matrixTex(_0x9bc052[_0x5de528(0x251)]))+_0x5de528(0x236))['join'](''),_0x2c49b4[_0x5de528(0x2e2)]===_0x5de528(0x219)?_0x306b69[_0x5de528(0x2a1)]+=_0x5de528(0x204)+_0x2c49b4[_0x5de528(0x26b)]['map'](_0x3739da=>mathMarkup(texName(_0x45e63b[_0x3739da['i']])+_0x5de528(0x215)+complexTex(_0x3739da[_0x5de528(0x1ac)])+'}{'+complexTex(_0x3739da[_0x5de528(0x22c)])+'}='+complexTex(_0x3739da[_0x5de528(0x2cc)])+_0x5de528(0x2b1)+_0x4b63f1+'}'))['join']('')+_0x5de528(0x278)+_0x2c49b4['relative'][_0x5de528(0x25a)](0x3)+_0x5de528(0x281):_0x306b69[_0x5de528(0x2a1)]+='<div\x20class=\x22notice\x20error\x22>'+(_0x2c49b4[_0x5de528(0x2e2)]==='dependent'?_0x5de528(0x301):_0x5de528(0x2c6))+_0x5de528(0x1f5),renderMath(_0x3eab38),renderMath(_0x306b69);}function switchTab(_0x450073){const _0x5e922f=_0x4f9eb3;document[_0x5e922f(0x1ed)](_0x5e922f(0x2d9))[_0x5e922f(0x29f)](_0x21a20a=>{const _0x3b3c4d=_0x5e922f,_0x2186b0=_0x21a20a[_0x3b3c4d(0x2e9)]['tab']===_0x450073;_0x21a20a[_0x3b3c4d(0x20a)](_0x3b3c4d(0x241),String(_0x2186b0)),_0x21a20a[_0x3b3c4d(0x24a)]=_0x2186b0?0x0:-0x1,$(_0x21a20a[_0x3b3c4d(0x2e9)][_0x3b3c4d(0x2d1)]+'-panel')['hidden']=!_0x2186b0;});if(_0x450073===_0x5e922f(0x21d))syncEditorGeometry();}function fillExampleParams(){const _0xf3bca1=_0x4f9eb3;params=Object[_0xf3bca1(0x21e)](null),[[0xa,0x5],[0x14,0xa],[0xf,-0xf],[0x19,0xf],[0xa,0x14]][_0xf3bca1(0x29f)]((_0x3128e1,_0x1dc492)=>{params['Z'+(_0x1dc492+0x1)]={'form':'rect','a':String(_0x3128e1[0x0]),'b':String(_0x3128e1[0x1])};}),[[0x69,0x4b],[0x5,0x2d],[0x2d,-0x2d]][_0xf3bca1(0x29f)]((_0x1b067a,_0x402b13)=>{const _0x3d6453=_0xf3bca1;params['E'+(_0x402b13+0x1)]={'form':_0x3d6453(0x2d2),'a':String(_0x1b067a[0x0]),'b':String(_0x1b067a[0x1])};});}function loadExample(){const _0x1a81a1=_0x4f9eb3;config['z']=0x5,config['e']=0x3;if(config[_0x1a81a1(0x2c8)]===_0x1a81a1(0x2f1))config['n']=0x5,$('equations')[_0x1a81a1(0x2cc)]=_0x1a81a1(0x243);else config[_0x1a81a1(0x2c8)]===_0x1a81a1(0x1d6)?(config['n']=0x3,$(_0x1a81a1(0x1bb))[_0x1a81a1(0x2cc)]='(Z2+Z3)*I11\x20-\x20Z3*I22\x20=\x20-E2-E3\x0a(Z1+Z3+Z5)*I22\x20-\x20Z3*I11\x20-\x20Z1*I33\x20=\x20E3-E1\x0a(Z1+Z4)*I33\x20-\x20Z1*I22\x20=\x20E1'):(config['n']=0x2,$(_0x1a81a1(0x1bb))[_0x1a81a1(0x2cc)]=_0x1a81a1(0x237));fillExampleParams(),syncConfig(),updateTokens(),validate(),switchTab('input'),saveState(),$('example-note')['hidden']=![];}function syncConfig(){const _0x5348d8=_0x4f9eb3;$(_0x5348d8(0x2c8))[_0x5348d8(0x2cc)]=config[_0x5348d8(0x2c8)],$(_0x5348d8(0x21c))[_0x5348d8(0x2cc)]=config['n'],$('zcount')[_0x5348d8(0x2cc)]=config['z'],$('ecount')[_0x5348d8(0x2cc)]=config['e'];}function exportState(){const _0x2657f7=_0x4f9eb3;return{'version':0x2,'config':{...config},'equations':$(_0x2657f7(0x1bb))[_0x2657f7(0x2cc)],'params':params,'precision':Number($(_0x2657f7(0x1db))[_0x2657f7(0x2cc)])};}function sanitizeState(_0x10a8ef){const _0x2e426d=_0x4f9eb3;if(!_0x10a8ef||_0x10a8ef[_0x2e426d(0x2f0)]!==0x2||!_0x10a8ef['config']||typeof _0x10a8ef[_0x2e426d(0x1bb)]!==_0x2e426d(0x1f3)||_0x10a8ef['equations']['length']>MAX_TEXT)throw Error('Непідтримуваний\x20або\x20пошкоджений\x20формат\x20стану.');const _0x128818=_0x10a8ef[_0x2e426d(0x22e)];if(![_0x2e426d(0x2f1),_0x2e426d(0x1d6),'node'][_0x2e426d(0x214)](_0x128818[_0x2e426d(0x2c8)])||!Number[_0x2e426d(0x2e0)](_0x128818['n'])||_0x128818['n']<0x2||_0x128818['n']>0x8||!Number[_0x2e426d(0x2e0)](_0x128818['z'])||_0x128818['z']<0x0||_0x128818['z']>0x8||!Number[_0x2e426d(0x2e0)](_0x128818['e'])||_0x128818['e']<0x0||_0x128818['e']>0x5)throw Error(_0x2e426d(0x2f6));if(!_0x10a8ef[_0x2e426d(0x205)]||typeof _0x10a8ef[_0x2e426d(0x205)]!==_0x2e426d(0x1c0)||Array['isArray'](_0x10a8ef[_0x2e426d(0x205)]))throw Error(_0x2e426d(0x289));const _0x9c50b7=Object[_0x2e426d(0x21e)](null);for(const [_0x36f12d,_0x106b11]of Object['entries'](_0x10a8ef[_0x2e426d(0x205)])){if(!PARAM_ID['test'](_0x36f12d))continue;if(!_0x106b11||![_0x2e426d(0x2d2),_0x2e426d(0x1bd)][_0x2e426d(0x214)](_0x106b11[_0x2e426d(0x255)])||typeof _0x106b11['a']!==_0x2e426d(0x1f3)||typeof _0x106b11['b']!=='string'||_0x106b11['a'][_0x2e426d(0x1e0)]>0x78||_0x106b11['b']['length']>0x78)throw Error(_0x2e426d(0x2ff)+_0x36f12d+'.');_0x9c50b7[_0x36f12d]={'form':_0x106b11[_0x2e426d(0x255)],'a':_0x106b11['a'],'b':_0x106b11['b']};}return{'version':0x2,'config':{'method':_0x128818[_0x2e426d(0x2c8)],'n':_0x128818['n'],'z':_0x128818['z'],'e':_0x128818['e']},'equations':_0x10a8ef[_0x2e426d(0x1bb)],'params':_0x9c50b7,'precision':[0x3,0x4,0x5,0x6,0x8]['includes'](_0x10a8ef[_0x2e426d(0x1db)])?_0x10a8ef[_0x2e426d(0x1db)]:0x4};}function sharedState(){const _0x1f1384=_0x4f9eb3,_0x37e209=location[_0x1f1384(0x1ec)][_0x1f1384(0x25e)](0x1);if(!_0x37e209)return null;if(_0x37e209[_0x1f1384(0x1e0)]>0x27100)throw Error(_0x1f1384(0x23a));const _0x3257cf=new URLSearchParams(_0x37e209)[_0x1f1384(0x29e)](_0x1f1384(0x2a8));return _0x3257cf===null?null:sanitizeState(JSON['parse'](_0x3257cf));}function applyState(_0xf319bb){const _0x6a833b=_0x4f9eb3;config=_0xf319bb['config'],params=_0xf319bb[_0x6a833b(0x205)],$(_0x6a833b(0x1bb))[_0x6a833b(0x2cc)]=_0xf319bb[_0x6a833b(0x1bb)],$(_0x6a833b(0x1db))[_0x6a833b(0x2cc)]=_0xf319bb[_0x6a833b(0x1db)],syncConfig(),updateTokens(),validate(),switchTab(_0x6a833b(0x21d)),$('example-note')[_0x6a833b(0x2ea)]=!![];}function saveState(_0x41fcca=!![]){const _0x596962=_0x4f9eb3;try{localStorage[_0x596962(0x1f2)](STORAGE_KEY,JSON[_0x596962(0x1f4)](exportState())),storageAvailable=!![],$('save-status')[_0x596962(0x202)]=_0x596962(0x273);}catch{storageAvailable=![],$(_0x596962(0x1d9))[_0x596962(0x202)]=_0x596962(0x1d8);}if(_0x41fcca&&new URLSearchParams(location[_0x596962(0x1ec)][_0x596962(0x25e)](0x1))[_0x596962(0x2a4)](_0x596962(0x2a8)))try{const _0x359123=new URL(location[_0x596962(0x2d5)]);_0x359123['hash']=storageAvailable?'':new URLSearchParams({'phasor':JSON[_0x596962(0x1f4)](exportState())})[_0x596962(0x284)](),history['replaceState'](null,'',_0x359123[_0x596962(0x2d5)]);}catch{}}function restoreInitialState(){const _0x5d587=_0x4f9eb3;let _0x3d1a48=null;try{_0x3d1a48=sharedState();}catch{showToast(_0x5d587(0x2c9),!![]);}if(!_0x3d1a48)try{const _0x710f63=localStorage[_0x5d587(0x2a7)](STORAGE_KEY);if(_0x710f63)_0x3d1a48=sanitizeState(JSON['parse'](_0x710f63));}catch{$(_0x5d587(0x1d9))[_0x5d587(0x202)]=_0x5d587(0x1de);}_0x3d1a48?(applyState(_0x3d1a48),saveState(![])):(syncConfig(),updateTokens(),validate());}function showToast(_0x369fed,_0x21b342=![]){const _0x20c409=_0x4f9eb3;clearTimeout(toastTimer),$(_0x20c409(0x1c2))[_0x20c409(0x202)]=_0x369fed,$(_0x20c409(0x1c2))[_0x20c409(0x1ab)]=_0x20c409(0x1c2)+(_0x21b342?_0x20c409(0x1b8):''),$(_0x20c409(0x1c2))['hidden']=![],toastTimer=setTimeout(()=>{const _0x27e2b7=_0x20c409;$(_0x27e2b7(0x1c2))[_0x27e2b7(0x2ea)]=!![];},0x1194);}async function copyText(_0x30d7e4,_0xca8707,_0x242d0d=_0x4f9eb3(0x2be)){const _0xbfa13a=_0x4f9eb3;let _0x1a9744=![];try{navigator['clipboard']?.[_0xbfa13a(0x2e3)]&&(await navigator['clipboard']['writeText'](_0x30d7e4),_0x1a9744=!![]);}catch{}if(!_0x1a9744){const _0x286340=document[_0xbfa13a(0x288)],_0x4502b6=document['createElement'](_0xbfa13a(0x212));_0x4502b6['value']=_0x30d7e4,_0x4502b6[_0xbfa13a(0x282)]=!![],_0x4502b6[_0xbfa13a(0x1ab)]=_0xbfa13a(0x1ca),document[_0xbfa13a(0x229)]['append'](_0x4502b6),_0x4502b6['select']();try{_0x1a9744=Boolean(document[_0xbfa13a(0x1aa)]?.('copy'));}catch{_0x1a9744=![];}_0x4502b6[_0xbfa13a(0x1a2)](),_0x286340?.[_0xbfa13a(0x1b2)]();}if(_0x1a9744){if(_0xca8707?.['isConnected']){const _0x35e663=copyFeedback[_0xbfa13a(0x29e)](_0xca8707),_0x22c082=_0x35e663?.[_0xbfa13a(0x2d4)]??_0xca8707['textContent'];clearTimeout(_0x35e663?.[_0xbfa13a(0x210)]),_0xca8707[_0xbfa13a(0x202)]=_0xbfa13a(0x287);const _0x15d285=setTimeout(()=>{const _0x1dbef=_0xbfa13a;if(_0xca8707['isConnected'])_0xca8707[_0x1dbef(0x202)]=_0x22c082;copyFeedback[_0x1dbef(0x2f9)](_0xca8707);},0x708);copyFeedback[_0xbfa13a(0x2db)](_0xca8707,{'original':_0x22c082,'timer':_0x15d285});}return showToast(_0x242d0d),!![];}$('copy-manual')['value']=_0x30d7e4;const _0xff842e=$('copy-dialog');if(typeof _0xff842e[_0xbfa13a(0x199)]==='function'){if(!_0xff842e[_0xbfa13a(0x274)])_0xff842e[_0xbfa13a(0x199)]();}else _0xff842e[_0xbfa13a(0x20a)](_0xbfa13a(0x274),'');return $('copy-manual')[_0xbfa13a(0x1b2)](),$('copy-manual')[_0xbfa13a(0x1b6)](),showToast(_0xbfa13a(0x206),!![]),![];}async function shareState(_0x42c575){const _0x286a48=_0x4f9eb3,_0x594df7=new URL(location[_0x286a48(0x2d5)]);_0x594df7['hash']=new URLSearchParams({'phasor':JSON['stringify'](exportState())})[_0x286a48(0x284)]();try{history[_0x286a48(0x295)](null,'',_0x594df7[_0x286a48(0x2d5)]);}catch{showToast(_0x286a48(0x1a3),!![]);}await copyText(_0x594df7[_0x286a48(0x2d5)],_0x42c575,_0x286a48(0x1ba));}function resultsReport(){const _0xbd4715=_0x4f9eb3;if(outcome?.[_0xbd4715(0x2e2)]!==_0xbd4715(0x219))return'';const _0x42e474={'branch':_0xbd4715(0x2c5),'mesh':_0xbd4715(0x1dc),'node':_0xbd4715(0x256)}[config['method']],_0x5b48b1=config[_0xbd4715(0x2c8)]===_0xbd4715(0x23d)?'В':'А';return['Фазор\x20—\x20'+_0x42e474,'',...outcome['x'][_0xbd4715(0x2cd)]((_0x107e05,_0x1039be)=>names()[_0x1039be]+_0xbd4715(0x2a2)+complexText(_0x107e05)+'\x20'+_0x5b48b1+_0xbd4715(0x2a2)+polarText(_0x107e05)+'\x20'+_0x5b48b1),'',_0xbd4715(0x222)+outcome[_0xbd4715(0x29a)][_0xbd4715(0x25a)](0x3),_0xbd4715(0x1c9)]['join']('\x0a');}for(const [id,min,max,value]of[[_0x4f9eb3(0x21c),0x2,0x8,0x5],[_0x4f9eb3(0x2fd),0x0,0x8,0x5],['ecount',0x0,0x5,0x3]]){for(let i=min;i<=max;i++)$(id)[_0x4f9eb3(0x1c3)](new Option(i,i));$(id)[_0x4f9eb3(0x2cc)]=value;}[_0x4f9eb3(0x2c8),_0x4f9eb3(0x21c),_0x4f9eb3(0x2fd),_0x4f9eb3(0x2bb)][_0x4f9eb3(0x29f)](_0x4a4384=>$(_0x4a4384)[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x220),()=>{const _0x35fbd0=_0x4f9eb3;config={'method':$(_0x35fbd0(0x2c8))[_0x35fbd0(0x2cc)],'n':Number($(_0x35fbd0(0x21c))['value']),'z':Number($('zcount')[_0x35fbd0(0x2cc)]),'e':Number($(_0x35fbd0(0x2bb))[_0x35fbd0(0x2cc)])},$(_0x35fbd0(0x1bc))[_0x35fbd0(0x2ea)]=!![],updateTokens(),validate(),saveState();})),$(_0x4f9eb3(0x1bb))[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x21d),()=>{const _0x24844a=_0x4f9eb3;$(_0x24844a(0x1bc))['hidden']=!![],saveState(),clearTimeout(parseTimer),system=null,outcome=null,$(_0x24844a(0x1be))[_0x24844a(0x2ea)]=!![],$('symbolic')['hidden']=!![],renderOutcome(),parseTimer=setTimeout(validate,0x8c),syncEditorGeometry();}),$(_0x4f9eb3(0x1bb))['addEventListener'](_0x4f9eb3(0x1cc),syncEditorGeometry);if(typeof ResizeObserver===_0x4f9eb3(0x1a6))new ResizeObserver(syncEditorGeometry)['observe']($(_0x4f9eb3(0x1bb)));window[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x2e1),syncEditorGeometry),$(_0x4f9eb3(0x1ee))[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x1fc),_0x1a2e16=>{const _0x2e8c5c=_0x4f9eb3,_0x452403=_0x1a2e16[_0x2e8c5c(0x252)]['closest'](_0x2e8c5c(0x217));if(!_0x452403)return;const _0x4de5bf=$(_0x2e8c5c(0x1bb)),_0x336a3f=_0x452403[_0x2e8c5c(0x2e9)][_0x2e8c5c(0x294)];if(_0x4de5bf[_0x2e8c5c(0x2cc)]['length']-(_0x4de5bf['selectionEnd']-_0x4de5bf['selectionStart'])+_0x336a3f[_0x2e8c5c(0x1e0)]>MAX_TEXT){showToast('Досягнуто\x20обмеження\x20довжини\x20системи.',!![]);return;}_0x4de5bf[_0x2e8c5c(0x279)](_0x336a3f,_0x4de5bf['selectionStart'],_0x4de5bf[_0x2e8c5c(0x2fe)],_0x2e8c5c(0x1e4)),_0x4de5bf[_0x2e8c5c(0x1b2)](),$(_0x2e8c5c(0x1bc))[_0x2e8c5c(0x2ea)]=!![],validate(),saveState();}),$('errors')[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x1fc),_0x4f89e0=>{const _0x1710c1=_0x4f9eb3,_0x52f7f4=_0x4f89e0['target'][_0x1710c1(0x238)](_0x1710c1(0x2d6));if(!_0x52f7f4)return;const _0x5403ae=lastErrors[Number(_0x52f7f4[_0x1710c1(0x2e9)][_0x1710c1(0x1dd)])];if(!_0x5403ae)return;$(_0x1710c1(0x1bb))['focus'](),$(_0x1710c1(0x1bb))['setSelectionRange'](_0x5403ae['offset']+_0x5403ae[_0x1710c1(0x22a)],_0x5403ae['offset']+_0x5403ae['pos']+_0x5403ae[_0x1710c1(0x24e)]);}),$(_0x4f9eb3(0x2ee))['addEventListener']('input',_0x1bc35a=>{const _0x86729=_0x4f9eb3,_0x333f8e=_0x1bc35a[_0x86729(0x252)];if(!_0x333f8e['matches'](_0x86729(0x300)))return;getParam(_0x333f8e[_0x86729(0x2e9)][_0x86729(0x2f5)])[_0x333f8e[_0x86729(0x2e9)][_0x86729(0x216)]]=_0x333f8e[_0x86729(0x2cc)],$('example-note')[_0x86729(0x2ea)]=!![],calculate(),saveState();}),$(_0x4f9eb3(0x2ee))[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x1fc),_0x287dfa=>{const _0x575f77=_0x4f9eb3,_0x2b768f=_0x287dfa[_0x575f77(0x252)][_0x575f77(0x238)](_0x575f77(0x1e7));if(_0x2b768f)toggleForm(_0x2b768f[_0x575f77(0x2e9)][_0x575f77(0x1d1)]);}),$(_0x4f9eb3(0x2ee))['addEventListener'](_0x4f9eb3(0x244),_0x2e8ba2=>{const _0x50d6db=_0x4f9eb3;if(_0x2e8ba2['key']!==_0x50d6db(0x200)||_0x2e8ba2['isComposing']||!_0x2e8ba2[_0x50d6db(0x252)][_0x50d6db(0x299)](_0x50d6db(0x300)))return;_0x2e8ba2['preventDefault']();const _0x485d4d=[...$(_0x50d6db(0x2ee))[_0x50d6db(0x1ed)](_0x50d6db(0x300))],_0x5904e8=_0x485d4d[_0x485d4d['indexOf'](_0x2e8ba2['target'])+0x1];if(_0x5904e8)_0x5904e8['focus']();else _0x2e8ba2['target'][_0x50d6db(0x26a)]();}),document[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x1fc),_0x3e90a8=>{const _0x415af5=_0x4f9eb3,_0x11522a=_0x3e90a8[_0x415af5(0x252)][_0x415af5(0x238)](_0x415af5(0x20e));if(_0x11522a)void copyText(_0x11522a[_0x415af5(0x238)]('.formula')[_0x415af5(0x1fd)](_0x415af5(0x1a9))[_0x415af5(0x2e9)][_0x415af5(0x2fb)],_0x11522a,'LaTeX\x20скопійовано');}),document[_0x4f9eb3(0x1ed)]('[role=tab]')[_0x4f9eb3(0x29f)](_0x445bd6=>{const _0x457a5f=_0x4f9eb3;_0x445bd6[_0x457a5f(0x1d7)](_0x457a5f(0x1fc),()=>switchTab(_0x445bd6[_0x457a5f(0x2e9)][_0x457a5f(0x2d1)])),_0x445bd6[_0x457a5f(0x1d7)](_0x457a5f(0x244),_0x165805=>{const _0x1dc1c6=_0x457a5f,_0x3b9d6a=[...document[_0x1dc1c6(0x1ed)](_0x1dc1c6(0x2d9))],_0x2ef340=_0x3b9d6a[_0x1dc1c6(0x1cd)](_0x445bd6),_0x24953b=_0x165805['key']===_0x1dc1c6(0x28b)?_0x3b9d6a[(_0x2ef340+0x1)%_0x3b9d6a[_0x1dc1c6(0x1e0)]]:_0x165805[_0x1dc1c6(0x254)]===_0x1dc1c6(0x2dd)?_0x3b9d6a[(_0x2ef340+_0x3b9d6a['length']-0x1)%_0x3b9d6a[_0x1dc1c6(0x1e0)]]:_0x165805[_0x1dc1c6(0x254)]===_0x1dc1c6(0x1cb)?_0x3b9d6a[0x0]:_0x165805[_0x1dc1c6(0x254)]==='End'?_0x3b9d6a[_0x3b9d6a[_0x1dc1c6(0x1e0)]-0x1]:null;_0x24953b&&(_0x165805[_0x1dc1c6(0x280)](),switchTab(_0x24953b[_0x1dc1c6(0x2e9)][_0x1dc1c6(0x2d1)]),_0x24953b[_0x1dc1c6(0x1b2)]());});}),$(_0x4f9eb3(0x2ba))[_0x4f9eb3(0x221)]=()=>switchTab(_0x4f9eb3(0x208)),$(_0x4f9eb3(0x198))[_0x4f9eb3(0x221)]=()=>switchTab('input'),$(_0x4f9eb3(0x286))[_0x4f9eb3(0x221)]=loadExample,$(_0x4f9eb3(0x20f))['onclick']=()=>{const _0x5e9c20=_0x4f9eb3;params=Object['create'](null),$(_0x5e9c20(0x1bc))[_0x5e9c20(0x2ea)]=!![],$(_0x5e9c20(0x1bb))[_0x5e9c20(0x2cc)]='',validate(),switchTab(_0x5e9c20(0x21d)),saveState(),$('equations')[_0x5e9c20(0x1b2)]();},$('precision')['onchange']=()=>{if(system)calculate();saveState();},$(_0x4f9eb3(0x224))[_0x4f9eb3(0x221)]=_0x2e883b=>{const _0x45c7c3=_0x4f9eb3;void shareState(_0x2e883b[_0x45c7c3(0x2f2)]);},$('copy-results')['onclick']=_0x18f14d=>{const _0x3714f7=_0x4f9eb3,_0x48be8a=resultsReport();if(_0x48be8a)void copyText(_0x48be8a,_0x18f14d[_0x3714f7(0x2f2)],_0x3714f7(0x249));},$(_0x4f9eb3(0x1e3))[_0x4f9eb3(0x221)]=()=>{const _0x1991d7=_0x4f9eb3,_0x34b50c=$(_0x1991d7(0x1e1));if(typeof _0x34b50c[_0x1991d7(0x258)]===_0x1991d7(0x1a6))_0x34b50c[_0x1991d7(0x258)]();else _0x34b50c[_0x1991d7(0x28f)](_0x1991d7(0x274));},window['addEventListener'](_0x4f9eb3(0x20c),()=>{const _0x5d2180=_0x4f9eb3;try{const _0x20dac1=sharedState();_0x20dac1&&(applyState(_0x20dac1),saveState(![]),showToast(_0x5d2180(0x260)));}catch{showToast(_0x5d2180(0x1af),!![]);}});let printDetails=[];window[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x2ca),()=>{const _0x253236=_0x4f9eb3;printDetails=[...document['querySelectorAll']('#solution-content\x20details')][_0x253236(0x2cd)](_0x1508c2=>({'element':_0x1508c2,'open':_0x1508c2[_0x253236(0x274)]})),printDetails[_0x253236(0x29f)](({element:_0xa9caa7})=>{const _0x4dc430=_0x253236;_0xa9caa7[_0x4dc430(0x274)]=!![];});}),window[_0x4f9eb3(0x1d7)](_0x4f9eb3(0x1e6),()=>{const _0x4f31bb=_0x4f9eb3;printDetails[_0x4f31bb(0x29f)](({element:_0x4a7c02,open:_0x46cc58})=>{const _0x4e7340=_0x4f31bb;_0x4a7c02[_0x4e7340(0x274)]=_0x46cc58;}),printDetails=[];}),$('print')['onclick']=()=>window[_0x4f9eb3(0x1c8)](),window['Phasor']={'tokenize':tokenize,'parseEquation':parseEquation,'affine':affine,'solve':solve,'C':C,'add':add,'sub':sub,'mul':mul,'div':div,'validate':validate,'calculate':calculate,'parameterValue':parameterValue,'toggleForm':toggleForm,'exportState':exportState,'sanitizeState':sanitizeState,'applyState':applyState,'resultsReport':resultsReport,get 'config'(){return config;},get 'params'(){return params;},get 'outcome'(){return outcome;},get 'system'(){return system;}},restoreInitialState();if(window[_0x4f9eb3(0x275)])renderMath(),$(_0x4f9eb3(0x1b3))[_0x4f9eb3(0x202)]='Формули\x20·\x20KaTeX';else{if(window['mathLoadFailed'])$('math-status')[_0x4f9eb3(0x202)]=_0x4f9eb3(0x2b7);}
     </script>
   </body>
 </html>
