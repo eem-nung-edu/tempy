@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Лінійне програмування · Графічний метод</title>
+<!-- One-file application. The only external library is docx (MIT), used for Word export. -->
+<script defer src="https://cdn.jsdelivr.net/npm/docx@9.5.1/dist/index.iife.js" crossorigin="anonymous"></script>
+<style>
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#20262d;background:#f5f6f7;font-size:14px;line-height:1.6;font-variant-numeric:tabular-nums;--green:#285f4d;--muted:#626c75;--line:#dce0e3}
+*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{min-height:36px;border:1px solid #ccd1d5;border-radius:6px;background:#fff;color:inherit;padding:6px 11px}button{cursor:pointer;font-weight:500}button:hover{background:#eef0f2}button:disabled{opacity:.45;cursor:not-allowed}button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid #267260;outline-offset:3px}button.primary{background:var(--green);border-color:var(--green);color:#fff}button.primary:hover{background:#204d3e}[hidden]{display:none!important}
+header{background:#fff;border-bottom:1px solid var(--line);padding:18px 26px;display:flex;align-items:center;justify-content:space-between;gap:15px}.brand{display:flex;gap:12px;align-items:center}.logo{display:grid;place-items:center;width:38px;height:38px;background:#253b34;border-radius:7px;flex-shrink:0}.logo svg{width:29px;height:29px}h1{font-size:19px;letter-spacing:-.4px;line-height:1.3;margin:0}header p{font-size:12px;color:var(--muted);margin:3px 0 0}.badge{font-size:12px;border:1px solid #d8dfdc;background:#f1f6f3;border-radius:5px;padding:4px 9px;white-space:nowrap}
+main{max-width:1260px;margin:auto;padding:23px 24px}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:19px}.toolbar label{font-weight:600}.toolbar select{min-width:196px}.spacer{flex:1}.toolbar .quiet{font-size:12px;color:var(--muted)}#tabs{display:flex;gap:4px;overflow:auto;border-bottom:1px solid #d9dfe2;padding-bottom:8px;scrollbar-width:thin}#tabs button{white-space:nowrap;background:transparent;border-color:transparent;font-size:13px;display:flex;align-items:center;gap:8px}#tabs button:hover{background:#e9edeb}#tabs button[aria-selected=true]{background:#e6efe9;color:#205b47;border-color:#cbdcd1}.tab-number{font-size:11px;opacity:.65}
+.workspace{display:grid;grid-template-columns:226px minmax(0,1fr);gap:18px;margin-top:19px;align-items:start}.sidebar{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px;position:sticky;top:16px}.sidebar h2{font-size:14px;margin:0 0 12px}.sidebar .math{font-size:18px}.sidebar hr{border:0;border-top:1px solid #e5e9e7;margin:16px 0}.meta-row{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin:8px 0}.meta-row span{color:var(--muted)}.sidebar .side-note{font-size:12px;color:var(--muted);margin-bottom:0}.side-links{display:grid;gap:6px;margin-top:12px}.side-links button{text-align:left;font-size:12px;border:0;padding:4px 0;min-height:28px;background:transparent;color:#285f4d}.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#6b7770;margin:0 0 6px}.sidebar .variant-title{font-size:24px;letter-spacing:-.7px;font-weight:650;line-height:1.4;margin:0 0 12px}
+article{min-width:0;background:#fff;border:1px solid var(--line);border-radius:8px;padding:24px}h2{font-size:18px;letter-spacing:-.3px;margin:0 0 15px;line-height:1.4}h3{font-size:15px;line-height:1.45;margin:24px 0 10px}h4{font-size:14px;margin:18px 0 8px}p{margin:10px 0}.muted{color:var(--muted)}.small{font-size:12px}.intro{color:#59646e;max-width:740px}.empty{padding:52px 18px;background:#fafbfb;border:1px dashed #d4dbde;border-radius:7px;text-align:center;color:#65717a}.empty .empty-icon{width:58px;height:58px;margin:0 auto 14px;color:#6a8878}.empty strong{display:block;color:#3c4d44;font-size:16px;margin-bottom:7px}.notice{padding:12px 15px;background:#f2f6f3;border-left:3px solid #82a692;margin:16px 0;border-radius:0 4px 4px 0}.notice.warning{background:#fff8ef;border-color:#b88139;color:#67451d}.math{font-family:'Cambria Math','STIX Two Math','Times New Roman',serif;font-size:19px;line-height:1.65;overflow-wrap:anywhere}.math sub{font-size:.68em}.math-block{background:#f7f8f9;padding:12px 16px;margin:12px 0;border-radius:5px;overflow-x:auto}.model{border-left:2px solid #80998b;padding-left:18px;margin:14px 0}.model .math{display:block;margin:4px 0}.model .objective{font-weight:600;margin-bottom:12px}.input-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.8fr);gap:30px}.guide{border-left:1px solid #e2e7e4;padding-left:24px}.guide h3{margin-top:0}.guide ol{padding-left:18px}.guide li{margin-bottom:9px}
+.table-scroll{max-width:100%;overflow:auto;margin:12px 0 18px}table{border-collapse:collapse;width:100%;font-size:13px;text-align:left}th,td{padding:9px 11px;border-bottom:1px solid #e6e9eb;vertical-align:top}th{font-weight:600}thead{background:#f6f7f8;color:#4c5963}tbody tr.best{background:#edf5ee}tbody tr:hover{background:#fafbf9}td .math,th .math{font-size:17px;white-space:nowrap}.nowrap{white-space:nowrap}.fraction{display:inline-flex;vertical-align:middle;flex-direction:column;text-align:center;font-size:.92em;line-height:1.2;margin:0 .08em}.fraction>span:first-child{border-bottom:1px solid currentColor;padding:0 3px 2px}.fraction>span:last-child{padding-top:2px}.step{border-top:1px solid #e2e7e5;padding-top:21px;margin-top:28px;scroll-margin-top:15px}.step:first-child{border-top:0;padding-top:0;margin-top:0}.step-heading{display:flex;align-items:baseline;gap:11px;margin-bottom:9px}.step-heading h3{margin:0;font-size:16px}.step-num{min-width:26px;height:26px;border:1px solid #d4e1d8;color:#285f4d;background:#eef4ef;display:grid;place-items:center;border-radius:5px;font-size:12px;font-weight:600}.step-body p:first-child{margin-top:0}.figure{margin:16px 0 10px;border:1px solid #e0e6e3;background:#fff;border-radius:6px;overflow:auto;break-inside:avoid}.figure svg{display:block;width:calc(100% * var(--plot-scale,1));height:auto;max-width:none}.figure figcaption{border-top:1px solid #e7ebe8;padding:9px 13px;font-size:12px;color:#59675f;background:#fafcfa}.legend{display:flex;flex-wrap:wrap;gap:5px 16px;font-size:12px;margin:8px 0;color:#5e6a63}.legend-item{display:inline-flex;align-items:center;gap:6px}.legend-key{width:20px;height:3px;border-radius:2px;display:inline-block;flex-shrink:0}.legend-key.area{height:11px;background:#d4e7da;border:1px solid #789c85}.constraint-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:15px 0}.constraint-chip{display:flex;align-items:baseline;gap:8px;padding:8px 10px;background:#f7f9f8;border-radius:4px;font-size:12px}.constraint-chip .math{font-size:16px}.line-dot{display:inline-grid;place-items:center;border:1px solid currentColor;border-radius:50%;width:21px;height:21px;font-size:11px;flex-shrink:0}.result-box{padding:18px 20px;border:1px solid #c8dccf;background:#f0f6f1;border-radius:7px;margin:16px 0}.result-box .math{font-size:22px}.result-box.no-solution{border-color:#e1c8a5;background:#fff8ef}.result-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#587463;margin:0 0 8px}.result-box.no-solution .result-label{color:#8c622f}.result-title{font-size:18px;font-weight:600;line-height:1.45;margin:6px 0}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 8px}.panel-footer{display:flex;justify-content:space-between;gap:10px;border-top:1px solid #e4e8e5;margin-top:26px;padding-top:16px}.panel-footer button{font-size:13px}.foot{font-size:12px;color:#707b83;margin:15px 0}#exportStatus{font-size:12px;color:var(--muted);min-height:20px;margin:7px 0 0}.status-wrap{margin-top:5px}.animation-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 14px;background:#f7f9f8;border:1px solid #e0e6e3;border-radius:5px;margin-top:14px}.animation-controls label{font-size:12px}.animation-controls input{flex:1;min-width:100px;accent-color:var(--green)}.animation-controls output{font-size:12px;min-width:90px;text-align:right}.snapshots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.snapshots .figure{margin-top:10px}.snapshots .figure svg{width:100%}.snapshots figcaption{font-size:11px;padding:7px 9px}.snapshots svg text{font-size:17px}details{border-top:1px solid #e2e7e4;padding-top:10px;margin-top:14px}summary{cursor:pointer;color:#285f4d;font-size:13px;font-weight:500}.vertex-card{background:#fafbfa;border:1px solid #e1e7e3;border-radius:5px;padding:12px 16px;margin:12px 0;break-inside:avoid}.vertex-card h4{margin:0 0 7px}.vertex-card .math-block{background:#f2f5f3}.proof-line{margin:9px 0}.number-note{font-size:12px;color:#727b76}.graph-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 18px;font-size:12px;color:#626c75}.graph-tools button{min-height:29px;padding:1px 9px}.graph-tools output{min-width:40px;text-align:center}.print-only{display:none}.continue-note{font-size:11px;fill:#67776d}.error{background:#fff3f2;border:1px solid #dfacac;color:#8d2424;border-radius:5px;padding:12px;margin-top:14px}
+@media(max-width:1000px){.workspace{grid-template-columns:190px minmax(0,1fr);gap:14px}.sidebar{padding:15px}article{padding:20px}.input-layout{grid-template-columns:1fr}.guide{border-left:0;border-top:1px solid #e2e7e4;padding:18px 0 0}.snapshots{grid-template-columns:1fr}.snapshots .figure{max-width:600px}.snapshots svg text{font-size:14px}.constraint-grid{grid-template-columns:1fr}}
+@media(max-width:720px){header{padding:15px 16px;align-items:flex-start}header .badge{display:none}h1{font-size:17px}main{padding:15px 12px}.toolbar{gap:8px}.toolbar label{width:100%;font-size:12px}.toolbar select{flex:1;min-width:180px}.toolbar .quiet{display:none}.toolbar .spacer{display:none}.workspace{display:block}.sidebar{position:static;margin-bottom:14px;padding:12px 15px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}.sidebar>h2,.sidebar hr,.sidebar .side-note,.side-links{display:none}.sidebar .variant-title{font-size:18px;margin:0}.sidebar .eyebrow{display:none}#sideFormula{margin:0;flex:1;min-width:140px}.sidebar .meta-row{margin:0;font-size:11px;gap:6px}#sideInfo{display:flex;gap:14px;flex-wrap:wrap}.sidebar .math{font-size:17px}article{padding:17px 14px}h2{font-size:17px}#tabs button{font-size:12px;padding:6px 9px}.math{font-size:18px}.model{padding-left:12px}.empty{padding:35px 12px}.result-box{padding:14px}.result-box .math{font-size:20px}th,td{padding:8px}.step-heading h3{font-size:15px}.panel-footer button{font-size:12px}.animation-controls output{min-width:auto}.figure{margin-left:0;margin-right:0}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@page{size:A4;margin:14mm 14mm 16mm}
+@media print{body{font-size:10.5pt;background:#fff;color:#000}header,.toolbar,#tabs,.sidebar,#viewTitle,#placeholder,.foot,.actions,.panel-footer,.animation-controls,.no-print,#exportStatus{display:none!important}.workspace{display:block;margin:0}main{padding:0;max-width:none}article{border:0;border-radius:0;padding:0}.print-only{display:block}.print-heading{border-bottom:1px solid #aaa;padding-bottom:12px;margin-bottom:20px}.print-heading h1{font-size:19pt}.print-heading p{margin:5px 0;font-size:11pt}[role=tabpanel]{display:block!important}#panel1,#panel2,#panel3{break-before:page}h2{font-size:16pt}h3{font-size:12pt;break-after:avoid}h4{break-after:avoid}.step-heading{break-after:avoid}.step{padding-top:15px;margin-top:20px}.figure{break-inside:avoid;max-width:155mm;margin:12px auto;border-color:#bbb}.figure svg{max-height:112mm}.snapshots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.snapshots .figure{width:100%}.snapshots svg{max-height:none}.snapshots svg text{font-size:17px}.snapshots figcaption{font-size:8pt}.input-layout{display:block}.guide{display:none}.table-scroll{overflow:visible}table{font-size:9pt}tr{break-inside:avoid}thead{display:table-header-group}.math{font-size:13pt}.math-block{overflow:visible}.result-box .math{font-size:15pt}.constraint-grid{grid-template-columns:1fr 1fr}.notice{break-inside:avoid}.print-hidden,.screen-note{display:none!important}.figure svg{width:100%!important}details{display:block}details>*{display:block!important}.sidebar[hidden]{display:none!important}body:not(.has-variant) .print-heading{display:none}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 5V30H31" stroke="#fff" stroke-width="1.8"/><path d="M7 28L12 15L23 10L29 21L23 28Z" fill="#9ebfab" stroke="#fff" stroke-width="1.2"/><path d="M12 30L29 9" stroke="#fff" stroke-width="1.6"/><circle cx="23" cy="10" r="2.4" fill="#fff"/></svg></div><div><h1>Лінійне програмування</h1><p>Практична робота · Графічний метод</p></div></div><span class="badge" id="variantBadge">20 варіантів завдань</span></header>
+<main>
+<div class="toolbar"><label for="variant">Варіант завдання</label><select id="variant" aria-label="Варіант завдання"><option value="">Оберіть варіант…</option></select><button id="reset" disabled title="Повернутися до умови поточного варіанта">До умови</button><span class="spacer"></span><span class="quiet" id="status" role="status" aria-live="polite">Навчальна лабораторія</span></div>
+<nav id="tabs" role="tablist" aria-label="Розділи практичної роботи"></nav>
+<div class="workspace">
+<aside class="sidebar" aria-label="Поточне завдання"><h2>Паспорт задачі</h2><div><p class="eyebrow">Практична робота</p><p class="variant-title" id="sideVariant">Варіант —</p></div><div id="sideFormula" class="math muted">Оберіть завдання</div><hr><div id="sideInfo"><div class="meta-row"><span>Змінні</span><strong>x₁, x₂</strong></div><div class="meta-row"><span>Оптимізація</span><strong id="sideGoal">—</strong></div><div class="meta-row"><span>Обмеження</span><strong id="sideCount">—</strong></div></div><p class="side-note">Усі умови перенесено з наданого завдання до практичної роботи. Змінні невід’ємні.</p><div class="side-links" id="sideLinks" hidden><button data-go="2">Перейти до побудови →</button><button data-go="3">Перейти до відповіді →</button></div></aside>
+<article>
+<div class="print-only print-heading"><h1>Лінійне програмування. Графічний метод</h1><p id="printVariant"></p></div>
+<h2 id="viewTitle">Вхідні дані</h2>
+<div class="graph-tools no-print" id="graphTools" hidden><span>Масштаб рисунків</span><button id="zoomOut" aria-label="Зменшити рисунки">−</button><output id="zoomValue">100%</output><button id="zoomIn" aria-label="Збільшити рисунки">+</button><span class="small">Збільшений рисунок можна прокручувати горизонтально.</span></div>
+<div id="placeholder" class="empty"><svg class="empty-icon" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M11 8V54H57M12 43L27 19L49 30L40 53" stroke="currentColor" stroke-width="1.8"/><path d="M12 52L27 20L49 30L40 52Z" fill="#e0ece3"/><path d="M18 47L47 12" stroke="currentColor" stroke-width="1.8" stroke-dasharray="4 3"/></svg><strong>Почніть із вибору варіанта</strong>Оберіть завдання 1–20 у списку вище.<br>Умова, пояснення та всі етапи розв’язку з’являться автоматично.</div>
+<section id="panel0" role="tabpanel" aria-labelledby="tab0" hidden></section>
+<section id="panel1" role="tabpanel" aria-labelledby="tab1" hidden></section>
+<section id="panel2" role="tabpanel" aria-labelledby="tab2" hidden></section>
+<section id="panel3" role="tabpanel" aria-labelledby="tab3" hidden></section>
+<div class="actions no-print"><button id="print" disabled>Друк / PDF</button><button class="primary" id="wordExport" disabled>Завантажити Word</button></div>
+<p id="exportStatus" role="status" aria-live="polite"></p>
+</article>
+</div>
+<p class="foot">Навчальний інструмент · 20 варіантів · дві невід’ємні дійсні змінні · метод за наданою лекцією</p>
+</main>
+<script>
+'use strict';
+/* Source: «Завдання до практичної роботи_Графічний метод», variants 1–20.
+   Constraint tuple: [coefficient of x1, coefficient of x2, <= or >=, right-hand side].
+   Nonnegativity is added exactly once by the solver. No source conditions are corrected. */
+const DATA = [
+ {id:1,c:[7,6],goal:'max',cons:[[2,5,'>=',10],[5,2,'>=',10],[1,0,'<=',6],[0,1,'<=',5]]},
+ {id:2,c:[3,-2],goal:'max',cons:[[2,1,'<=',11],[-3,2,'<=',10],[3,4,'>=',20]]},
+ {id:3,c:[5,-3],goal:'min',cons:[[3,2,'>=',6],[2,-3,'>=',-6],[1,-1,'<=',4],[4,7,'<=',28]]},
+ {id:4,c:[1,2],goal:'max',cons:[[2,1,'<=',14],[-3,2,'<=',9],[3,4,'>=',27]]},
+ {id:5,c:[7,-2],goal:'max',cons:[[5,-2,'<=',3],[1,1,'>=',1],[-3,1,'<=',3],[2,1,'<=',4]]},
+ {id:6,c:[2,1],goal:'max',cons:[[1,-2,'>=',4],[5,2,'>=',10],[4,-3,'<=',12],[7,4,'<=',28]]},
+ {id:7,c:[2,2],goal:'max',cons:[[3,-2,'>=',-6],[1,1,'>=',3],[1,0,'<=',3],[0,1,'<=',5]]},
+ {id:8,c:[2,-4],goal:'max',cons:[[8,-5,'<=',16],[1,3,'<=',2],[2,7,'>=',9]]},
+ {id:9,c:[1,2],goal:'max',cons:[[5,-2,'<=',4],[1,-2,'>=',-4],[1,1,'>=',4]]},
+ {id:10,c:[3,3],goal:'max',cons:[[1,-4,'<=',4],[3,2,'<=',6],[-1,1,'<=',1],[1,2,'>=',2]]},
+ {id:11,c:[2,-1],goal:'max',cons:[[1,-1,'>=',-3],[6,7,'<=',42],[2,-3,'<=',6],[1,1,'>=',4]]},
+ {id:12,c:[5,1],goal:'min',cons:[[1,7,'>=',7],[-2,1,'<=',6],[2,5,'>=',10],[5,2,'>=',10],[7,1,'>=',7],[1,0,'<=',6],[0,1,'<=',7]]},
+ {id:13,c:[1,-1],goal:'max',cons:[[-1,1,'>=',8],[8,5,'<=',80],[1,-2,'<=',2],[1,4,'>=',4]]},
+ {id:14,c:[7,1],goal:'max',cons:[[1,1,'<=',14],[3,-5,'<=',15],[5,3,'>=',21]]},
+ {id:15,c:[7,-6],goal:'min',cons:[[1,1,'>=',3],[5,1,'>=',5],[1,5,'>=',5],[1,0,'<=',4],[0,1,'<=',4]]},
+ {id:16,c:[1,1],goal:'min',cons:[[3,1,'>=',8],[1,2,'>=',6],[1,-1,'<=',3]]},
+ {id:17,c:[1,3],goal:'max',cons:[[-1,1,'<=',3],[4,3,'<=',20]]},
+ {id:18,c:[2,1],goal:'max',cons:[[1,-1,'>=',4],[1,1,'>=',10],[4,-1,'<=',12],[7,1,'<=',7]]},
+ {id:19,c:[2,2],goal:'max',cons:[[3,-2,'>=',-6],[1,1,'>=',3],[1,0,'<=',3],[0,1,'<=',5]]},
+ {id:20,c:[2,-4],goal:'max',cons:[[8,-5,'<=',16],[1,3,'>=',2],[2,7,'<=',9]]}
+];
+const $=id=>document.getElementById(id);
+const NAMES=['Вхідні дані','Пояснення методу','Покроковий розв’язок','Підсумок'];
+const COLORS=['#32699a','#ac6930','#8060a2','#398172','#b24f66','#777032','#5878a0'];
+let current=null, solution=null, active=0, animationTimer=null, exporting=false, chartCounter=0, plotScale=1;
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+// Exact rational arithmetic for the supplied integer coefficients.
+class Q{
+ constructor(n,d=1){if(d===0)throw Error('Нульовий знаменник');if(d<0){n=-n;d=-d}const g=gcd(n,d);this.n=n/g;this.d=d/g}
+ add(v){v=q(v);return new Q(this.n*v.d+v.n*this.d,this.d*v.d)}
+ sub(v){v=q(v);return new Q(this.n*v.d-v.n*this.d,this.d*v.d)}
+ mul(v){v=q(v);return new Q(this.n*v.n,this.d*v.d)}
+ div(v){v=q(v);return new Q(this.n*v.d,this.d*v.n)}
+ cmp(v){v=q(v);return Math.sign(this.n*v.d-v.n*this.d)}
+ get value(){return this.n/this.d}
+ toString(){return this.d===1?String(this.n):this.n+'/'+this.d}
+}
+function q(v){return v instanceof Q?v:new Q(v)}
+function f(v){v=q(v);return v.d===1?String(v.n).replace('-','−'):`${v.n<0?'−':''}<span class="fraction"><span>${Math.abs(v.n)}</span><span>${v.d}</span></span>`}
+function txt(v){return String(v).replaceAll('-','−')}
+const math=s=>`<span class="math">${s}</span>`;
+const block=s=>`<div class="math math-block">${s}</div>`;
+function expr(a,b,html=true){const vars=html?['x<sub>1</sub>','x<sub>2</sub>']:['x₁','x₂'];let out='';[a,b].forEach((v,i)=>{if(!v)return;const sign=v<0?'−':out?' + ':'';out+=(v<0&&out?' − ':sign)+(Math.abs(v)===1?'':Math.abs(v))+vars[i]});return out||'0'}
+const symbol=op=>op==='>='?'≥':op==='<='?'≤':'=';
+function equation(c,equality=false,html=true){return expr(c[0],c[1],html)+' '+(equality?'=':symbol(c[2]))+' '+txt(c[3])}
+function objective(d,html=true){return 'F = '+expr(...d.c,html)+' → '+d.goal}
+function point(p,html=true){return html?`(${f(p.x)}; ${f(p.y)})`:`(${p.x}; ${p.y})`}
+function table(headers,rows){return `<div class="table-scroll"><table><thead><tr>${headers.map(h=>`<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr${r.best?' class="best"':''}>${r.map((v,i)=>`<${i?'td':'th scope="row"'}>${v}</${i?'td':'th'}>`).join('')}</tr>`).join('')}</tbody></table></div>`}
+function allConstraints(d){return [...d.cons,[1,0,'>=',0],[0,1,'>=',0]]}
+function inside(p,c){const cmp=p.x.mul(c[0]).add(p.y.mul(c[1])).cmp(c[3]);return c[2]==='<='?cmp<=0:cmp>=0}
+function valueAt(p,d){return p.x.mul(d.c[0]).add(p.y.mul(d.c[1]))}
+// Express x2 through x1, substitute into the other equation, then substitute back.
+function substitution(c1,c2){
+ const isolated=c1[1]!==0?0:c2[1]!==0?1:-1;if(isolated<0)return null;
+ const [a,b,,c]=isolated===0?c1:c2,[u,v,,w]=isolated===0?c2:c1;
+ const alpha=new Q(-a,b),beta=new Q(c,b),coefficient=q(u).add(alpha.mul(v)),rhs=q(w).sub(beta.mul(v));
+ if(coefficient.n===0)return null;
+ const x=rhs.div(coefficient),y=alpha.mul(x).add(beta);
+ return {x,y,isolated,alpha,beta,coefficient,rhs};
+}
+function solve(d){
+ const cs=allConstraints(d),vertices=[];
+ for(let i=0;i<cs.length;i++)for(let j=i+1;j<cs.length;j++){
+  const intersection=substitution(cs[i],cs[j]);if(!intersection)continue;
+  const p={x:intersection.x,y:intersection.y,pair:[i,j]};
+  if(cs.every(k=>inside(p,k))&&!vertices.some(k=>k.x.cmp(p.x)===0&&k.y.cmp(p.y)===0))vertices.push(p);
+ }
+ if(!vertices.length)return {status:'infeasible',vertices:[],rays:[],best:[],value:null,bounded:false};
+ const cx=vertices.reduce((s,p)=>s+p.x.value,0)/vertices.length,cy=vertices.reduce((s,p)=>s+p.y.value,0)/vertices.length;
+ vertices.sort((a,b)=>Math.atan2(b.y.value-cy,b.x.value-cx)-Math.atan2(a.y.value-cy,a.x.value-cx));
+ const first=vertices.reduce((k,p,i)=>p.x.cmp(vertices[k].x)<0||p.x.cmp(vertices[k].x)===0&&p.y.cmp(vertices[k].y)<0?i:k,0);
+ vertices.push(...vertices.splice(0,first));
+ let letter=0;
+ vertices.forEach(p=>{p.label=p.x.n===0&&p.y.n===0?'O':String.fromCharCode(65+letter++);p.value=valueAt(p,d);p.active=cs.map((c,j)=>p.x.mul(c[0]).add(p.y.mul(c[1])).cmp(c[3])===0?j:-1).filter(j=>j>=0)});
+ const rays=[];
+ const dirs=[[1,0],[0,1],...cs.flatMap(c=>[[-c[1],c[0]],[c[1],-c[0]]])];
+ for(let [x,y] of dirs){if(x<0||y<0||!x&&!y)continue;const g=gcd(x,y);x/=g;y/=g;
+  if(cs.every(c=>c[2]==='<='?c[0]*x+c[1]*y<=0:c[0]*x+c[1]*y>=0)&&!rays.some(r=>r.x===x&&r.y===y))rays.push({x,y,value:d.c[0]*x+d.c[1]*y});
+ }
+ // A boundary ray starts where a supporting line meets a finite vertex.
+ // A strip may have two boundary rays with the same direction and different origins.
+ rays.forEach(ray=>{ray.origins=vertices.filter(p=>p.active.some(i=>cs[i][0]*ray.x+cs[i][1]*ray.y===0))});
+ const improving=rays.find(r=>d.goal==='max'?r.value>0:r.value<0);
+ if(improving)return {status:'unbounded',vertices,rays,best:[],value:null,bounded:false,improving};
+ const opt=vertices.reduce((a,p)=>(d.goal==='max'?p.value.cmp(a)>0:p.value.cmp(a)<0)?p.value:a,vertices[0].value);
+ const best=vertices.filter(p=>p.value.cmp(opt)===0),flatRays=rays.filter(r=>r.value===0);
+ return {status:'optimal',vertices,rays,best,value:opt,bounded:rays.length===0,multiple:best.length>1||flatRays.length>0,flatRays};
+}
+function constraintName(i,d,html=true){return i<d.cons.length?(html?'ℓ<sub>'+(i+1)+'</sub>':'ℓ'+(i+1)):i===d.cons.length?(html?'x<sub>1</sub> = 0':'x₁ = 0'):(html?'x<sub>2</sub> = 0':'x₂ = 0')}
+function modelHTML(d){return `<div class="model"><span class="math objective">${objective(d)}</span>${d.cons.map(c=>`<span class="math">${equation(c)},</span>`).join('')}<span class="math">x<sub>1</sub> ≥ 0, &nbsp; x<sub>2</sub> ≥ 0.</span></div>`}
+function footer(i){return `<div class="panel-footer no-print">${i?`<button data-go="${i-1}">← ${NAMES[i-1]}</button>`:'<span></span>'}${i<3?`<button data-go="${i+1}">${NAMES[i+1]} →</button>`:'<button data-go="0">До умови ↑</button>'}</div>`}
+function lineLegend(d,limit=d.cons.length){return `<div class="constraint-grid">${d.cons.slice(0,limit).map((c,i)=>`<div class="constraint-chip"><span class="line-dot" style="color:${COLORS[i]}">${i+1}</span>${math(equation(c,true))}</div>`).join('')}</div>`}
+function stage(title,body,index,id=''){return `<section class="step"${id?` id="${id}"`:''}><div class="step-heading"><span class="step-num">${index}</span><h3>${title}</h3></div><div class="step-body">${body}</div></section>`}
+function clip(poly,c){
+ const out=[],sign=c[2]==='<='?1:-1;
+ const dist=p=>sign*(c[0]*p.x+c[1]*p.y-c[3]);
+ for(let i=0;i<poly.length;i++){const p=poly[i],n=poly[(i+1)%poly.length],dp=dist(p),dn=dist(n),pin=dp<=1e-9,nin=dn<=1e-9;if(pin)out.push(p);if(pin!==nin){const t=dp/(dp-dn);out.push({x:p.x+t*(n.x-p.x),y:p.y+t*(n.y-p.y)})}}
+ return out;
+}
+function chartBounds(d,r){
+ // Include the actual normal endpoint and both positive and negative intercepts.
+ // The same number of pixels represents one unit on either axis.
+ const xs=[0,2,d.c[0],...r.vertices.map(p=>p.x.value),...d.cons.filter(c=>c[0]).map(c=>c[3]/c[0])];
+ const ys=[0,2,d.c[1],...r.vertices.map(p=>p.y.value),...d.cons.filter(c=>c[1]).map(c=>c[3]/c[1])];
+ const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+ const spanX=Math.max(2,maxX-minX),spanY=Math.max(2,maxY-minY);
+ const W=840,H=530,left=48,right=30,top=33,bottom=36;
+ const xmin=minX-spanX*.13,ymin=minY-spanY*.16;
+ const unit=Math.min((W-left-right)/(spanX*1.34),(H-top-bottom)/(spanY*1.36));
+ const xmax=xmin+(W-left-right)/unit,ymax=ymin+(H-top-bottom)/unit;
+ return {W,H,left,right,top,bottom,unit,xmin,ymin,xmax,ymax,X:x=>left+(x-xmin)*unit,Y:y=>H-bottom-(y-ymin)*unit};
+}
+function niceStep(span){const raw=span/9,p=10**Math.floor(Math.log10(raw));return [1,2,2.5,5,10].map(v=>v*p).find(v=>v>=raw)||p*10}
+function lineSegment(a,b,c,B){
+ const points=[];const add=(x,y)=>{if(x>=B.xmin-1e-7&&x<=B.xmax+1e-7&&y>=B.ymin-1e-7&&y<=B.ymax+1e-7&&!points.some(p=>Math.hypot(p.x-x,p.y-y)<1e-7))points.push({x,y})};
+ if(b){add(B.xmin,(c-a*B.xmin)/b);add(B.xmax,(c-a*B.xmax)/b)}if(a){add((c-b*B.ymin)/a,B.ymin);add((c-b*B.ymax)/a,B.ymax)}
+ return points.slice(0,2);
+}
+function svgChart(d,r,opt={}){
+ const B=chartBounds(d,r),{W,H,X,Y,xmin,ymin,xmax,ymax,unit}=B;
+ const limit=opt.limit??d.cons.length,latest=opt.latest??-1,cs=d.cons.slice(0,limit),title=opt.title||'Графічний розв’язок';
+ const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('"','&quot;');
+ const svgLine=(x1,y1,x2,y2,color,width=1,dash='',extra='')=>`<line x1="${X(x1)}" y1="${Y(y1)}" x2="${X(x2)}" y2="${Y(y2)}" stroke="${color}" stroke-width="${width}"${dash?` stroke-dasharray="${dash}"`:''} ${extra}/>`;
+ const label=(x,y,text,color='#263b2f',size=14,anchor='start',extra='')=>`<text x="${X(x)}" y="${Y(y)}" fill="${color}" font-family="Arial,sans-serif" font-size="${size}" text-anchor="${anchor}" ${extra}>${esc(text)}</text>`;
+ const rect=[{x:0,y:0},{x:xmax,y:0},{x:xmax,y:ymax},{x:0,y:ymax}];
+ const poly=cs.reduce((p,c)=>clip(p,c),rect);
+ const polygon=(points,fill,opacity,stroke='none')=>points.length?`<polygon points="${points.map(p=>X(p.x)+','+Y(p.y)).join(' ')}" fill="${fill}" fill-opacity="${opacity}" stroke="${stroke}" stroke-width="1.3"/>`:'';
+ const lineLabels=[];
+ const vertexLabelPosition=p=>{
+  const x=p.x.value,y=p.y.value,center=poly.length?poly.reduce((a,p)=>({x:a.x+p.x/poly.length,y:a.y+p.y/poly.length}),{x:0,y:0}):{x:0,y:0};
+  const dx=x-center.x,dy=y-center.y,l=Math.hypot(dx,dy)||1;
+  return {x:X(x)+(Math.abs(x)<1e-8?-16:dx/l*17),y:Y(y)+(Math.abs(y)<1e-8?35:-dy/l*17)+4};
+ };
+ let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(title)}"><title>${esc(title)}</title><defs><clipPath id="plot"><rect x="${B.left}" y="${B.top}" width="${W-B.left-B.right}" height="${H-B.top-B.bottom}"/></clipPath><marker id="axisArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 1L9 5L0 9" fill="none" stroke="#485a4e" stroke-width="1.5"/></marker><marker id="greenArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1L9 5L0 9Z" fill="#285f4d"/></marker><marker id="redArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 1L9 5L0 9Z" fill="#b24b43"/></marker></defs><rect width="${W}" height="${H}" fill="white"/>`;
+ const tick=niceStep(Math.max(xmax-xmin,ymax-ymin));
+ s+='<g clip-path="url(#plot)">';
+ for(let x=Math.ceil(xmin/tick)*tick;x<xmax;x+=tick)s+=svgLine(x,ymin,x,ymax,'#e9eeea');
+ for(let y=Math.ceil(ymin/tick)*tick;y<ymax;y+=tick)s+=svgLine(xmin,y,xmax,y,'#e9eeea');
+ if(latest>=0)s+=polygon(clip(rect,d.cons[latest]),COLORS[latest],.09);
+ if(!opt.noArea)s+=polygon(poly,'#79a68b',.30,'#6a9479');
+ s+=svgLine(xmin,0,xmax-.04*(xmax-xmin),0,'#485a4e',1.5,'','marker-end="url(#axisArrow)"');
+ s+=svgLine(0,ymin,0,ymax-.04*(ymax-ymin),'#485a4e',1.5,'','marker-end="url(#axisArrow)"');
+ cs.forEach((c,i)=>{
+  const seg=lineSegment(c[0],c[1],c[3],B);if(seg.length<2)return;
+  const color=COLORS[i],width=i===latest?2.7:1.7;
+  s+=svgLine(seg[0].x,seg[0].y,seg[1].x,seg[1].y,color,width);
+  if(opt.arrows!==false){
+   const dir=c[2]==='<='?-1:1,mag=Math.hypot(c[0],c[1]),nx=dir*c[0]/mag,ny=dir*c[1]/mag;
+   const candidates=[.28,.52,.76];
+   for(const t of candidates){const x=seg[0].x+t*(seg[1].x-seg[0].x),y=seg[0].y+t*(seg[1].y-seg[0].y);if(x<.03*xmax||y<.025*ymax||x>xmax-.06*xmax||y>ymax-.08*ymax)continue;
+    const len=21/unit;s+=svgLine(x,y,x+nx*len,y+ny*len,color,1.2);
+    const hx=x+nx*len,hy=y+ny*len,back=6/unit,side=3/unit;s+=svgLine(hx,hy,hx-nx*back+ny*side,hy-ny*back-nx*side,color,1.2)+svgLine(hx,hy,hx-nx*back-ny*side,hy-ny*back+nx*side,color,1.2);
+   }
+  }
+  // Line number near the plot boundary; complete equations appear below each chart.
+  const choices=[.12,.88,.22,.78,.40,.60].map(t=>({x:seg[0].x+t*(seg[1].x-seg[0].x),y:seg[0].y+t*(seg[1].y-seg[0].y)}));
+  const p=choices.find(p=>p.x>.07*xmax&&p.y>.07*ymax&&p.y<.91*ymax&&p.x<.93*xmax&&!r.vertices.some(v=>Math.hypot((p.x-v.x.value)*unit,(p.y-v.y.value)*unit)<28))||choices[2];
+  lineLabels.push({x:X(p.x)+11,y:Y(p.y)-10});
+  s+=`<circle cx="${X(p.x)+11}" cy="${Y(p.y)-10}" r="10" fill="white" stroke="${color}"/>`+`<text x="${X(p.x)+11}" y="${Y(p.y)-6}" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="600" fill="${color}">${i+1}</text>`;
+ });
+ if(opt.level!==undefined){
+  const vals=opt.ghosts||[];
+  for(const v of vals){const seg=lineSegment(...d.c,v,B);if(seg.length===2)s+=svgLine(seg[0].x,seg[0].y,seg[1].x,seg[1].y,'#c99690',1.5,'6 5')}
+  const seg=lineSegment(...d.c,opt.level,B);if(seg.length===2)s+=svgLine(seg[0].x,seg[0].y,seg[1].x,seg[1].y,'#b24b43',2.7);
+ }
+ if(opt.normal){
+  const [nx,ny]=d.c,n=Math.hypot(nx,ny),len=Math.min(xmax-xmin,ymax-ymin)*.16;
+  s+=svgLine(nx,0,nx,ny,'#6e8c79',1.2,'5 4','data-role="normal-projection-x"');
+  s+=svgLine(0,ny,nx,ny,'#6e8c79',1.2,'5 4','data-role="normal-projection-y"');
+  s+=svgLine(0,0,nx,ny,'#285f4d',2.8,'',`marker-end="url(#greenArrow)" data-role="normal-vector" data-end-x="${nx}" data-end-y="${ny}" aria-label="Вектор N (${txt(nx)}; ${txt(ny)})"`);
+  const text='N',width=12;
+  const obstacles=r.vertices.flatMap(p=>{const lp=vertexLabelPosition(p);return [{x:X(p.x.value)-9,y:Y(p.y.value)-9,w:18,h:18},{x:lp.x-9,y:lp.y-16,w:18,h:22}]});
+  obstacles.push({x:X(nx)-17,y:Y(0)+3,w:34,h:23},{x:X(0)-34,y:Y(ny)-13,w:27,h:23});
+  const candidates=[[12,-12,'start'],[14,27,'start'],[-14,-12,'end'],[-14,27,'end'],[14,-37,'start'],[14,49,'start']].map(([dx,dy,anchor])=>({x:X(nx)+dx,y:Y(ny)+dy,anchor}));
+  const place=candidates.find(p=>{const box={x:p.x-(p.anchor==='end'?width:0),y:p.y-16,w:width,h:22};return box.x>B.left&&box.x+box.w<W-B.right&&box.y>B.top&&box.y+box.h<H-B.bottom&&!obstacles.some(o=>box.x<o.x+o.w+3&&box.x+box.w>o.x-3&&box.y<o.y+o.h+3&&box.y+box.h>o.y-3)})||candidates[0];
+  s+=label(xmin+(place.x-B.left)/unit,ymin+(H-B.bottom-place.y)/unit,text,'#285f4d',15,place.anchor,'font-weight="600" stroke="white" stroke-width="4" paint-order="stroke"');
+  const dir=d.goal==='max'?1:-1,anchor=poly.length?poly.reduce((a,p)=>({x:a.x+p.x/poly.length,y:a.y+p.y/poly.length}),{x:0,y:0}):{x:xmax*.4,y:ymax*.4};
+  const dx=dir*d.c[0]/n*len*.64,dy=dir*d.c[1]/n*len*.64;
+  s+=svgLine(anchor.x,anchor.y,anchor.x+dx,anchor.y+dy,'#b24b43',2,'','marker-end="url(#redArrow)"');
+ }
+ const showVertices=opt.vertices!==false&&limit===d.cons.length;
+ if(showVertices){
+  if(r.best.length>1&&opt.optimum){const a=r.best[0],b=r.best[r.best.length-1];s+=svgLine(a.x.value,a.y.value,b.x.value,b.y.value,'#b24b43',5)}
+  for(const p of r.vertices){const x=p.x.value,y=p.y.value,best=opt.optimum&&r.best.includes(p),color=best?'#ad4138':'#285f4d';s+=`<circle cx="${X(x)}" cy="${Y(y)}" r="${best?5.8:4}" fill="${color}" stroke="white" stroke-width="1.4"/>`;
+   const lp=vertexLabelPosition(p);
+   s+=`<text x="${lp.x}" y="${lp.y}" font-family="Arial,sans-serif" text-anchor="middle" font-size="16" font-weight="600" fill="${color}" stroke="white" stroke-width="4" paint-order="stroke">${p.label}</text>`;
+  }
+  if(!r.bounded&&r.status!=='infeasible'&&!opt.hideRays){
+   r.rays.forEach(ray=>ray.origins.forEach(origin=>{
+    const x=origin.x.value,y=origin.y.value;
+    const tx=ray.x?(xmax-.07*(xmax-xmin)-x)/ray.x:Infinity,ty=ray.y?(ymax-.08*(ymax-ymin)-y)/ray.y:Infinity;
+    let t=Math.min(tx,ty);
+    for(let attempt=0;attempt<4&&lineLabels.some(p=>Math.hypot(p.x-X(x+ray.x*t),p.y-Y(y+ray.y*t))<27);attempt++)t-=28/(unit*Math.hypot(ray.x,ray.y));
+    if(t>0)s+=svgLine(x,y,x+ray.x*t,y+ray.y*t,'#285f4d',2.5,'6 4',`marker-end="url(#greenArrow)" data-role="boundary-ray" data-origin-x="${x}" data-origin-y="${y}" data-direction-x="${ray.x}" data-direction-y="${ray.y}"`);
+   }));
+  }
+ }
+ if(poly.length>=3&&!opt.noArea&&limit===d.cons.length&&r.status!=='infeasible'){
+  const p=poly.reduce((a,p)=>({x:a.x+p.x/poly.length,y:a.y+p.y/poly.length}),{x:0,y:0});s+=label(p.x,p.y,'M','#365b42',21,'middle','font-style="italic"');
+ }
+ s+='</g>';
+ for(let x=Math.ceil(xmin/tick)*tick;x<xmax-.04*(xmax-xmin);x+=tick)if(Math.abs(x)>tick*.01){s+=svgLine(x,-3/unit,x,3/unit,'#6b796f');if(!opt.normal||Math.abs(x-d.c[0])*unit>18)s+=label(x,-18/unit,Number(x.toFixed(2)).toString(),'#69766d',12,'middle')}
+ for(let y=Math.ceil(ymin/tick)*tick;y<ymax-.05*(ymax-ymin);y+=tick)if(Math.abs(y)>tick*.01){s+=svgLine(-3/unit,y,3/unit,y,'#6b796f');if(!opt.normal||Math.abs(y-d.c[1])*unit>18)s+=label(-10/unit,y-4/unit,Number(y.toFixed(2)).toString(),'#69766d',12,'end')}
+ if(opt.normal){
+  s+=label(d.c[0],-19/unit,txt(d.c[0]),'#285f4d',13,'middle','font-weight="600" stroke="white" stroke-width="3" paint-order="stroke" data-role="normal-coordinate-x"');
+  s+=label(-11/unit,d.c[1]-4/unit,txt(d.c[1]),'#285f4d',13,'end','font-weight="600" stroke="white" stroke-width="3" paint-order="stroke" data-role="normal-coordinate-y"');
+ }
+ if(!showVertices||!r.vertices.some(p=>p.label==='O'))s+=label(-8/unit,-18/unit,'0','#69766d',12,'end');
+ s+=label(xmax-.025*(xmax-xmin),-19/unit,'x₁','#34473a',17,'end')+label(11/unit,ymax-.03*(ymax-ymin),'x₂','#34473a',17);
+ if(r.status==='infeasible'&&limit===d.cons.length&&!poly.length)s+=`<rect x="${W-229}" y="${H-75}" width="204" height="33" rx="5" fill="#fff7eb" stroke="#dbc09a"/><text x="${W-127}" y="${H-53}" fill="#85602e" font-family="Arial,sans-serif" font-size="14" text-anchor="middle">M = ∅ · спільних точок немає</text>`;
+ if(!r.bounded&&r.status!=='infeasible'&&limit===d.cons.length)s+=`<text x="${W-34}" y="${H-12}" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#61766a">Область M продовжується за межі рисунка ↗</text>`;
+ // Unique fragment IDs prevent markers in hidden tabs from shadowing visible charts.
+ const uid=++chartCounter;
+ return (s+'</svg>').replace(/id="(plot|axisArrow|greenArrow|redArrow)"/g,(_,name)=>`id="${name}-${uid}"`).replace(/url\(#(plot|axisArrow|greenArrow|redArrow)\)/g,(_,name)=>`url(#${name}-${uid})`);
+}
+function figure(d,r,opt,caption,extraClass=''){return `<figure class="figure ${extraClass}">${svgChart(d,r,opt)}<figcaption>${caption}</figcaption></figure>`}
+function baseLegend(){return '<div class="legend"><span class="legend-item"><i class="legend-key area"></i>Допустима область M</span><span class="legend-item"><i class="legend-key" style="background:#b24b43"></i>Лінія рівня цільової функції</span><span class="legend-item"><i class="legend-key" style="background:#285f4d"></i>Вектор N / напрям продовження області</span></div>'}
+function inputPanel(d){return `<div class="input-layout"><div><p class="intro">Розв’язати задачу лінійного програмування графічним методом.</p><h3>Умова · Варіант ${d.id}</h3><p>Знайти <strong>${d.goal==='max'?'максимум':'мінімум'}</strong> цільової функції за наведених обмежень.</p>${modelHTML(d)}<p class="number-note">x₁, x₂ — дійсні невід’ємні змінні. Вимоги цілочисельності в умові немає.</p></div><aside class="guide"><h3>Як працювати</h3><ol><li>Перевірте умову свого варіанта.</li><li>Перегляньте пояснення графічного методу.</li><li>Пройдіть побудову від кожної прямої до оптимуму.</li><li>Зіставте відповідь із перевіркою обмежень.</li></ol><p class="muted small">Рисунки, розрахунки та звіт автоматично відповідають обраному варіанту.</p></aside></div><div class="notice screen-note">На наступних вкладках наведено повний розв’язок. Кнопки внизу створюють друковану версію та Word-звіт з усіма етапами й рисунками.</div>${footer(0)}`}
+function explainPanel(d,r){
+ const direction=d.goal==='max'?'у напрямку вектора N':'у напрямку, протилежному до вектора N';
+ return `<h2 class="print-only">Пояснення графічного методу</h2><p class="intro">Алгоритм відповідає прикладу з лекції: прямі обмежень → допустима область → вектор нормалі → опорна пряма → координати та значення функції.</p>
+ <h3>1. Прямі та допустимі півплощини</h3><p>Кожне обмеження aᵢx₁ + bᵢx₂ ≤ dᵢ або ≥ dᵢ задає півплощину. Для побудови її межі замінюємо нерівність рівністю. Пряму проводимо через дві точки; допустимий бік визначаємо підстановкою контрольної точки.</p><p>У цьому варіанті праві частини обмежень ненульові, тому зручно перевіряти початок координат O(0; 0). Якщо нерівність виконується, обираємо бік із точкою O; інакше — протилежний. Стрілки на прямих указують допустимий бік.</p>
+ <h3>2. Спільна область M</h3><p>Умови x₁ ≥ 0 та x₂ ≥ 0 обмежують пошук першою чвертю. Перетин усіх півплощин утворює область допустимих розв’язків M. Вона може бути багатокутником, необмеженою областю, відрізком, точкою або порожньою множиною.</p><div class="notice">Необмежена область не обов’язково означає необмежену цільову функцію. Наявність оптимуму перевіряємо окремо.</div>
+ <h3>3. Вектор нормалі та лінії рівня</h3><p>Для функції ${math('F = '+expr(...d.c))} вектор нормалі дорівнює ${math(`N = (${txt(d.c[0])}; ${txt(d.c[1])})`)}. Лінії рівня ${math(expr(...d.c)+' = k')} перпендикулярні до N і паралельні між собою.</p>${block(`N = (${txt(d.c[0])}; ${txt(d.c[1])}), &nbsp; l(k): ${expr(...d.c)} = k`)}<p>За умовою шукаємо <strong>${d.goal==='max'?'максимум':'мінімум'}</strong>, тому лінію рівня зміщуємо <strong>${direction}</strong>. Оптимальне положення — останній дотик прямої до M у цьому напрямку.</p>
+ <h3>4. Точні координати та перевірка</h3><p>Рисунок підказує оптимальну вершину. Для визначення її координат розв’язуємо два рівняння активних меж методом підстановки: виражаємо x₂ через x₁, підставляємо в інше рівняння та знаходимо обидві координати. Для незалежної перевірки обчислюємо F у всіх допустимих вершинах і підставляємо оптимальну точку в кожне обмеження.</p><p>Якщо опорна пряма збігається зі стороною M, оптимальними є всі точки відповідного відрізка. Якщо система несумісна, оптимуму немає. Якщо функція необмежено поліпшується вздовж допустимого променя, скінченного оптимуму також немає.</p>
+ <h3>Позначення на рисунках</h3>${table(['Позначення','Зміст'],[[math('ℓᵢ'),'Межа i-го обмеження; номер і колір відповідають рівнянню в легенді'],[math('M'),'Перетин усіх допустимих півплощин і першої чверті'],[math('O, A, B, C, …'),'Вершини за годинниковою стрілкою; початок координат, якщо він належить M, позначаємо O'],[math('N'),'Вектор нормалі (коефіцієнти цільової функції)'],[math('l(k)'),'Лінія рівня F = k; червона пряма'],['Зелена заливка','Спільна область після врахування побудованих обмежень']])}<p class="number-note">Розрахунки для заданих цілочисельних коефіцієнтів виконуються у звичайних дробах. Округлення координат для побудови рисунка не впливає на відповідь.</p>${footer(1)}`;
+}
+function constructionPoints(c){const [a,b,,v]=c;if(a&&b)return [{x:new Q(v,a),y:q(0)},{x:q(0),y:new Q(v,b)}];if(a)return [{x:new Q(v,a),y:q(0)},{x:new Q(v,a),y:q(1)}];return [{x:q(0),y:new Q(v,b)},{x:q(1),y:new Q(v,b)}]}
+function noSolutionProof(d){
+ if(d.id===6)return `<p>Із першого обмеження ${math('x₁ − 2x₂ ≥ 4')} маємо ${math('x₁ ≥ 4 + 2x₂')}. Із третього ${math('4x₁ − 3x₂ ≤ 12')} маємо ${math('x₁ ≤ 3 + '+f(new Q(3,4))+'x₂')}.</p>${block('4 + 2x₂ ≤ 3 + '+f(new Q(3,4))+'x₂ &nbsp; ⇒ &nbsp; 1 + '+f(new Q(5,4))+'x₂ ≤ 0')}<p>Це неможливо за ${math('x₂ ≥ 0')}: ліва частина не менша за 1. Отже, перше й третє обмеження разом з невід’ємністю вже несумісні.</p>`;
+ if(d.id===8)return `<p>Із другого обмеження ${math('x₁ + 3x₂ ≤ 2')} та ${math('x₁ ≥ 0')} випливає:</p>${block('2x₁ + 7x₂ = '+f(new Q(7,3))+'(x₁ + 3x₂) − '+f(new Q(1,3))+'x₁ ≤ '+f(new Q(14,3))+' < 9')}<p>А третє обмеження вимагає ${math('2x₁ + 7x₂ ≥ 9')}. Отримали суперечність. Ці дві півплощини в першій чверті не мають спільних точок.</p>`;
+ if(d.id===18)return `<p>Із ${math('x₁ − x₂ ≥ 4')} та ${math('x₂ ≥ 0')} маємо ${math('x₁ ≥ 4')}. Тоді:</p>${block('7x₁ + x₂ ≥ 7 · 4 + 0 = 28 > 7')}<p>Це суперечить четвертому обмеженню ${math('7x₁ + x₂ ≤ 7')}. Отже, спільна допустима область порожня.</p>`;
+ return '<p>Жодна точка не задовольняє всіх обмежень одночасно.</p>';
+}
+function verticesTable(d,r){return table(['Вершина','Координати (x₁; x₂)','Активні межі','Значення F'],r.vertices.map(p=>{let row=[p.label,math(point(p)),p.active.map(i=>math(constraintName(i,d))).join(', '),math(f(p.value))];row.best=r.best.includes(p);return row}))}
+function affineHTML(alpha,beta,variable='x₁'){
+ let out=beta.n===0?'':f(beta);
+ if(alpha.n!==0){const abs=new Q(Math.abs(alpha.n),alpha.d),term=(abs.cmp(1)===0?'':f(abs)+' · ')+variable;out+=(alpha.n<0?(out?' − ':'−'):(out?' + ':''))+term}
+ return out||'0';
+}
+function vertexDerivation(d,p){
+ const cs=allConstraints(d),[i,j]=p.pair,s=substitution(cs[i],cs[j]);
+ const isolated=s.isolated===0?i:j,other=s.isolated===0?j:i,[u,v,,w]=cs[other];
+ const affine=affineHTML(s.alpha,s.beta);
+ let substituted=u===0?'':expr(u,0);
+ if(v!==0)substituted+=(v<0?(substituted?' − ':'−'):(substituted?' + ':''))+(Math.abs(v)===1?'':Math.abs(v)+' · ')+`(${affine})`;
+ const reduced=affineHTML(s.coefficient,q(0));
+ return `<div class="vertex-card" data-vertex="${p.label}"><h4>${p.label}${math(point(p))} · ${constraintName(i,d)} ∩ ${constraintName(j,d)}</h4>${block(equation(cs[i],true)+'<br>'+equation(cs[j],true))}<p class="small muted">Розв’язуємо систему методом підстановки, як у лекції. Із рівняння ${math(constraintName(isolated,d))} виражаємо x₂ через x₁:</p>${block('x₂ = '+affine)}<p>Підставляємо цей вираз у рівняння ${math(constraintName(other,d))} та зводимо подібні доданки:</p>${block(`${substituted} = ${txt(w)}<br>${reduced} = ${f(s.rhs)}<br>x₁ = (${f(s.rhs)}) / (${f(s.coefficient)}) = ${f(p.x)}`)}<p>Знайдене значення x₁ підставляємо у вираз для x₂:</p>${block(`x₂ = ${affineHTML(s.alpha,s.beta,'('+f(p.x)+')')} = ${f(p.y)}`)}<p>Отже, ${math(p.label+point(p))}. Обчислюємо цільову функцію:</p>${block(`F(${p.label}) = ${txt(d.c[0])} · (${f(p.x)}) + (${txt(d.c[1])}) · (${f(p.y)}) = ${f(p.value)}`)}</div>`;
+}
+function optimumDescription(d,r){
+ if(r.status==='infeasible')return '<strong>M = ∅.</strong> Система обмежень несумісна. Допустимих розв’язків і оптимального значення цільової функції немає.';
+ if(r.status==='unbounded')return `Цільова функція необмежена ${d.goal==='max'?'зверху':'знизу'} на M. Скінченного ${d.goal==='max'?'максимуму':'мінімуму'} немає.`;
+ if(r.multiple){const a=r.best[0],b=r.best[r.best.length-1];return `Оптимум досягається <strong>в усіх точках відрізка ${a.label}${b.label}</strong>, включно з кінцями ${math(a.label+point(a))} та ${math(b.label+point(b))}.`}
+ return `Єдиний оптимальний розв’язок — точка ${math(r.best[0].label+point(r.best[0]))}.`;
+}
+function resultBox(d,r){return `<div class="result-box${r.status==='infeasible'?' no-solution':''}"><p class="result-label">Варіант ${d.id} · ${d.goal==='max'?'максимізація':'мінімізація'}</p>${r.status==='optimal'?`<div class="math">F<sub>${d.goal}</sub> = ${f(r.value)}</div>`:`<p class="result-title">${r.status==='infeasible'?'Допустимих розв’язків немає':'Функція необмежена'}</p>`}<p>${optimumDescription(d,r)}</p></div>`}
+function checksTable(d,p){return table(['Умова','Підстановка','Перевірка'],allConstraints(d).map(c=>{const left=p.x.mul(c[0]).add(p.y.mul(c[1]));return [math(equation(c)),math(`${txt(c[0])} · (${f(p.x)}) + (${txt(c[1])}) · (${f(p.y)}) = ${f(left)}`),math(`${f(left)} ${symbol(c[2])} ${txt(c[3])}`)+' ✓']}))}
+function boundedExplanation(d,r){
+ if(r.bounded)return '<p>Область M обмежена. Для лінійної функції на такому непорожньому багатокутнику оптимум досягається принаймні в одній вершині. Порівняння значень у всіх вершинах підтверджує графічний висновок.</p>';
+ if(d.id===16)return `<div class="notice">Область M необмежена, але мінімум функції існує. Із ${math('d₁ ≥ 0, d₂ ≥ 0')} для будь-якого ненульового допустимого напряму випливає ${math('d₁ + d₂ > 0')}; рух до нескінченності збільшує F.</div><p>Необмежені ребра починаються у вершинах ${math('(0; 8)')} та ${math('(4; 1)')}: ${math('X(t) = (0; 8) + t(0; 1)')} і ${math('X(t) = (4; 1) + t(1; 1)')}, ${math('t ≥ 0')}. Уздовж них ${math('ΔF = t')} та ${math('ΔF = 2t')} відповідно, ${math('t ≥ 0')}. Тому мінімум шукаємо серед скінченних вершин.</p>`;
+ return '<p>Напрями необмеженості області перевірено окремо: жоден із них не поліпшує цільову функцію безмежно.</p>';
+}
+function stepsPanel(d,r){
+ let n=1,out='<h2 class="print-only">Покроковий розв’язок</h2><p class="intro">Кожен рисунок продовжує попередній. Номери прямих відповідають порядку обмежень в умові; стрілки вказують допустимий бік.</p>';
+ out+=stage('Записуємо математичну модель',`<p>Потрібно знайти ${d.goal==='max'?'найбільше':'найменше'} значення F. Розглядаємо першу чверть координатної площини, оскільки ${math('x₁ ≥ 0, x₂ ≥ 0')}.</p>${modelHTML(d)}`,n++,'step-model');
+ d.cons.forEach((c,i)=>{
+  const pts=constructionPoints(c),ok=c[2]==='<='?0<=c[3]:0>=c[3],test=`0 ${symbol(c[2])} ${txt(c[3])}`;
+  out+=stage(`Будуємо пряму ℓ${i+1} та обираємо півплощину`,`${block(equation(c)+' &nbsp; → &nbsp; '+equation(c,true))}${table(['Точка','x₁','x₂'],pts.map((p,j)=>['P'+(j+1),math(f(p.x)),math(f(p.y))]))}<p>Проводимо пряму через ${math('P₁'+point(pts[0]))} і ${math('P₂'+point(pts[1]))}. Контрольна точка ${math('O(0; 0)')}: ${math(test)} — <strong>${ok?'істинна':'хибна'}</strong> нерівність. Обираємо півплощину <strong>${ok?'з початком координат':'з протилежного боку від початку координат'}</strong>.</p>${figure(d,r,{limit:i+1,latest:i,vertices:false,title:`Варіант ${d.id}. Крок ${i+1}: пряма ℓ${i+1} та допустима півплощина`},`Рисунок ${i+1}. Пряма ℓ${i+1}: ${math(equation(c,true))}. Світлий тон — її допустима півплощина в I чверті; зелений — перетин перших ${i+1} обмежень.`)}${lineLegend(d,i+1)}`,n++);
+ });
+ out+=stage('Визначаємо спільну допустиму область M',`<p>Перетинаємо всі побудовані півплощини та умови невід’ємності. ${r.status==='infeasible'?'Спільної заливки немає: жодна точка не задовольняє всі умови.':r.bounded?'Отримуємо замкнену допустиму область із позначеними вершинами.':'Отримуємо необмежену область. Штрихові зелені стрілки показують її продовження за межі рисунка.'}</p>${figure(d,r,{arrows:true,title:`Варіант ${d.id}. Перетин усіх допустимих півплощин`},`Рисунок ${d.cons.length+1}. ${r.status==='infeasible'?'Порожня допустима область M = ∅.':r.bounded?'Допустима область M та її вершини.':'Необмежена допустима область M; межі рисунка не є обмеженнями задачі.'}`)}${lineLegend(d)}`,n++,'step-region');
+ if(r.status==='infeasible'){
+  out+=stage('Доводимо несумісність обмежень',noSolutionProof(d),n++,'step-proof');
+  out+=stage('Формулюємо відповідь',resultBox(d,r)+'<p>Побудову опорної прямої та пошук екстремуму не продовжуємо: оптимізувати функцію на порожній множині неможливо.</p>',n++);
+  return out+footer(2);
+ }
+ out+=stage('Обчислюємо координати вершин',`<p>Кожна вершина лежить на перетині двох незалежних граничних прямих або прямої та осі координат. Розв’язуємо відповідні системи методом підстановки; залишаємо лише точки, що задовольняють усі нерівності. Вершини позначаємо за годинниковою стрілкою. Якщо початок координат належить M, позначаємо його O, а решту вершин — A, B, C, … .</p>${r.vertices.map(p=>vertexDerivation(d,p)).join('')}`,n++,'step-vertices');
+ const start=r.vertices.reduce((a,p)=>a+p.value.value/r.vertices.length,0),end=r.status==='optimal'?r.value.value:start+10,mid=(start+end)/2;
+ out+=stage('Будуємо вектор нормалі та лінію рівня',`<p>Коефіцієнти функції утворюють вектор ${math(`N = (${txt(d.c[0])}; ${txt(d.c[1])})`)}. Будуємо перпендикулярну до нього пряму ${math('l(k): '+expr(...d.c)+' = k')}.</p><p>Умова вимагає ${d.goal==='max'?'максимуму':'мінімуму'}, отже рухаємо пряму <strong>${d.goal==='max'?'за вектором N':'проти вектора N'}</strong>. Зелена стрілка від початку координат закінчується точно в точці (${txt(d.c[0])}; ${txt(d.c[1])}); червона — показує напрям пошуку. Пунктирні відрізки проєктують кінець N на осі, де підписані його точні координати.</p>${figure(d,r,{normal:true,level:start,arrows:false,title:`Варіант ${d.id}. Вектор нормалі та напрям пошуку ${d.goal}`},'Лінія рівня перетинає M. Її початкове положення вибране всередині діапазону значень F. Масштаб осей однаковий.')}<div class="notice small">Вектор N побудовано за точними координатами коефіцієнтів цільової функції. Межі графіка враховують його кінець, зокрема від’ємні координати; одиниця довжини на обох осях однакова.</div>`,n++);
+ out+=stage('Зміщуємо пряму до опорного положення',`<p>Переміщуємо лінію рівня паралельно самій собі ${d.goal==='max'?'за вектором нормалі':'проти вектора нормалі'}, доки вона востаннє торкнеться M. Нижче наведено три послідовні положення.</p><div class="snapshots">${[start,mid,end].map((v,i)=>figure(d,r,{level:v,arrows:false,optimum:i===2,title:['Початкове положення лінії рівня','Проміжне положення лінії рівня','Опорне положення лінії рівня'][i]},['1. Пряма перетинає M','2. Зміщення до оптимуму','3. Опорна пряма'][i])).join('')}</div><div class="animation-controls no-print"><button id="animateLevel" type="button">▶ Показати рух</button><label for="levelRange">Положення прямої</label><input id="levelRange" type="range" min="0" max="100" value="100" step="1"><output id="levelOutput" for="levelRange">100%</output></div><div id="interactiveChart" class="no-print">${figure(d,r,{level:end,ghosts:[start,mid],normal:true,arrows:false,optimum:true,title:`Варіант ${d.id}. Опорна пряма`},`${math('l*: '+expr(...d.c)+' = '+f(r.value))}. ${r.multiple?'Пряма збігається зі стороною допустимої області.':'Останній дотик до області M — в оптимальній вершині.'}`)}</div>${baseLegend()}`,n++,'step-level');
+ out+=stage('Порівнюємо значення цільової функції',`${verticesTable(d,r)}${boundedExplanation(d,r)}<p>${optimumDescription(d,r)}</p>${r.multiple?parametricSolution(d,r):''}${resultBox(d,r)}`,n++,'step-optimum');
+ out+=stage('Перевіряємо оптимальний розв’язок',`<p>Підставляємо ${math(r.best[0].label+point(r.best[0]))} у вихідні обмеження. Усі нерівності мають виконуватися одночасно.</p>${checksTable(d,r.best[0])}${r.multiple?`<p>Для другого кінця оптимального відрізка ${math(r.best[1].label+point(r.best[1]))}:</p>${checksTable(d,r.best[1])}<p>Обидва кінці допустимі. За опуклістю M весь відрізок належить M; за лінійністю F її значення на цьому відрізку однакове.</p>`:''}`,n++,'step-check');
+ return out+footer(2);
+}
+function parametricSolution(d,r){const a=r.best[0],b=r.best[r.best.length-1];return `<h4>Множина оптимальних розв’язків</h4>${block(`X(t) = (1 − t) · (${f(a.x)}; ${f(a.y)}) + t · (${f(b.x)}; ${f(b.y)}), &nbsp; 0 ≤ t ≤ 1`)}<p>Для кожного ${math('t ∈ [0; 1]')} маємо ${math(`F(X(t)) = ${f(r.value)}`)}. Лінія рівня паралельна відповідній стороні M та збігається з нею в опорному положенні.</p>`}
+function resultsPanel(d,r){
+ let out=`<h2 class="print-only">Підсумок · Варіант ${d.id}</h2>${resultBox(d,r)}`;
+ if(r.status==='infeasible')out+=`<h3>Причина відсутності розв’язку</h3>${noSolutionProof(d)}<p class="muted">Умови варіанта збережено відповідно до наданого завдання.</p>`;
+ else out+=`${figure(d,r,{level:r.value.value,optimum:true,arrows:false,normal:true,title:`Варіант ${d.id}. Підсумкова побудова`},`Підсумкова побудова. ${math('F'+(d.goal==='max'?'<sub>max</sub>':'<sub>min</sub>')+' = '+f(r.value))}; ${r.multiple?'усі точки виділеного відрізка оптимальні.':'оптимальна точка виділена червоним.'}`)}${baseLegend()}${lineLegend(d)}<h3>Значення у вершинах</h3>${verticesTable(d,r)}${r.multiple?parametricSolution(d,r):''}${boundedExplanation(d,r)}`;
+ return out+`<div class="notice small screen-note">Друк / PDF і Word містять умову, пояснення методу, усі етапи побудови, обчислення координат та підсумкову відповідь.</div>${footer(3)}`;
+}
+function stopAnimation(){if(animationTimer!==null){clearInterval(animationTimer);animationTimer=null}const b=$('animateLevel');if(b)b.textContent='▶ Показати рух'}
+function setTab(i,focus=false){active=i;stopAnimation();document.querySelectorAll('[role=tab]').forEach((el,j)=>{el.setAttribute('aria-selected',String(i===j));el.tabIndex=i===j?0:-1});NAMES.forEach((_,j)=>$('panel'+j).hidden=!current||j!==i);$('placeholder').hidden=!!current;$('viewTitle').textContent=NAMES[i];$('graphTools').hidden=!current||i<2;$('tab'+i).scrollIntoView({block:'nearest',inline:'nearest'});if(focus)$('tab'+i).focus()}
+function selectVariant(id){
+ stopAnimation();setZoom(1);current=DATA.find(d=>d.id===Number(id))||null;solution=current?solve(current):null;
+ document.body.classList.toggle('has-variant',!!current);
+ $('variantBadge').textContent=current?'Варіант '+current.id:'20 варіантів завдань';$('sideVariant').textContent=current?'Варіант '+current.id:'Варіант —';
+ $('sideFormula').innerHTML=current?objective(current):'Оберіть завдання';$('sideGoal').textContent=current?(current.goal==='max'?'Максимум':'Мінімум'):'—';$('sideCount').textContent=current?current.cons.length+' + x₁, x₂ ≥ 0':'—';
+ $('status').textContent=current?'Розв’язок варіанта '+current.id+' готовий':'Навчальна лабораторія';$('reset').disabled=!current;$('print').disabled=!current;$('wordExport').disabled=!current||exporting;$('sideLinks').hidden=!current;$('exportStatus').textContent='';
+ if(current){$('panel0').innerHTML=inputPanel(current);$('panel1').innerHTML=explainPanel(current,solution);$('panel2').innerHTML=stepsPanel(current,solution);$('panel3').innerHTML=resultsPanel(current,solution);$('printVariant').textContent='Практична робота · Варіант '+current.id+' · '+(current.goal==='max'?'Знайти максимум':'Знайти мінімум');bindAnimation()}
+ else NAMES.forEach((_,i)=>$('panel'+i).innerHTML='');
+ setTab(0);
+}
+function bindAnimation(){
+ const range=$('levelRange'),button=$('animateLevel');if(!range||!button)return;
+ const d=current,r=solution,start=r.vertices.reduce((a,p)=>a+p.value.value/r.vertices.length,0),end=r.value.value;
+ function drawRange(){const t=Number(range.value)/100,v=start+(end-start)*t;$('levelOutput').textContent=range.value+'%';$('interactiveChart').innerHTML=figure(d,r,{level:v,ghosts:[start],normal:true,arrows:false,optimum:t===1,title:`Варіант ${d.id}. Рух лінії рівня, ${range.value}%`},`${t===1?'Опорне положення':'Проміжне положення'}: F ≈ ${v.toLocaleString('uk-UA',{maximumFractionDigits:3})}. Червона стрілка показує напрям пошуку.`)}
+ range.oninput=()=>{stopAnimation();drawRange()};button.onclick=()=>{if(animationTimer!==null){stopAnimation();return}range.value=0;drawRange();button.textContent='Ⅱ Зупинити';const step=window.matchMedia('(prefers-reduced-motion: reduce)').matches?20:2;animationTimer=setInterval(()=>{range.value=Math.min(100,Number(range.value)+step);drawRange();if(Number(range.value)>=100)stopAnimation()},60)};
+}
+// Word: editable text/tables plus high-resolution PNG copies of every static SVG figure.
+async function imageFromSvg(svg){
+ const clone=svg.cloneNode(true);clone.setAttribute('xmlns','http://www.w3.org/2000/svg');clone.setAttribute('width','1680');clone.setAttribute('height','1060');
+ // Each SVG is self-contained, including its clipping path and arrow markers.
+ const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml;charset=utf-8'}));
+ try{const im=new Image();await new Promise((resolve,reject)=>{im.onload=resolve;im.onerror=()=>reject(Error('Не вдалося перетворити рисунок у зображення.'));im.src=url});const canvas=document.createElement('canvas');canvas.width=1680;canvas.height=1060;const ctx=canvas.getContext('2d');ctx.fillStyle='white';ctx.fillRect(0,0,1680,1060);ctx.drawImage(im,0,0);return Uint8Array.from(atob(canvas.toDataURL('image/png').split(',')[1]),c=>c.charCodeAt(0))}finally{URL.revokeObjectURL(url)}
+}
+function plainText(node){
+ if(node.nodeType===3)return node.textContent;
+ if(node.nodeType!==1)return '';
+ if(node.classList.contains('fraction'))return node.children[0].textContent+'/'+node.children[1].textContent;
+ if(node.tagName==='SUB')return [...node.textContent].map(c=>({'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'}[c]||c)).join('');
+ if(node.tagName==='BR')return '\n';
+ const separator=node.classList.contains('model')||node.classList.contains('result-box')?'\n':node.classList.contains('legend')?' · ':node.classList.contains('constraint-chip')?' ':'';
+ return Array.from(node.childNodes).map(plainText).join(separator);
+}
+async function ensureDocx(){if(window.docx)return window.docx;await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://unpkg.com/docx@9.5.1/dist/index.iife.js';s.onload=resolve;s.onerror=()=>reject(Error('Бібліотека Word не завантажилася. Перевірте інтернет і повторіть спробу.'));document.head.append(s)});if(!window.docx)throw Error('Бібліотека Word недоступна.');return window.docx}
+async function exportWord(){
+ if(!current||exporting)return;stopAnimation();exporting=true;$('wordExport').disabled=true;
+ const snapshot={id:current.id,goal:current.goal,sections:NAMES.map((_,i)=>$('panel'+i).cloneNode(true))};
+ snapshot.sections.forEach(root=>root.querySelectorAll('.no-print,.panel-footer,.print-only,.guide,.screen-note').forEach(n=>n.remove()));
+ // The introduction already states that all results are exact fractions.
+ snapshot.sections[1].querySelectorAll('.number-note').forEach(n=>n.remove());
+ $('exportStatus').textContent='Формую Word-звіт для варіанта '+snapshot.id+'…';
+ try{
+  const d=await ensureDocx();
+  const runs=text=>String(text).split('\n').flatMap((s,i)=>[...(i?[new d.TextRun({break:1})]:[]),new d.TextRun(s)]);
+  const paragraph=(text,options={})=>new d.Paragraph({children:runs(text),spacing:{after:80,line:250},...options});
+  const heading=(text,level=2)=>paragraph(text,{heading:level===1?d.HeadingLevel.HEADING_1:d.HeadingLevel.HEADING_2,keepNext:true,spacing:{before:170,after:80}});
+  async function convert(root){
+   const out=[];
+   for(const node of root.children){
+    if(node.matches('.no-print,.print-only,.panel-footer,button,input,output'))continue;
+    if(node.matches('figure')){
+     const svg=node.querySelector('svg');if(svg){const data=await imageFromSvg(svg);out.push(new d.Paragraph({children:[new d.ImageRun({type:'png',data,transformation:{width:560,height:560*530/840},altText:{title:svg.querySelector('title')?.textContent||'Рисунок',description:'Графічний розв’язок поточного варіанта',name:'Рисунок'}})],alignment:d.AlignmentType.CENTER,keepNext:true,spacing:{before:90,after:40}}))}
+     const caption=node.querySelector('figcaption');if(caption)out.push(paragraph(plainText(caption),{style:'Caption'}));
+    }else if(node.tagName==='TABLE'){
+     const rows=Array.from(node.rows),count=rows[0].cells.length,first=plainText(rows[0].cells[0]),widths=count===2?[2100,6900]:count===4?[1050,2700,3150,2100]:count===3?(first==='Точка'?[1200,3900,3900]:[2600,3900,2500]):Array(count).fill(Math.floor(9000/count)),border={style:d.BorderStyle.SINGLE,size:4,color:'D8DEDA'};
+     out.push(new d.Table({width:{size:9000,type:d.WidthType.DXA},columnWidths:widths,layout:d.TableLayoutType.FIXED,borders:{top:border,bottom:border,left:border,right:border,insideHorizontal:border,insideVertical:border},rows:rows.map((row,i)=>new d.TableRow({tableHeader:i===0,cantSplit:true,children:Array.from(row.cells).map((cell,j)=>new d.TableCell({width:{size:widths[j],type:d.WidthType.DXA},verticalAlign:d.VerticalAlign.CENTER,shading:i===0?{fill:'EBF1EC'}:undefined,margins:{top:90,bottom:90,left:100,right:100},children:[paragraph(plainText(cell),{style:'TableCell',keepNext:i<rows.length-1,spacing:{after:20,line:240}})]}))}))}));out.push(paragraph(''));
+    }else if(/^H[1-4]$/.test(node.tagName)){out.push(heading(plainText(node),node.tagName==='H2'?1:2))}
+    else if(node.classList.contains('step-heading')){out.push(heading(plainText(node.querySelector('h3'))))}
+    else if(node.matches('.math-block,.model,.result-box,.legend,.constraint-chip,.notice')){out.push(paragraph(plainText(node),{keepLines:true,spacing:{before:60,after:110,line:280}}))}
+    else if(node.tagName==='P'){out.push(paragraph(plainText(node),{keepNext:!!node.nextElementSibling?.matches('.table-scroll,table')}))}
+    else if(node.tagName==='OL'||node.tagName==='UL'){Array.from(node.children).forEach((li,i)=>out.push(paragraph((node.tagName==='OL'?(i+1)+'. ':'• ')+plainText(li))))}
+    else out.push(...await convert(node));
+   }
+   return out;
+  }
+  const children=[paragraph('Лінійне програмування',{heading:d.HeadingLevel.TITLE,keepNext:true}),paragraph('Графічний метод. Практична робота',{heading:d.HeadingLevel.SUBTITLE}),paragraph('Варіант '+snapshot.id+' · '+(snapshot.goal==='max'?'Максимізація':'Мінімізація'),{keepNext:true}),paragraph('Умова та порядок графічного розв’язання відповідають наданим завданням і лекції. Координати та значення функції наведено у точних дробах.')];
+  for(let i=0;i<snapshot.sections.length;i++){
+   $('exportStatus').textContent='Формую Word-звіт · Варіант '+snapshot.id+' · Розділ '+(i+1)+' з 4…';
+   children.push(paragraph(NAMES[i],{heading:d.HeadingLevel.HEADING_1,pageBreakBefore:i>0,keepNext:true}));
+   children.push(...await convert(snapshot.sections[i]));
+  }
+  const doc=new d.Document({creator:'Навчальна лабораторія',title:'Графічний метод · Варіант '+snapshot.id,description:'Повний покроковий розв’язок задачі лінійного програмування',styles:{default:{document:{run:{font:'Calibri',size:22,color:'20262D'},paragraph:{spacing:{after:100,line:260}}},title:{run:{size:38,bold:true,color:'000000'}},heading1:{run:{size:30,bold:true,color:'000000'}},heading2:{run:{size:25,bold:true,color:'000000'}}},paragraphStyles:[{id:'TableCell',name:'Table Cell',basedOn:'Normal',run:{size:19}},{id:'Caption',name:'Caption',basedOn:'Normal',run:{size:19,color:'59675F'},paragraph:{spacing:{after:130}}}]},sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:900,right:1080,bottom:900,left:1080}}},footers:{default:new d.Footer({children:[paragraph('Практична робота · Варіант '+snapshot.id,{alignment:d.AlignmentType.CENTER,style:'Caption'})]})},children}]});
+  const blob=await d.Packer.toBlob(doc),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='linear-programming-variant-'+snapshot.id+'.docx';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);$('exportStatus').textContent='Word-звіт для варіанта '+snapshot.id+' завантажено.';
+ }catch(e){$('exportStatus').textContent='Не вдалося створити Word-звіт: '+e.message;console.error(e)}finally{exporting=false;$('wordExport').disabled=!current}
+}
+function setZoom(scale){plotScale=Math.max(1,Math.min(2.5,scale));document.documentElement.style.setProperty('--plot-scale',plotScale);$('zoomValue').textContent=Math.round(plotScale*100)+'%';$('zoomOut').disabled=plotScale<=1;$('zoomIn').disabled=plotScale>=2.5}
+function initialize(){
+ DATA.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent='Варіант '+d.id;$('variant').append(o)});
+ $('tabs').innerHTML=NAMES.map((name,i)=>`<button type="button" role="tab" id="tab${i}" aria-controls="panel${i}" aria-selected="${i===0}" tabindex="${i===0?0:-1}"><span class="tab-number">${i+1}</span>${name}</button>`).join('');
+ NAMES.forEach((_,i)=>{$('tab'+i).onclick=()=>setTab(i);$('tab'+i).onkeydown=e=>{const j=e.key==='ArrowRight'?(i+1)%4:e.key==='ArrowLeft'?(i+3)%4:e.key==='Home'?0:e.key==='End'?3:null;if(j!==null){e.preventDefault();setTab(j,true)}}});
+ $('variant').onchange=e=>selectVariant(e.target.value);$('reset').onclick=()=>{setTab(0);window.scrollTo({top:0,behavior:'smooth'})};
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){setTab(Number(b.dataset.go));$('viewTitle').scrollIntoView({block:'start',behavior:'smooth'})}});
+ $('zoomOut').onclick=()=>setZoom(plotScale-.25);$('zoomIn').onclick=()=>setZoom(plotScale+.25);
+ $('print').onclick=()=>{stopAnimation();window.print()};$('wordExport').onclick=exportWord;
+ window.addEventListener('beforeprint',stopAnimation);selectVariant('');
+}
+// Public read-only test hooks also support mathematical verification outside the UI.
+window.LP={DATA,solve,Q,substitution,chartBounds,svgChart,get state(){return {variant:current,solution,tab:active}},selectVariant};
+initialize();
+</script>
+</body>
+</html>
