@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Погода в Івано-Франківську | Точний онлайн-прогноз</title>
+  <meta name="theme-color" content="#1e3c72" id="app-theme-color">
+  <script>
+    const THEME_STORAGE_KEY = 'if_weather_theme';
+    const THEME_COLORS = { dark: '#1e3c72', light: '#eaf4ff' };
+
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      document.getElementById('app-theme-color').content = THEME_COLORS[theme];
+    }
+
+    try {
+      if (localStorage.getItem(THEME_STORAGE_KEY) === 'light') applyTheme('light');
+    } catch {}
+  </script>
+  <!-- Якщо прямий MET Norway повертає HTTP 403, хостинг може роздати кешувальний
+       проксі для тих самих координат. Укажіть його шлях у meta met-norway-proxy. -->
+  <link rel="manifest" id="pwa-manifest">
+  <style>
+    @font-face {
+      font-family: 'Plus Jakarta Sans';
+      font-style: normal;
+      font-weight: 300 800;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2) format('woff2');
+    }
+
+    :root {
+      --bg-gradient-day: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6dd5ed 100%);
+      --bg-gradient-night: linear-gradient(135deg, #0b1021 0%, #162447 50%, #1f4068 100%);
+      --bg-gradient-rain: linear-gradient(135deg, #203a43 0%, #2c5364 50%, #4b6cb7 100%);
+      --bg-gradient-cloudy: linear-gradient(135deg, #3a6073 0%, #3a7bd5 100%);
+      --bg-gradient-storm: linear-gradient(135deg, #1f1c2c 0%, #352d4e 50%, #4c3b6e 100%);
+      --card-bg: rgba(255, 255, 255, 0.12);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --card-hover: rgba(255, 255, 255, 0.18);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.75);
+      --text-muted: rgba(255, 255, 255, 0.55);
+      --accent-yellow: #f6d365;
+      --accent-blue: #38ef7d;
+      --accent-cyan: #00d2ff;
+      --accent-rain: #4facfe;
+      --accent-warn: #ff9966;
+      --radius-sm: 12px;
+      --radius-md: 18px;
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.25);
+      --shadow-glow: 0 0 25px rgba(255, 255, 255, 0.15);
+
+      --chip-bg: rgba(255, 255, 255, 0.18);
+      --clock-bg: rgba(255, 255, 255, 0.14);
+      --live-dot: #22c55e;
+      --live-glow: 0 0 8px #22c55e;
+      --button-bg: rgba(255, 255, 255, 0.2);
+      --button-text: white;
+      --button-hover: rgba(255, 255, 255, 0.3);
+      --reading-bg: rgba(255, 255, 255, 0.15);
+      --temperature-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      --weather-icon-shadow: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+      --hero-glow: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+      --badge-ok-bg: rgba(34, 197, 94, 0.25);
+      --badge-ok-text: #86efac;
+      --badge-ok-border: 1px solid rgba(34, 197, 94, 0.4);
+      --badge-warn-bg: rgba(249, 115, 22, 0.25);
+      --badge-warn-text: #fdba74;
+      --badge-warn-border: 1px solid rgba(249, 115, 22, 0.4);
+      --badge-alert-bg: rgba(239, 68, 68, 0.25);
+      --badge-alert-text: #fca5a5;
+      --badge-alert-border: 1px solid rgba(239, 68, 68, 0.4);
+      --badge-info-bg: rgba(56, 189, 248, 0.25);
+      --badge-info-text: #7dd3fc;
+      --badge-info-border: 1px solid rgba(56, 189, 248, 0.4);
+      --hourly-scrollbar: rgba(255,255,255,0.3) transparent;
+      --hourly-scrollbar-thumb: rgba(255, 255, 255, 0.25);
+      --hourly-bg: rgba(255, 255, 255, 0.08);
+      --hourly-border: 1px solid rgba(255, 255, 255, 0.12);
+      --hourly-now-bg: rgba(255, 255, 255, 0.2);
+      --hourly-now-border: rgba(255, 255, 255, 0.35);
+      --hourly-hover-bg: rgba(255, 255, 255, 0.18);
+      --hourly-rain-text: #60a5fa;
+      --daily-rain-text: #93c5fd;
+      --metric-bg: rgba(255, 255, 255, 0.08);
+      --metric-border: 1px solid rgba(255, 255, 255, 0.14);
+      --daily-bg: rgba(255, 255, 255, 0.06);
+      --daily-border: 1px solid rgba(255, 255, 255, 0.1);
+      --daily-hover-bg: rgba(255, 255, 255, 0.12);
+      --temp-track: rgba(255, 255, 255, 0.15);
+      --temp-range: linear-gradient(90deg, #38ef7d, #f6d365, #ff758c);
+      --focus-ring: #b6dcff;
+      --theme-moon: #c6d5ff;
+      --theme-sun: #9a4f00;
+    }
+
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --bg-gradient-day: linear-gradient(135deg, #eaf4ff 0%, #f8fbff 65%, #deefff 100%);
+      --bg-gradient-night: linear-gradient(135deg, #dce6f6 0%, #f2f6ff 64%, #e1eafa 100%);
+      --bg-gradient-rain: linear-gradient(135deg, #d8eafa 0%, #f1f8ff 65%, #e2effb 100%);
+      --bg-gradient-cloudy: linear-gradient(135deg, #dfeaf4 0%, #f5f9fd 65%, #e9eff8 100%);
+      --bg-gradient-storm: linear-gradient(135deg, #e6e1f8 0%, #f8f5ff 65%, #e2ebfc 100%);
+      --card-bg: rgba(255, 255, 255, 0.84);
+      --card-border: #becfe3;
+      --card-hover: #f4f9ff;
+      --text-primary: #16263b;
+      --text-secondary: #354d66;
+      --text-muted: #4b6279;
+      --accent-yellow: #9a4f00;
+      --accent-rain: #1764a8;
+      --accent-warn: #a64912;
+      --shadow-soft: 0 10px 30px rgba(44, 85, 130, 0.12);
+      --focus-ring: #1764a8;
+      --chip-bg: #dcecff;
+      --clock-bg: #eaf3ff;
+      --live-dot: #197246;
+      --live-glow: 0 0 8px rgba(25, 114, 70, 0.35);
+      --button-bg: #edf5ff;
+      --button-text: #16263b;
+      --button-hover: #dbeafe;
+      --reading-bg: #e7f1fc;
+      --temperature-shadow: none;
+      --weather-icon-shadow: drop-shadow(0 7px 12px rgba(44, 85, 130, 0.18));
+      --hero-glow: radial-gradient(circle, rgba(175, 212, 252, 0.36) 0%, rgba(175, 212, 252, 0) 70%);
+      --badge-ok-bg: #e7f6ed;
+      --badge-ok-text: #155e39;
+      --badge-ok-border: 1px solid #6c9f80;
+      --badge-warn-bg: #fff1df;
+      --badge-warn-text: #854208;
+      --badge-warn-border: 1px solid #b47a43;
+      --badge-alert-bg: #fce9ec;
+      --badge-alert-text: #962f42;
+      --badge-alert-border: 1px solid #b86e7b;
+      --badge-info-bg: #e7f2ff;
+      --badge-info-text: #1e5587;
+      --badge-info-border: 1px solid #7398bd;
+      --hourly-scrollbar: #6b8aaa transparent;
+      --hourly-scrollbar-thumb: #6b8aaa;
+      --hourly-bg: #f2f7ff;
+      --hourly-border: 1px solid #c4d6eb;
+      --hourly-now-bg: #dcecff;
+      --hourly-now-border: #5985ae;
+      --hourly-hover-bg: #e5f0ff;
+      --hourly-rain-text: #1764a8;
+      --daily-rain-text: #1764a8;
+      --metric-bg: rgba(246, 250, 255, 0.92);
+      --metric-border: 1px solid #c7d9ec;
+      --daily-bg: #f2f7fe;
+      --daily-border: 1px solid #ccdaec;
+      --daily-hover-bg: #e7f0fe;
+      --temp-track: #cad9eb;
+      --temp-range: linear-gradient(90deg, #1764a8, #287951, #aa550b, #a52c3e);
+      --icon-sun-fill: #ffca57;
+      --icon-sun-outline: #9a4f00;
+      --icon-moon-fill: #8e7bdc;
+      --icon-moon-outline: #4d3a99;
+      --icon-star: #6443ab;
+      --icon-soft-cloud: #d9e6f2;
+      --icon-cloud: #b7cbe1;
+      --icon-cloud-outline: #536d89;
+      --icon-rain-cloud: #8faed2;
+      --icon-rain-outline: #3d5c7f;
+      --icon-rain-line: #1764a8;
+      --icon-storm-cloud: #7d72ab;
+      --icon-storm-outline: #483c7c;
+      --icon-snow: #3975a2;
+      --icon-fog: #526b88;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      color: var(--text-primary);
+      background: var(--bg-gradient-day);
+      background-attachment: fixed;
+      transition: background 1.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 40px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    /* Top Navigation / Header */
+    header {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .location-info, .location-text { min-width: 0; overflow-wrap: break-word; }
+    .location-icon-wrapper { flex: 0 0 48px; }
+
+    .location-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .location-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--chip-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .location-text h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .location-text h1 .flag {
+      font-size: 1.2rem;
+    }
+
+    .location-text p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .api-switcher {
+      display: inline-flex;
+      flex-wrap: wrap;
+      padding: 3px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+    }
+
+    .api-switcher .refresh-btn {
+      background: transparent;
+      border-color: transparent;
+      padding: 5px 8px;
+    }
+
+    .api-switcher .refresh-btn[aria-pressed="true"],
+    .api-switcher .refresh-btn:hover {
+      background: var(--card-hover);
+      border-color: var(--card-border);
+      transform: none;
+    }
+
+    [hidden] { display: none !important; }
+
+    #content-container {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .live-clock-badge {
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: var(--clock-bg);
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--live-dot);
+      border-radius: 50%;
+      box-shadow: var(--live-glow);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .refresh-btn {
+      background: var(--button-bg);
+      border: 1px solid var(--card-border);
+      color: var(--button-text);
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+      background: var(--button-hover);
+      transform: translateY(-1px);
+    }
+
+    .refresh-btn:active {
+      transform: translateY(1px);
+    }
+
+    .refresh-btn svg {
+      width: 16px;
+      height: 16px;
+      transition: transform 0.6s ease;
+    }
+
+    :is(button, a):focus-visible {
+      outline: 2px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    [data-theme="light"] .api-switcher .refresh-btn[aria-pressed="true"] {
+      background: #dcecff;
+      border-color: #5985ae;
+      color: #1e5587;
+    }
+
+    .theme-toggle {
+      justify-content: center;
+      padding-inline: 6px;
+      min-width: 30px;
+    }
+
+    .theme-icon-dark { color: var(--theme-moon); }
+    .theme-toggle .theme-icon-light { display: none; color: var(--theme-sun); }
+    [data-theme="light"] .theme-toggle .theme-icon-dark { display: none; }
+    [data-theme="light"] .theme-toggle .theme-icon-light { display: block; }
+
+    .refresh-btn.spinning svg {
+      transform: rotate(360deg);
+    }
+
+    /* Weather Hero Banner */
+    .hero-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      padding: 32.4px 28.8px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      align-items: center;
+      gap: 28px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 240px;
+      height: 240px;
+      background: var(--hero-glow);
+      pointer-events: none;
+    }
+
+    .hero-main, .answer-card, .metric-card, .daily-row > div {
+      min-width: 0;
+      overflow-wrap: break-word;
+    }
+
+    .hero-main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .temp-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .current-temp {
+      font-size: 4.95rem;
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      text-shadow: var(--temperature-shadow);
+    }
+
+    .temp-unit {
+      font-size: 2.2rem;
+      font-weight: 500;
+      opacity: 0.85;
+      margin-top: 6px;
+    }
+
+    .weather-summary-text {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-transform: capitalize;
+    }
+
+    .temp-feels-like, .today-min-max { flex-wrap: wrap; }
+
+    .temp-feels-like {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .today-min-max {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      background: var(--reading-bg);
+      padding: 6px 14px;
+      border-radius: 999px;
+      width: fit-content;
+      margin-top: 4px;
+    }
+
+    .hero-art {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .weather-hero-icon {
+      width: 153px;
+      height: 153px;
+      filter: var(--weather-icon-shadow);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Key Answers Banner: Rain, Wind, Clouds, Comfort */
+    .smart-answers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .answer-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .answer-card:hover {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+    }
+
+    .answer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .answer-title {
+      min-width: 0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .answer-badge {
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .badge-ok {
+      background: var(--badge-ok-bg);
+      color: var(--badge-ok-text);
+      border: var(--badge-ok-border);
+    }
+
+    .badge-warn {
+      background: var(--badge-warn-bg);
+      color: var(--badge-warn-text);
+      border: var(--badge-warn-border);
+    }
+
+    .badge-alert {
+      background: var(--badge-alert-bg);
+      color: var(--badge-alert-text);
+      border: var(--badge-alert-border);
+    }
+
+    .badge-info {
+      background: var(--badge-info-bg);
+      color: var(--badge-info-text);
+      border: var(--badge-info-border);
+    }
+
+    .answer-status {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    .answer-detail {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Hourly Forecast Section */
+    .section-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hourly-scroll {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--hourly-scrollbar);
+    }
+
+    .hourly-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .hourly-scroll::-webkit-scrollbar-thumb {
+      background: var(--hourly-scrollbar-thumb);
+      border-radius: 999px;
+    }
+
+    .hourly-item {
+      flex: 0 0 94px;
+      background: var(--hourly-bg);
+      border: var(--hourly-border);
+      border-radius: var(--radius-md);
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .hourly-item {
+      position: relative;
+    }
+
+    .hourly-item[style*="--rain-fill"]::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 10%;
+      width: var(--rain-fill);
+      height: 2px;
+      background: var(--accent-rain);
+      border-radius: var(--radius-sm);
+    }
+
+    .hourly-item.now {
+      background: var(--hourly-now-bg);
+      border-color: var(--hourly-now-border);
+      transform: scale(1.03);
+    }
+
+    .hourly-item:hover {
+      background: var(--hourly-hover-bg);
+      transform: translateY(-2px);
+    }
+
+    .hourly-time {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .hourly-icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .hourly-temp {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .hourly-rain {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--hourly-rain-text);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .hourly-wind {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Detailed Metrics Grid (6 items) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    .metric-card {
+      background: var(--metric-bg);
+      border: var(--metric-border);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-svg {
+      display: none;
+      width: 1em;
+      height: 1em;
+      vertical-align: -0.125em;
+    }
+
+    [data-theme="light"] .metric-emoji { display: none; }
+    [data-theme="light"] .metric-svg { display: inline-block; }
+    .metric-svg--humidity { color: #14716f; }
+    .metric-svg--pressure { color: #1764a8; }
+    .metric-svg--wind { color: #6443ab; }
+    .metric-svg--rain { color: #1764a8; }
+    .metric-svg--sun { color: #9a4f00; }
+    .metric-svg--air { color: #197246; }
+    .metric-svg--duration { color: #526980; }
+    .metric-svg--camera { color: #6443ab; }
+    .metric-svg--radiation { color: #9a4f00; }
+
+    .metric-value {
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .metric-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .compass-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+
+    .compass-arrow {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      transition: transform 0.5s ease;
+    }
+
+    /* 7-Day Forecast */
+    .daily-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .daily-row {
+      display: grid;
+      grid-template-columns: minmax(110px, 1.1fr) 44px minmax(110px, 1.4fr) minmax(85px, auto) minmax(130px, 1.2fr);
+      align-items: center;
+      background: var(--daily-bg);
+      border: var(--daily-border);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      gap: 14px;
+      transition: background 0.2s ease;
+    }
+
+    .daily-row:hover {
+      background: var(--daily-hover-bg);
+    }
+
+    .daily-day {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .daily-date {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .daily-icon-wrap {
+      width: 40px;
+      height: 40px;
+    }
+
+    .daily-icon-wrap { max-width: 100%; }
+
+    .daily-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .daily-rain {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--daily-rain-text);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .temp-range-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .temp-min {
+      color: var(--text-muted);
+      width: 32px;
+      text-align: right;
+    }
+
+    .temp-max {
+      color: var(--text-primary);
+      width: 32px;
+      text-align: left;
+    }
+
+    .temp-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--temp-track);
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .temp-bar-fill {
+      height: 100%;
+      background: var(--temp-range);
+      border-radius: 999px;
+    }
+
+    .metric-card .answer-badge { align-self: flex-start; }
+    .solar-arc { width: 100%; max-width: 480px; align-self: center; }
+    .solar-arc text { fill: var(--text-secondary); font-size: 13px; }
+    .weather-warning { border-color: var(--accent-warn); }
+
+    /* Footer & Attribution */
+    footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 18px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: underline;
+    }
+
+    /* Loading and Error states */
+    .loading-state, .error-state {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 60px 24px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 820px) {
+      .hero-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 25.2px 18px;
+      }
+      .temp-row {
+        justify-content: center;
+      }
+      .today-min-max {
+        margin: 0 auto;
+      }
+      .temp-feels-like {
+        justify-content: center;
+      }
+      .hero-art {
+        order: -1;
+      }
+      .weather-hero-icon {
+        width: 117px;
+        height: 117px;
+      }
+      .daily-row {
+        grid-template-columns: minmax(90px, 1fr) 36px 1.2fr minmax(100px, 1.1fr);
+      }
+      .daily-rain {
+        display: none;
+      }
+    }
+
+    @media (max-width: 540px) {
+      .theme-toggle { min-width: 44px; min-height: 44px; }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .current-temp {
+        font-size: 3.78rem;
+      }
+      .daily-row {
+        grid-template-columns: minmax(80px, 1fr) 32px 1fr minmax(90px, 1fr);
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .daily-desc {
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .section-card { padding: 16px 12px; }
+      .daily-row { padding-inline: 6px; gap: 4px; }
+      .temp-range-bar-wrap { gap: 4px; }
+      .location-text h1 { display: block; }
+    }
+
+    @media (max-width: 310px) {
+      .daily-row { grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1fr); }
+      .temp-range-bar-wrap { grid-column: 1 / -1; }
+      .smart-answers-grid { grid-template-columns: minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="location-info">
+        <div class="location-icon-wrapper">📍</div>
+        <div class="location-text">
+          <h1>Івано-Франківськ <span class="flag">🇺🇦</span></h1>
+          <p id="geo-info">48.92° пн. ш., 24.71° сх. д. • Висота 260 м</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="api-switcher" role="group" aria-label="Джерело прогнозу">
+          <button class="refresh-btn" type="button" data-provider="open-meteo" aria-pressed="true">Open-Meteo</button>
+          <button class="refresh-btn" type="button" data-provider="met-no" aria-pressed="false">MET Norway</button>
+        </div>
+        <div class="live-clock-badge">
+          <span class="live-dot"></span>
+          <span id="live-time">--:--:--</span>
+        </div>
+        <button id="refresh-button" class="refresh-btn" title="Оновити погодні дані">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+          <span>Оновити</span>
+        </button>
+        <button id="theme-button" class="refresh-btn theme-toggle" type="button"
+          aria-label="Світла тема" aria-pressed="false" title="Увімкнути світлу тему">
+          <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20.8 15.1A8.8 8.8 0 0 1 8.9 3.2a9.2 9.2 0 1 0 11.9 11.9Z"/>
+          </svg>
+          <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/>
+          </svg>
+        </button>
+        <button id="install-button" class="refresh-btn" type="button" hidden>Встановити</button>
+      </div>
+    </header>
+
+    <main id="content-container">
+      <div class="loading-state">
+        <h2>Завантаження прогнозу</h2>
+        <p>Отримуємо погодні дані для Івано-Франківська.</p>
+      </div>
+    </main>
+
+    <footer>
+      <p>Джерело прогнозу <a id="weather-source" href="https://open-meteo.com/">Open-Meteo (ECMWF &amp; DWD ICON)</a><span id="weather-license" hidden> · адаптовано, <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span></p>
+      <p>AQI <a href="https://open-meteo.com/en/docs/air-quality-api">Open-Meteo / CAMS</a></p>
+      <p id="last-updated-text" role="status">Останнє оновлення: --:--</p>
+    </footer>
+  </div>
+
+  <!-- PWA: на HTTPS (або localhost) роздайте вміст #weather-worker як ./sw.js
+       з MIME text/javascript. Браузери приймають HTTP(S) URL того самого
+       походження для Service Worker. Див. https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/register
+       Safari на iOS: «Поділитися» → «На початковий екран». -->
+  <script type="text/plain" id="weather-worker">
+    const shell = new URL('weather_1.html', self.registration.scope);
+    const cachePrefix = 'if-weather:' + shell.pathname + ':';
+    const cacheName = cachePrefix + 'v1';
+    const font = 'https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2';
+
+    self.addEventListener('install', event => {
+      event.waitUntil((async () => {
+        const cache = await caches.open(cacheName);
+        await cache.add(new Request(shell.href, { cache: 'reload' }));
+        await cache.add(new Request(font, { mode: 'cors' })).catch(() => {});
+        await self.skipWaiting();
+      })());
+    });
+
+    self.addEventListener('activate', event => {
+      event.waitUntil((async () => {
+        const names = await caches.keys();
+        await Promise.all(names.filter(name => name.startsWith(cachePrefix) && name !== cacheName)
+          .map(name => caches.delete(name)));
+        await self.clients.claim();
+      })());
+    });
+
+    self.addEventListener('fetch', event => {
+      const request = event.request;
+      const url = new URL(request.url);
+      if (request.method !== 'GET') return;
+      if (request.mode === 'navigate' && url.origin === shell.origin && url.pathname === shell.pathname) {
+        event.respondWith((async () => {
+          const cache = await caches.open(cacheName);
+          try {
+            const response = await fetch(request);
+            if (!response.ok) return (await cache.match(shell.href)) || response;
+            await cache.put(shell.href, response.clone()).catch(() => {});
+            return response;
+          } catch {
+            return (await cache.match(shell.href)) || Response.error();
+          }
+        })());
+      } else if (request.url === font) {
+        event.respondWith((async () => {
+          const cache = await caches.open(cacheName);
+          const cached = await cache.match(font);
+          if (cached) return cached;
+          const response = await fetch(request);
+          if (response.ok) await cache.put(font, response.clone()).catch(() => {});
+          return response;
+        })());
+      }
+    });
+  </script>
+  <script>
+    const CONFIG = {
+      lat: 48.9226,
+      lon: 24.7111,
+      timezone: 'Europe/Kyiv',
+      refreshIntervalMs: 600000,
+      metIntervalMs: 10800000
+    };
+    const PROVIDERS = {
+      'open-meteo': { label: 'Open-Meteo (ECMWF & DWD ICON)', url: 'https://open-meteo.com/' },
+      'met-no': { label: 'MET Norway (Yr.no / Norwegian Meteorological Institute)', url: 'https://api.met.no/' }
+    };
+    // A same-origin caching proxy is optional for hosts that cannot use the MET CORS endpoint.
+    // https://api.met.no/doc/TermsOfService
+    const MET_PROXY = document.querySelector('meta[name="met-norway-proxy"]')?.content;
+    const MET_URL = 'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=48.9226&lon=24.7111';
+    const COORDS = `latitude=${CONFIG.lat}&longitude=${CONFIG.lon}`;
+    const OPEN_URL = `https://api.open-meteo.com/v1/forecast?${COORDS}&timezone=${encodeURIComponent(CONFIG.timezone)}&timeformat=unixtime`;
+    const AQI_URL = `https://air-quality-api.open-meteo.com/v1/air-quality?${COORDS}&current=european_aqi,pm10,pm2_5`;
+    const HOUR = 3600;
+    const DAY = 24 * HOUR;
+    const state = {
+      provider: readStorage('if_api_provider') || 'open-meteo',
+      weather: new Map(),
+      air: readCache('if_air_quality_v1'),
+      request: null
+    };
+    if (!Object.hasOwn(PROVIDERS, state.provider)) state.provider = 'open-meteo';
+
+    const clockFormat = new Intl.DateTimeFormat('uk-UA', {
+      timeZone: CONFIG.timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+    });
+    const timeFormat = new Intl.DateTimeFormat('uk-UA', {
+      timeZone: CONFIG.timezone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+    });
+    const dateKeyFormat = new Intl.DateTimeFormat('sv-SE', {
+      timeZone: CONFIG.timezone, year: 'numeric', month: '2-digit', day: '2-digit'
+    });
+    const weekdayFormat = new Intl.DateTimeFormat('uk-UA', { timeZone: CONFIG.timezone, weekday: 'long' });
+    const dateFormat = new Intl.DateTimeFormat('uk-UA', { timeZone: CONFIG.timezone, day: 'numeric', month: 'short' });
+    const nowSeconds = () => Math.floor(Date.now() / 1000);
+    const dayKey = seconds => dateKeyFormat.format(seconds * 1000);
+    const timeUk = seconds => timeFormat.format(seconds * 1000);
+    const dayEpoch = date => Date.parse(date + 'T00:00:00Z') / 1000;
+    const calendarDay = seconds => new Date(seconds * 1000).toISOString().slice(0, 10);
+    const number = value => Number.isFinite(value) ? value : null;
+    const rounded = value => Number.isFinite(value) ? Math.round(value) : '—';
+    const percent = value => Number.isFinite(value) ? `${rounded(value)}%` : '—';
+    const degrees = value => Number.isFinite(value) ? `${rounded(value)}°C` : '—';
+    const signed = value => value > 0 ? `+${value}` : String(value);
+    const max = values => values.filter(Number.isFinite).reduce((best, n) => best === null ? n : Math.max(best, n), null);
+
+    function readStorage(key) {
+      try { return localStorage.getItem(key); } catch { return null; }
+    }
+
+    function readCache(key) {
+      try { return JSON.parse(readStorage(key)); } catch { return null; }
+    }
+
+    function writeStorage(key, value) {
+      try { localStorage.setItem(key, value); } catch {}
+    }
+
+    // WMO Weather Code Translations & SVGs
+    const WEATHER_CODES = {
+      0: { title: 'Ясно', isRain: false, isSnow: false, icon: 'sun', theme: 'day' },
+      1: { title: 'Переважно ясно', isRain: false, isSnow: false, icon: 'sun-cloud', theme: 'day' },
+      2: { title: 'Мінлива хмарність', isRain: false, isSnow: false, icon: 'cloud-sun', theme: 'day' },
+      3: { title: 'Похмуро', isRain: false, isSnow: false, icon: 'cloud', theme: 'cloudy' },
+      45: { title: 'Туман', isRain: false, isSnow: false, icon: 'fog', theme: 'cloudy' },
+      48: { title: 'Паморозьний туман', isRain: false, isSnow: false, icon: 'fog', theme: 'cloudy' },
+      51: { title: 'Слабка мряка', isRain: true, isSnow: false, icon: 'drizzle', theme: 'rain' },
+      53: { title: 'Помірна мряка', isRain: true, isSnow: false, icon: 'drizzle', theme: 'rain' },
+      55: { title: 'Густа мряка', isRain: true, isSnow: false, icon: 'drizzle', theme: 'rain' },
+      56: { title: 'Крижана мряка', isRain: true, isSnow: false, icon: 'sleet', theme: 'rain' },
+      57: { title: 'Густа крижана мряка', isRain: true, isSnow: false, icon: 'sleet', theme: 'rain' },
+      61: { title: 'Невеликий дощ', isRain: true, isSnow: false, icon: 'rain-light', theme: 'rain' },
+      63: { title: 'Помірний дощ', isRain: true, isSnow: false, icon: 'rain', theme: 'rain' },
+      65: { title: 'Сильний дощ', isRain: true, isSnow: false, icon: 'rain-heavy', theme: 'rain' },
+      66: { title: 'Крижаний дощ', isRain: true, isSnow: false, icon: 'sleet', theme: 'rain' },
+      67: { title: 'Сильний крижаний дощ', isRain: true, isSnow: false, icon: 'sleet', theme: 'rain' },
+      71: { title: 'Невеликий сніг', isRain: false, isSnow: true, icon: 'snow', theme: 'snow' },
+      73: { title: 'Помірний снігопад', isRain: false, isSnow: true, icon: 'snow', theme: 'snow' },
+      75: { title: 'Сильний снігопад', isRain: false, isSnow: true, icon: 'snow-heavy', theme: 'snow' },
+      77: { title: 'Снігова крупа', isRain: false, isSnow: true, icon: 'snow', theme: 'snow' },
+      80: { title: 'Короткочасний дощ', isRain: true, isSnow: false, icon: 'rain-light', theme: 'rain' },
+      81: { title: 'Помірна злива', isRain: true, isSnow: false, icon: 'rain', theme: 'rain' },
+      82: { title: 'Сильна злива', isRain: true, isSnow: false, icon: 'rain-heavy', theme: 'rain' },
+      85: { title: 'Невеликий сніговий душ', isRain: false, isSnow: true, icon: 'snow', theme: 'snow' },
+      86: { title: 'Сильний сніговий шквал', isRain: false, isSnow: true, icon: 'snow-heavy', theme: 'snow' },
+      95: { title: 'Гроза', isRain: true, isSnow: false, icon: 'thunderstorm', theme: 'storm' },
+      96: { title: 'Гроза з дрібним градом', isRain: true, isSnow: false, icon: 'thunderstorm', theme: 'storm' },
+      99: { title: 'Гроза з сильним градом', isRain: true, isSnow: false, icon: 'thunderstorm', theme: 'storm' }
+    };
+
+    // Vector SVG Icons Generator
+    function getSvgIcon(iconName, isDay = 1) {
+      if (!isDay && iconName === 'sun') {
+        return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+          <path d="M48 38C48 48 39.5 54 30 54C19 54 11 45 11 34C11 23.5 18 15.5 28 14C26 18 25.5 22.5 27 27C29 33 34 37.5 40 38.5C42.5 39 45.5 39 48 38Z" fill="var(--icon-moon-fill, #FDE047)" stroke="var(--icon-moon-outline, #EAB308)" stroke-width="2"/>
+          <circle cx="48" cy="18" r="1.5" fill="var(--icon-star, #FFF)"/>
+          <circle cx="54" cy="28" r="1" fill="var(--icon-star, #FFF)"/>
+          <circle cx="40" cy="12" r="1" fill="var(--icon-star, #FFF)"/>
+        </svg>`;
+      }
+
+      switch (iconName) {
+        case 'sun':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <circle cx="32" cy="32" r="14" fill="var(--icon-sun-fill, #FBBF24)" stroke="var(--icon-sun-outline, #F59E0B)" stroke-width="2"/>
+            <path d="M32 6V12M32 52V58M6 32H12M52 32H58M13.6 13.6L17.8 17.8M46.2 46.2L50.4 50.4M13.6 50.4L17.8 46.2M46.2 17.8L50.4 13.6" stroke="var(--icon-sun-outline, #F59E0B)" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>`;
+        case 'sun-cloud':
+        case 'cloud-sun':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <circle cx="24" cy="24" r="11" fill="var(--icon-sun-fill, #FBBF24)" stroke="var(--icon-sun-outline, #F59E0B)" stroke-width="2"/>
+            <path d="M24 6V10M11 11L14 14M6 24H10M38 24H42M34 14L37 11" stroke="var(--icon-sun-outline, #F59E0B)" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M24 48H44C49 48 53 44 53 39C53 34.5 49.5 31 45.5 30.5C45 23.5 39 18 32 18C26 18 20.8 22 19 27.5C14.5 28.5 11 32.5 11 37.5C11 43.3 16 48 24 48Z" fill="var(--icon-soft-cloud, #E2E8F0)" stroke="var(--icon-cloud-outline, #94A3B8)" stroke-width="2"/>
+          </svg>`;
+        case 'cloud':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M22 50H45C50.5 50 55 45.5 55 40C55 35 51 31 46.5 30.5C46 22.5 39.5 16 31.5 16C24.5 16 18.5 20.5 16.5 27C11.5 28 8 32.5 8 38C8 44.5 13.5 50 22 50Z" fill="var(--icon-cloud, #CBD5E1)" stroke="var(--icon-rain-outline, #64748B)" stroke-width="2"/>
+          </svg>`;
+        case 'rain-light':
+        case 'drizzle':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M20 42H44C49 42 53 38 53 33C53 28.5 49.5 25 45.5 24.5C45 17.5 39 12 32 12C26 12 20.8 16 19 21.5C14.5 22.5 11 26.5 11 31.5C11 37.3 16 42 20 42Z" fill="var(--icon-rain-cloud, #94A3B8)" stroke="var(--icon-rain-outline, #64748B)" stroke-width="2"/>
+            <path d="M24 48L20 56M34 48L30 56M44 48L40 56" stroke="var(--icon-rain-line, #38BDF8)" stroke-width="3" stroke-linecap="round"/>
+          </svg>`;
+        case 'rain':
+        case 'rain-heavy':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M20 38H45C50 38 54 34 54 29C54 24.5 50.5 21 46.5 20.5C46 13.5 40 8 33 8C27 8 21.8 12 20 17.5C15.5 18.5 12 22.5 12 27.5C12 33.3 17 38 20 38Z" fill="var(--icon-rain-cloud, #64748B)" stroke="var(--icon-storm-outline, #475569)" stroke-width="2"/>
+            <path d="M22 44L16 58M32 44L26 58M42 44L36 58" stroke="var(--icon-rain-line, #0284C7)" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>`;
+        case 'thunderstorm':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M20 36H45C50 36 54 32 54 27C54 22.5 50.5 19 46.5 18.5C46 11.5 40 6 33 6C27 6 21.8 10 20 15.5C15.5 16.5 12 20.5 12 25.5C12 31.3 17 36 20 36Z" fill="var(--icon-storm-cloud, #475569)" stroke="var(--icon-storm-outline, #334155)" stroke-width="2"/>
+            <path d="M34 38L24 50H32L28 62L42 46H34L38 38H34Z" fill="var(--icon-sun-fill, #FBBF24)" stroke="var(--icon-sun-outline, #F59E0B)" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>`;
+        case 'snow':
+        case 'snow-heavy':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M20 40H44C49 40 53 36 53 31C53 26.5 49.5 23 45.5 22.5C45 15.5 39 10 32 10C26 10 20.8 14 19 19.5C14.5 20.5 11 24.5 11 29.5C11 35.3 16 40 20 40Z" fill="var(--icon-cloud, #CBD5E1)" stroke="var(--icon-cloud-outline, #94A3B8)" stroke-width="2"/>
+            <circle cx="22" cy="50" r="2.5" fill="var(--icon-snow, #E2E8F0)"/>
+            <circle cx="33" cy="56" r="3" fill="var(--icon-soft-cloud, #E2E8F0)"/>
+            <circle cx="44" cy="49" r="2.5" fill="var(--icon-snow, #E2E8F0)"/>
+          </svg>`;
+        case 'sleet':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M20 39H44C50 39 54 35 54 30C54 25 50 21 45 21C43 14 38 10 31 10C24 10 19 15 18 21C12 22 9 25 9 31C9 35 13 39 20 39Z" fill="var(--icon-cloud, #CBD5E1)" stroke="var(--icon-cloud-outline, #64748B)" stroke-width="2"/>
+            <path d="M24 45L20 55M39 45L35 55" stroke="var(--icon-rain-line, #38BDF8)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M47 49v10m-5-5h10" stroke="var(--icon-snow, #E2E8F0)" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>`;
+        case 'fog':
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <path d="M14 26H50M10 34H54M16 42H48M22 50H42" stroke="var(--icon-fog, #E2E8F0)" stroke-width="4" stroke-linecap="round"/>
+          </svg>`;
+        default:
+          return `<svg viewBox="0 0 64 64" fill="none" class="weather-svg" aria-hidden="true" focusable="false">
+            <circle cx="32" cy="32" r="14" fill="var(--icon-sun-fill, #FBBF24)"/>
+          </svg>`;
+      }
+    }
+
+    const MET_CODES = {
+      clearsky: 0, fair: 1, partlycloudy: 2, cloudy: 3, fog: 45,
+      drizzle: 51, lightrain: 61, rain: 63, heavyrain: 65,
+      lightsleet: 66, sleet: 66, heavysleet: 67, lightsnow: 71, snow: 73, heavysnow: 75,
+      lightrainshowers: 80, rainshowers: 80, heavyrainshowers: 82,
+      lightsleetshowers: 66, sleetshowers: 66, heavysleetshowers: 67,
+      lightsnowshowers: 85, snowshowers: 85, heavysnowshowers: 86, thunderstorm: 95
+    };
+
+    function metWeatherCode(symbol) {
+      const code = (symbol || '').replace(/_(day|night|polartwilight)$/, '');
+      return code.includes('thunder') ? 95 : (MET_CODES[code] ?? null);
+    }
+
+    // Solar coordinates and equation of time from NOAA's solar equations.
+    // https://gml.noaa.gov/grad/solcalc/solareqns.PDF
+    function solarTimes(date) {
+      const midnight = dayEpoch(date);
+      const year = Number(date.slice(0, 4));
+      const jan1 = dayEpoch(`${year}-01-01`);
+      const yearDays = (dayEpoch(`${year + 1}-01-01`) - jan1) / DAY;
+      const radians = Math.PI / 180;
+      const latitude = CONFIG.lat * radians;
+
+      function transit(minutes, edge = 0) {
+        const gamma = 2 * Math.PI / yearDays * ((midnight - jan1) / DAY + minutes / 1440 - 0.5);
+        const equation = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma)
+          - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
+        const declination = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+          - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
+          - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
+        const angle = Math.acos((Math.cos(90.833 * radians) - Math.sin(latitude) * Math.sin(declination))
+          / (Math.cos(latitude) * Math.cos(declination)));
+        return 720 - 4 * CONFIG.lon - equation + edge * 4 * angle / radians;
+      }
+
+      const event = edge => Math.round(midnight + 60 * transit(transit(720, edge), edge));
+      return { sunrise: event(-1), noon: event(0), sunset: event(1) };
+    }
+
+    function normalizeMetNoToOpenMeteoFormat(metJson) {
+      const series = metJson.properties?.timeseries;
+      if (!series?.length) throw new Error('Порожній прогноз MET Norway');
+      const keys = [
+        'time', 'temperature_2m', 'relative_humidity_2m', 'precipitation_probability',
+        'precipitation', 'rain', 'weather_code', 'wind_speed_10m', 'wind_direction_10m',
+        'wind_gusts_10m', 'is_day', 'pressure_msl', 'cloud_cover'
+      ];
+      const hourly = Object.fromEntries(keys.map(key => [key, []]));
+      const days = new Map();
+
+      function getDay(date) {
+        if (!days.has(date)) {
+          days.set(date, { ...solarTimes(date), temperatures: [], probability: null, amount: null, code: null });
+        }
+        return days.get(date);
+      }
+
+      let coveredUntil = 0;
+      for (const point of series) {
+        const time = Date.parse(point.time) / 1000;
+        const { instant, next_1_hours: one, next_6_hours: six, next_12_hours: twelve } = point.data;
+        const details = instant.details;
+        const date = dayKey(time);
+        const day = getDay(date);
+        const code = metWeatherCode((one || six || twelve)?.summary?.symbol_code);
+        const amount = number(one?.details?.precipitation_amount);
+        const probability = number(one?.details?.probability_of_precipitation);
+        const fields = {
+          time,
+          temperature_2m: number(details.air_temperature),
+          relative_humidity_2m: number(details.relative_humidity),
+          precipitation_probability: probability,
+          precipitation: amount,
+          rain: WEATHER_CODES[code]?.isRain ? amount : null,
+          weather_code: code,
+          wind_speed_10m: kmh(details.wind_speed),
+          wind_direction_10m: number(details.wind_from_direction),
+          wind_gusts_10m: kmh(details.wind_speed_of_gust),
+          is_day: Number(time >= day.sunrise && time < day.sunset),
+          pressure_msl: number(details.air_pressure_at_sea_level),
+          cloud_cover: number(details.cloud_area_fraction)
+        };
+        for (const key of keys) hourly[key].push(fields[key]);
+        if (fields.temperature_2m !== null) day.temperatures.push(fields.temperature_2m);
+        if (code !== null) day.code = day.code === null ? code : Math.max(day.code, code);
+        if (amount !== null) {
+          day.amount = (day.amount ?? 0) + amount;
+          coveredUntil = Math.max(coveredUntil, time + HOUR);
+        }
+        if (probability !== null) day.probability = max([day.probability, probability]);
+
+        // Use only non-overlapping six-hour totals. Allocate intervals that cross Kyiv midnight by duration.
+        const sixAmount = number(six?.details?.precipitation_amount);
+        const nextTime = Date.parse(series[hourly.time.length]?.time) / 1000;
+        if (sixAmount !== null && amount === null && nextTime - time >= 6 * HOUR && time >= coveredUntil) {
+          coveredUntil = time + 6 * HOUR;
+          for (let hour = 0; hour < 6; hour++) {
+            const intervalDay = getDay(dayKey(time + hour * HOUR));
+            intervalDay.amount = (intervalDay.amount ?? 0) + sixAmount / 6;
+            intervalDay.probability = max([intervalDay.probability, six.details.probability_of_precipitation]);
+            if (code !== null) intervalDay.code = max([intervalDay.code, code]);
+          }
+        }
+      }
+
+      const daily = Object.fromEntries([
+        'time', 'temperature_2m_min', 'temperature_2m_max', 'precipitation_sum',
+        'precipitation_probability_max', 'weather_code', 'sunrise', 'sunset',
+        'daylight_duration', 'sunshine_duration', 'uv_index_max'
+      ].map(key => [key, []]));
+      for (const [date, day] of days) {
+        if (!day.temperatures.length) continue;
+        daily.time.push(date);
+        daily.temperature_2m_min.push(Math.min(...day.temperatures));
+        daily.temperature_2m_max.push(Math.max(...day.temperatures));
+        daily.precipitation_sum.push(day.amount === null ? null : Number(day.amount.toFixed(1)));
+        daily.precipitation_probability_max.push(day.probability);
+        daily.weather_code.push(day.code);
+        daily.sunrise.push(day.sunrise);
+        daily.sunset.push(day.sunset);
+        daily.daylight_duration.push(day.sunset - day.sunrise);
+        daily.sunshine_duration.push(null);
+        daily.uv_index_max.push(null);
+      }
+
+      return { current: metCurrent(hourly, nowSeconds()), hourly, daily };
+    }
+
+    function kmh(speed) {
+      return Number.isFinite(speed) ? speed * 3.6 : null;
+    }
+
+    function metCurrent(hourly, now) {
+      const index = Math.max(0, hourly.time.findLastIndex(time => time <= now));
+      const current = Object.fromEntries(Object.entries(hourly).map(([key, values]) => [key, values[index]]));
+      const { temperature_2m: temp, relative_humidity_2m: humidity, wind_speed_10m: wind } = current;
+      const vaporPressure = humidity / 100 * 6.105 * Math.exp(17.27 * temp / (237.7 + temp));
+      current.apparent_temperature = [temp, humidity, wind].every(Number.isFinite)
+        ? temp + 0.33 * vaporPressure - 0.70 * (wind / 3.6) - 4 : null;
+      return { ...current, surface_pressure: null, uv_index: null, shortwave_radiation: null };
+    }
+
+    function normalizeOpenMeteo(data) {
+      const offset = data.utc_offset_seconds || 0;
+      const seconds = value => typeof value === 'string' ? Date.parse(value + 'Z') / 1000 - offset : value;
+      return {
+        current: { ...data.current, time: seconds(data.current.time) },
+        hourly: { ...data.hourly, time: data.hourly.time.map(seconds) },
+        daily: {
+          ...data.daily,
+          time: data.daily.time.map(value => typeof value === 'string' ? value : calendarDay(value + offset)),
+          sunrise: data.daily.sunrise.map(seconds),
+          sunset: data.daily.sunset.map(seconds)
+        }
+      };
+    }
+
+    function getWindDirectionText(degrees) {
+      const directions = ['Пн', 'Пн-Сх', 'Сх', 'Пд-Сх', 'Пд', 'Пд-Зх', 'Зх', 'Пн-Зх'];
+      return Number.isFinite(degrees) ? directions[(Math.round(degrees / 45) + 8) % 8] : '—';
+    }
+
+    function evaluateWind(speed, gust) {
+      if (Math.max(speed ?? 0, gust ?? 0) >= 50) return ['Штормовий вітер ⚠️', 'badge-alert'];
+      if (speed >= 35) return ['Сильний вітер', 'badge-warn'];
+      if (speed >= 20) return ['Відчутний вітер', 'badge-warn'];
+      if (speed >= 6) return ['Помірний вітер', 'badge-ok'];
+      if (Number.isFinite(speed)) return ['Штиль / Слабкий', 'badge-ok'];
+      return ['Немає даних', 'badge-info'];
+    }
+
+    function evaluateRain(current, hourly, start) {
+      if (current.rain > 0.1) {
+        return ['ЙДЕ ДОЩ', 'badge-alert', 'Зараз іде дощ 🌧️', 'За прогнозом, дощ триває.', 'Захопіть парасольку'];
+      }
+      const end = start + 12;
+      const probabilities = hourly.precipitation_probability.slice(start, end);
+      const amounts = hourly.precipitation.slice(start, end);
+      const peak = max(probabilities);
+      const first = probabilities.findIndex((value, i) => value >= 40 || amounts[i] > 0.1);
+      if (first >= 0) {
+        const detail = peak === null ? 'Ймовірність у відсотках недоступна.' : `Ймовірність опадів до ${percent(peak)}.`;
+        return ['МОЖЛИВІ', 'badge-warn', `Опади близько ${timeUk(hourly.time[start + first])}`, detail, 'Захопіть парасольку'];
+      }
+      if (peak > 20) {
+        return ['МОЖЛИВІ', 'badge-info', 'Можливі невеликі опади', `Ймовірність до ${percent(peak)}.`, 'Парасолька навряд чи знадобиться'];
+      }
+      if (peak === null && !amounts.some(Number.isFinite)) {
+        return ['НЕМАЄ ДАНИХ', 'badge-info', 'Дані про опади недоступні', 'Перевірте погодинний прогноз.', 'Погляньте на прогноз перед виходом'];
+      }
+      return ['БЕЗ ОПАДІВ', 'badge-ok', 'Опадів не очікується', 'За доступними даними на найближчі 12 годин.', 'Парасолька навряд чи знадобиться'];
+    }
+
+    function pressureTrend(current, hourly, history) {
+      const past = current.time - 3 * HOUR;
+      const before = Math.floor(past / HOUR) * HOUR;
+      const after = Math.ceil(past / HOUR) * HOUR;
+      const pressureAt = time => number(hourly.pressure_msl?.[hourly.time.indexOf(time)]) ?? number(history?.[time]);
+      const low = pressureAt(before);
+      const high = pressureAt(after);
+      if (![low, high, current.pressure_msl].every(Number.isFinite)) return 'Тренд за 3 год недоступний';
+      const baseline = low + (high - low) * (past - before) / HOUR;
+      const delta = current.pressure_msl - baseline;
+      return delta >= 1 ? '↑ Зростає' : delta <= -1 ? '↓ Падає' : '→ Стабільний';
+    }
+
+    // Dynamic Theme based on weather and time of day
+    function updateTheme(weatherCode, isDay) {
+      const body = document.body;
+      const codeInfo = WEATHER_CODES[weatherCode] || WEATHER_CODES[0];
+
+      if (!isDay) {
+        body.style.background = 'var(--bg-gradient-night)';
+        return;
+      }
+
+      switch (codeInfo.theme) {
+        case 'rain':
+          body.style.background = 'var(--bg-gradient-rain)';
+          break;
+        case 'storm':
+          body.style.background = 'var(--bg-gradient-storm)';
+          break;
+        case 'cloudy':
+          body.style.background = 'var(--bg-gradient-cloudy)';
+          break;
+        default:
+          body.style.background = 'var(--bg-gradient-day)';
+          break;
+      }
+    }
+
+    function setupThemeToggle() {
+      const button = document.getElementById('theme-button');
+      const root = document.documentElement;
+
+      function updateButton() {
+        const light = root.dataset.theme === 'light';
+        button.setAttribute('aria-pressed', String(light));
+        button.title = light ? 'Увімкнути темну тему' : 'Увімкнути світлу тему';
+      }
+
+      updateButton();
+      button.addEventListener('click', () => {
+        const nextTheme = root.dataset.theme === 'light' ? 'dark' : 'light';
+        applyTheme(nextTheme);
+        writeStorage(THEME_STORAGE_KEY, nextTheme);
+        updateButton();
+      });
+    }
+
+    function renderWeather(data) {
+      const { current, hourly, daily } = data;
+      const code = WEATHER_CODES[current.weather_code] || { title: 'Невідомо', icon: 'cloud' };
+      const start = Math.max(0, hourly.time.findLastIndex(time => time <= current.time));
+      const today = Math.max(0, daily.time.indexOf(dayKey(current.time)));
+      const wind = evaluateWind(current.wind_speed_10m, current.wind_gusts_10m);
+      const direction = getWindDirectionText(current.wind_direction_10m);
+      const [rainLabel, rainBadge, rainStatus, rainDetail, advice] = evaluateRain(current, hourly, start);
+      const cloud = current.cloud_cover;
+      const cloudText = cloud === null ? 'Дані недоступні' : cloud > 80 ? 'Суцільна хмарність'
+        : cloud > 40 ? 'Мінлива хмарність' : cloud > 15 ? 'Невелика хмарність' : 'Ясно';
+      const pressure = number(current.pressure_msl);
+      const trend = pressureTrend(current, hourly, state.weather.get(state.provider)?.pressureHistory);
+      const temp = rounded(current.temperature_2m);
+      const actual = Math.abs(nowSeconds() - current.time) < 2 * HOUR;
+      const sunrise = daily.sunrise[today];
+      const sunset = daily.sunset[today];
+
+      updateTheme(current.weather_code, current.is_day);
+      document.title = `${typeof temp === 'number' ? signed(temp) + '°C ' : ''}${code.title} | Погода Івано-Франківськ`;
+      const content = document.getElementById('content-container');
+      const scroll = content.querySelector('.hourly-scroll')?.scrollLeft || 0;
+      content.innerHTML = `
+        ${actual ? renderWarning(current, hourly) : ''}
+        <div class="hero-card">
+          <div class="hero-main">
+            <div class="today-min-max">
+              <span>${actual ? 'Сьогодні' : 'За прогнозом'} · Мін ${degrees(daily.temperature_2m_min[today])}</span>
+              <span>•</span>
+              <span>Макс ${degrees(daily.temperature_2m_max[today])}</span>
+            </div>
+            <div class="temp-row">
+              <span class="current-temp">${temp}</span><span class="temp-unit">°C</span>
+            </div>
+            <div class="weather-summary-text">${code.title}</div>
+            <div class="temp-feels-like">
+              <span>Відчувається як <strong>${degrees(current.apparent_temperature)}</strong></span>
+              <span>•</span><span>${current.is_day ? '☀️ День' : '🌙 Ніч'}</span>
+            </div>
+          </div>
+          <div class="hero-art">
+            <div class="weather-hero-icon">${getSvgIcon(code.icon, current.is_day)}</div>
+          </div>
+        </div>
+
+        <div class="smart-answers-grid">
+          ${answerCard('🌧️ Чи буде дощ?', rainLabel, rainBadge, rainStatus, rainDetail)}
+          ${answerCard('💨 Який вітер?', wind[0], wind[1], `${rounded(current.wind_speed_10m)} км/год · ${direction}`,
+            Number.isFinite(current.wind_gusts_10m) ? `Пориви до ${rounded(current.wind_gusts_10m)} км/год` : 'Дані про пориви недоступні')}
+          ${answerCard('☁️ Чи хмарно?', percent(cloud), cloud > 80 ? 'badge-info' : 'badge-ok', cloudText,
+            Number.isFinite(cloud) ? `Хмарний покрив неба ${percent(cloud)}.` : 'Провайдер не повернув значення.')}
+          ${answerCard('💡 Порада дня', 'Івано-Франківськ', 'badge-info', advice,
+            Number.isFinite(current.apparent_temperature) && current.apparent_temperature < 10
+              ? 'На вулиці прохолодно.' : 'Перевірте прогноз перед прогулянкою.')}
+        </div>
+
+        <section class="section-card">
+          <h2 class="section-title">⏱️ Погодинний прогноз (до 24 годин)</h2>
+          <div class="hourly-scroll">${renderHourlyList(hourly, start, actual)}</div>
+        </section>
+
+        <div class="metrics-grid">
+          ${metric('humidity', '💧', 'Вологість повітря', percent(current.relative_humidity_2m),
+            Number.isFinite(current.relative_humidity_2m) ? (current.relative_humidity_2m > 80 ? 'Висока вологість' : 'Нормальна вологість') : 'Дані недоступні')}
+          ${metric('pressure', '🧭', 'Атмосферний тиск', pressure === null ? '—' : `${rounded(pressure * 0.750062)} <small>мм рт. ст.</small>`,
+            pressure === null ? trend : `${pressure} гПа · ${trend}`)}
+          ${metric('wind', '💨', 'Напрямок вітру', Number.isFinite(current.wind_direction_10m)
+            ? `<span class="compass-indicator"><span class="compass-arrow" style="transform:rotate(${current.wind_direction_10m}deg)">↓</span>${direction}</span>`
+            : '—', Number.isFinite(current.wind_direction_10m) ? `${rounded(current.wind_direction_10m)}°` : 'Дані недоступні')}
+          ${metric('rain', '🌧️', 'Опади за добу', Number.isFinite(daily.precipitation_sum[today]) ? `${daily.precipitation_sum[today]} <small>мм</small>` : '—',
+            `Макс. ймовірність ${percent(daily.precipitation_probability_max[today])}${state.provider === 'met-no' ? ' · за доступний період' : ''}`)}
+          ${metric('sun', '🌅', 'Схід сонця', Number.isFinite(sunrise) ? timeUk(sunrise) : '—', 'Початок світлового дня')}
+          ${metric('sun', '🌇', 'Захід сонця', Number.isFinite(sunset) ? timeUk(sunset) : '—', 'Сутінки в місті')}
+          <div class="metric-card" id="air-quality">${renderAirQuality()}</div>
+        </div>
+
+        ${renderSolarSection(data, today)}
+
+        <section class="section-card">
+          <h2 class="section-title">📅 Прогноз на 7 днів для Івано-Франківська</h2>
+          <div class="daily-list">${renderDailyList(daily, today)}</div>
+        </section>`;
+      content.querySelector('.hourly-scroll').scrollLeft = scroll;
+      updateSolarMarker();
+    }
+
+    function answerCard(title, badge, style, status, detail) {
+      return `<div class="answer-card">
+        <div class="answer-header"><span class="answer-title">${title}</span><span class="answer-badge ${style}">${badge}</span></div>
+        <div class="answer-status">${status}</div>
+        <div class="answer-detail">${detail}</div>
+      </div>`;
+    }
+
+    const METRIC_ICON_PATHS = {
+      humidity: 'M12 3c3.5 4.8 6.5 7.4 6.5 11a6.5 6.5 0 0 1-13 0c0-3.6 3-6.2 6.5-11Zm-3 12a3 3 0 0 0 3 3',
+      pressure: 'M4 18a8 8 0 1 1 16 0H4Zm8-3 4-4M7 13h.01M12 10h.01M17 13h.01',
+      wind: 'M3 8h12a2 2 0 1 0-2-2M3 12h16a2 2 0 1 1-2 2M3 16h8a2 2 0 1 1-2 2',
+      rain: 'M6 15a3.5 3.5 0 1 1 .5-7 5 5 0 0 1 9.4 1.5A2.8 2.8 0 1 1 17 15H6Zm2 3-1 2m6-2-1 2m6-2-1 2',
+      sun: 'M3 19h18M7 16a5 5 0 0 1 10 0M12 5v3M4.5 9l2 2m13-2-2 2M2 15h3m14 0h3',
+      air: 'M19 4c-7 0-13 2-13 9a5 5 0 0 0 5 5c7 0 8-8 8-14ZM5 20l9-9',
+      duration: 'M7 3h10M7 21h10M8 3v4c0 2 2 3 4 5-2 2-4 3-4 5v4m8-18v4c0 2-2 3-4 5 2 2 4 3 4 5v4',
+      camera: 'M4 7h4l2-3h4l2 3h4v12H4V7Zm12 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+      radiation: 'M13 2 5 14h6l-1 8 9-12h-6l1-8Z'
+    };
+
+    function metricLabel(icon, emoji, label) {
+      return `<div class="metric-label"><span><span class="metric-emoji" aria-hidden="true">${emoji}</span><svg
+        class="metric-svg metric-svg--${icon}" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path
+        d="${METRIC_ICON_PATHS[icon]}"/></svg> ${label}</span></div>`;
+    }
+
+    function metric(icon, emoji, label, value, detail) {
+      return `<div class="metric-card">
+        ${metricLabel(icon, emoji, label)}
+        <div class="metric-value">${value}</div>
+        <div class="metric-sub">${detail}</div>
+      </div>`;
+    }
+
+    function renderWarning(current, hourly) {
+      const now = Math.max(current.time, nowSeconds());
+      const indices = hourly.time.flatMap((time, i) => time >= now && time <= now + 12 * HOUR ? [i] : []);
+      const temps = [current.temperature_2m, ...indices.map(i => hourly.temperature_2m[i])].filter(Number.isFinite);
+      const gust = max([current.wind_gusts_10m, ...indices.map(i => hourly.wind_gusts_10m?.[i])]);
+      const delta = temps.length ? Math.max(...temps) - Math.min(...temps) : 0;
+      const alerts = [];
+      if (gust >= 50) alerts.push(`Пориви вітру до ${rounded(gust)} км/год`);
+      if (delta >= 8) alerts.push(`Перепад температури до ${rounded(delta)} °C`);
+      return alerts.length ? `<aside class="section-card weather-warning">
+        <h2 class="section-title">⚠️ Попередження на найближчі 12 годин</h2>
+        <p class="answer-detail">${alerts.join(' · ')}</p>
+      </aside>` : '';
+    }
+
+    function renderHourlyList(hourly, start, actual) {
+      return hourly.time.slice(start, start + 24).filter(time => time < hourly.time[start] + DAY).map((time, offset) => {
+        const i = start + offset;
+        const probability = number(hourly.precipitation_probability[i]);
+        const code = WEATHER_CODES[hourly.weather_code[i]];
+        const isNow = actual && offset === 0;
+        const indicator = probability >= 40 ? ` style="--rain-fill:${Math.min(80, 0.8 * probability)}%"` : '';
+        return `<div class="hourly-item${isNow ? ' now' : ''}"${indicator}>
+          <span class="hourly-time">${isNow ? 'Зараз' : timeUk(time)}</span>
+          <div class="hourly-icon" role="img" aria-label="${code?.title || 'Невідомо'}">${getSvgIcon(code?.icon || 'cloud', hourly.is_day?.[i] ?? 1)}</div>
+          <span class="hourly-temp">${degrees(hourly.temperature_2m[i]).replace('°C', '°')}</span>
+          <span class="hourly-rain">${probability > 0 ? '💧 ' : ''}${percent(probability)}</span>
+          <span class="hourly-wind">${rounded(hourly.wind_speed_10m[i])} км/год</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderDailyList(daily, start) {
+      const dates = daily.time.slice(start, start + 7);
+      const values = daily.temperature_2m_min.slice(start, start + dates.length)
+        .concat(daily.temperature_2m_max.slice(start, start + dates.length)).filter(Number.isFinite);
+      const low = values.length ? Math.min(...values) : 0;
+      const range = values.length ? Math.max(...values) - low || 1 : 1;
+      return dates.map((date, offset) => {
+        const i = start + offset;
+        const atNoon = (dayEpoch(date) + 12 * HOUR) * 1000;
+        const day = date === dayKey(nowSeconds()) ? 'Сьогодні' : weekdayFormat.format(atNoon);
+        const code = WEATHER_CODES[daily.weather_code[i]];
+        const min = daily.temperature_2m_min[i];
+        const maxTemp = daily.temperature_2m_max[i];
+        const probability = number(daily.precipitation_probability_max[i]);
+        const left = Number.isFinite(min) ? Math.min(85, (min - low) / range * 100) : 0;
+        const width = [min, maxTemp].every(Number.isFinite) ? Math.min(100 - left, Math.max(15, (maxTemp - min) / range * 100)) : 0;
+        return `<div class="daily-row">
+          <div><div class="daily-day">${day[0].toUpperCase() + day.slice(1)}</div><div class="daily-date">${dateFormat.format(atNoon)}</div></div>
+          <div class="daily-icon-wrap">${getSvgIcon(code?.icon || 'cloud')}</div>
+          <div class="daily-desc">${code?.title || 'Невідомо'}</div>
+          <div class="daily-rain">${probability === null ? '—' : probability > 0 ? `💧 ${percent(probability)}` : '0%'}</div>
+          <div class="temp-range-bar-wrap">
+            <span class="temp-min">${degrees(min).replace('°C', '°')}</span>
+            <div class="temp-bar"><div class="temp-bar-fill" style="margin-left:${left}%;width:${width}%"></div></div>
+            <span class="temp-max">${degrees(maxTemp).replace('°C', '°')}</span>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function renderSolarSection({ current, daily }, index) {
+      const date = daily.time[index];
+      const calculated = solarTimes(date);
+      const sunrise = daily.sunrise[index] ?? calculated.sunrise;
+      const sunset = daily.sunset[index] ?? calculated.sunset;
+      const daylight = daily.daylight_duration?.[index] ?? (sunset - sunrise);
+      const minutes = Math.round(daylight / 60);
+      const yesterday = solarTimes(calendarDay(dayEpoch(date) - DAY));
+      const previous = daily.daylight_duration?.[index - 1] ?? (yesterday.sunset - yesterday.sunrise);
+      const change = Math.round((daylight - previous) / 60);
+      const goldenMorning = `${timeUk(sunrise)}–${timeUk(sunrise + 2700)}`;
+      const goldenEvening = `${timeUk(sunset - 2700)}–${timeUk(sunset)}`;
+
+      return `<section class="section-card">
+        <h2 class="section-title">☀️ Світловий день, Золота година та Сонячна енергія</h2>
+        <svg class="solar-arc" viewBox="0 0 400 130" role="img" aria-label="Шлях сонця: схід ${timeUk(sunrise)}, захід ${timeUk(sunset)}">
+          <path d="M28 104H372" stroke="var(--text-muted)" stroke-dasharray="5 5"/>
+          <path d="M48 104A152 84 0 0 1 352 104" fill="none" stroke="var(--accent-yellow)" stroke-width="2"/>
+          <g id="solar-position" data-sunrise="${sunrise}" data-sunset="${sunset}" opacity="0">
+            <circle r="7" fill="var(--accent-yellow)"/>
+            <path d="M0-15v4M0 11v4M-15 0h4M11 0h4M-11-11l3 3m16 16 3 3m0-22-3 3M-8 8l-3 3" stroke="var(--accent-yellow)" stroke-linecap="round"/>
+          </g>
+          <text x="48" y="124" text-anchor="middle">${timeUk(sunrise)}</text>
+          <text x="352" y="124" text-anchor="middle">${timeUk(sunset)}</text>
+        </svg>
+        <div class="metrics-grid">
+          ${metric('duration', '⏳', 'Тривалість дня', `${Math.floor(minutes / 60)} год ${String(minutes % 60).padStart(2, '0')} хв`,
+            `${signed(change)} хв порівняно з попереднім днем`)}
+          ${metric('camera', '📷', 'Золота година', goldenMorning, `Вечір ${goldenEvening} · приблизно`)}
+          <div class="metric-card" id="solar-energy">${renderSolarEnergy(current)}</div>
+          ${metric('sun', '☀️', 'Сонячний полудень', timeUk(calculated.noon), 'Розрахунковий час максимальної висоти сонця')}
+        </div>
+      </section>`;
+    }
+
+    function updateSolarMarker() {
+      const marker = document.getElementById('solar-position');
+      if (!marker) return;
+      const sunrise = Number(marker.dataset.sunrise);
+      const sunset = Number(marker.dataset.sunset);
+      const progress = (nowSeconds() - sunrise) / (sunset - sunrise);
+      if (progress < 0 || progress > 1) {
+        marker.setAttribute('opacity', '0');
+        return;
+      }
+      const angle = Math.PI * progress;
+      const x = 200 - 152 * Math.cos(angle);
+      const y = 104 - 84 * Math.sin(angle);
+      marker.setAttribute('transform', `translate(${x} ${y})`);
+      marker.setAttribute('opacity', '1');
+    }
+
+    function renderSolarEnergy(current) {
+      const extra = state.provider === 'met-no' ? state.solar : null;
+      const fresh = extra && Math.abs(extra.data.time - current.time) < HOUR;
+      const uv = number(current.uv_index) ?? (fresh ? number(extra.data.uv_index) : null);
+      const radiation = number(current.shortwave_radiation) ?? (fresh ? number(extra.data.shortwave_radiation) : null);
+      const advice = radiation === null ? 'Дані для оцінки СЕС недоступні.'
+        : radiation >= 600 ? 'Висока освітленість для СЕС.'
+        : radiation >= 200 ? 'Помірна освітленість для СЕС.' : 'Низька освітленість для СЕС.';
+      return `${metricLabel('radiation', '🔆', 'УФ-індекс і радіація')}
+        <div class="metric-value">УФ ${uv ?? '—'}</div>
+        <div class="metric-sub">${radiation === null ? '—' : `${rounded(radiation)} Вт/м²`} · ${advice}${fresh ? ' · Open-Meteo' : ''}</div>`;
+    }
+
+    function renderAirQuality() {
+      const air = state.air?.data;
+      const aqi = number(air?.european_aqi);
+      const label = aqi === null ? 'Немає даних' : aqi <= 20 ? 'Добра' : aqi <= 40 ? 'Задовільна'
+        : aqi <= 60 ? 'Помірна' : aqi <= 80 ? 'Погана' : aqi <= 100 ? 'Дуже погана' : 'Вкрай погана';
+      const style = aqi === null ? 'badge-info' : aqi <= 40 ? 'badge-ok' : aqi <= 60 ? 'badge-warn' : 'badge-alert';
+      const age = Date.now() - (state.air?.timestamp ?? 0);
+      return `${metricLabel('air', '🌿', 'Якість повітря · EU AQI')}
+        <div class="metric-value">${aqi ?? '—'}</div>
+        <span class="answer-badge ${style}">${label}</span>
+        <div class="metric-sub">PM₂.₅ ${number(air?.pm2_5) ?? '—'} · PM₁₀ ${number(air?.pm10) ?? '—'} мкг/м³${air && age > HOUR * 1000 ? ' · збережено' : ''}</div>`;
+    }
+
+    function cacheKey(provider) {
+      return `if_weather_data_${provider}_v2`;
+    }
+
+    function validWeather(data) {
+      return Number.isFinite(data?.current?.time) && data.hourly?.time?.length > 0 &&
+        data.daily?.time?.length > 0 && Array.isArray(data.daily.sunrise) && Array.isArray(data.daily.sunset);
+    }
+
+    function getWeatherCache(provider) {
+      if (!state.weather.has(provider)) {
+        let entry = readCache(cacheKey(provider));
+        if (!validWeather(entry?.data) && provider === 'open-meteo') {
+          const legacy = readCache('if_weather_data');
+          if (legacy?.data) {
+            try { entry = { ...legacy, data: normalizeOpenMeteo(legacy.data) }; } catch {}
+          }
+        }
+        if (validWeather(entry?.data) && Number.isFinite(entry.timestamp)) state.weather.set(provider, entry);
+      }
+      return state.weather.get(provider);
+    }
+
+    function showProvider() {
+      const { provider } = state;
+      const source = document.getElementById('weather-source');
+      source.textContent = PROVIDERS[provider].label;
+      source.href = PROVIDERS[provider].url;
+      document.getElementById('weather-license').hidden = provider !== 'met-no';
+      for (const button of document.querySelectorAll('[data-provider]')) {
+        button.setAttribute('aria-pressed', String(button.dataset.provider === provider));
+      }
+    }
+
+    function showStatus(message, entry) {
+      const stamp = entry ? ` · отримано ${dateFormat.format(entry.timestamp)}, ${clockFormat.format(entry.timestamp)}` : '';
+      document.getElementById('last-updated-text').textContent = message + stamp;
+    }
+
+    function showCached(provider, entry) {
+      const now = nowSeconds();
+      const { data } = entry;
+      const current = provider === 'met-no' && now - data.current.time < 4 * HOUR
+        ? metCurrent(data.hourly, now) : data.current;
+      renderWeather({ ...data, current });
+    }
+
+    async function getJson(url, signal) {
+      const response = await fetch(url, { signal });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    }
+
+    function loadAuxiliary(request) {
+      const { controller, provider } = request;
+      const { signal } = controller;
+      const air = getJson(AQI_URL, signal).then(({ current }) => {
+        if (!current || signal.aborted) return;
+        state.air = { data: current, timestamp: Date.now() };
+        writeStorage('if_air_quality_v1', JSON.stringify(state.air));
+        const card = document.getElementById('air-quality');
+        if (card) card.innerHTML = renderAirQuality();
+      });
+      const solar = provider === 'met-no' && getJson(OPEN_URL + '&current=uv_index,shortwave_radiation', signal)
+        .then(({ current }) => {
+          if (!current || signal.aborted) return;
+          state.solar = { data: current, timestamp: Date.now() };
+          writeStorage('if_solar_v1', JSON.stringify(state.solar));
+          const card = document.getElementById('solar-energy');
+          const entry = getWeatherCache(provider);
+          if (card && entry) card.innerHTML = renderSolarEnergy(metCurrent(entry.data.hourly, nowSeconds()));
+        });
+      return Promise.allSettled([air, solar]);
+    }
+
+    function metForecastUrl() {
+      if (!MET_PROXY) return MET_URL;
+      const url = new URL(MET_PROXY, location.href);
+      return url.origin === location.origin ? url.href : MET_URL;
+    }
+
+    function metPressureHistory(cached, currentTime) {
+      const history = Object.fromEntries(Object.entries(cached?.pressureHistory || {})
+        .filter(([time]) => Number(time) >= currentTime - 6 * HOUR && Number(time) < currentTime));
+      const hourly = cached?.data.hourly;
+      hourly?.time.forEach((time, i) => {
+        const pressure = hourly.pressure_msl?.[i];
+        if (time >= currentTime - 6 * HOUR && time < currentTime && Number.isFinite(pressure)) history[time] = pressure;
+      });
+      return history;
+    }
+
+    async function fetchWeather({ switching = false, manual = false } = {}) {
+      const { provider } = state;
+      if (state.request?.provider === provider) return;
+      state.request?.controller.abort();
+      const request = { provider, controller: new AbortController() };
+      state.request = request;
+      const cached = getWeatherCache(provider);
+      const refresh = document.getElementById('refresh-button');
+      const content = document.getElementById('content-container');
+      const metFresh = provider === 'met-no' && cached && Date.now() < cached.timestamp + CONFIG.metIntervalMs;
+      if (cached) {
+        showCached(provider, cached);
+        const status = !navigator.onLine ? 'Офлайн · збережений прогноз'
+          : metFresh ? 'Прогноз MET Norway' : 'Збережений прогноз · перевіряємо оновлення';
+        showStatus(status, cached);
+      } else if (switching) {
+        content.innerHTML = '<div class="loading-state"><h2>Завантаження прогнозу</h2></div>';
+        document.title = 'Погода Івано-Франківськ';
+        showStatus('Отримуємо прогноз');
+      }
+      refresh.classList.toggle('spinning', manual && !metFresh);
+
+      const { signal } = request.controller;
+      const timeout = setTimeout(() => request.controller.abort(), 12000);
+      const auxiliary = loadAuxiliary(request);
+      try {
+        if (!metFresh) {
+          const url = provider === 'met-no' ? metForecastUrl() : OPEN_URL +
+            '&past_days=1&forecast_days=7' +
+            '&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,weather_code,cloud_cover,pressure_msl,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,shortwave_radiation,uv_index' +
+            '&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,pressure_msl,is_day' +
+            '&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_sum,precipitation_probability_max,uv_index_max,daylight_duration,sunshine_duration';
+          const json = await getJson(url, signal);
+          if (signal.aborted || state.request !== request) return;
+          const data = provider === 'met-no' ? normalizeMetNoToOpenMeteoFormat(json) : normalizeOpenMeteo(json);
+          if (!validWeather(data)) throw new Error('Порожній прогноз');
+          const entry = { data, timestamp: Date.now() };
+          if (provider === 'met-no') entry.pressureHistory = metPressureHistory(cached, data.current.time);
+          state.weather.set(provider, entry);
+          writeStorage(cacheKey(provider), JSON.stringify(entry));
+          renderWeather(data);
+          showStatus('Прогноз оновлено', entry);
+        }
+      } catch (error) {
+        if (state.request !== request || state.provider !== provider) return;
+        if (cached) {
+          showStatus('Оновлення недоступне · збережений прогноз', cached);
+        } else {
+          content.innerHTML = `<div class="error-state">
+            <h2>Не вдалося завантажити прогноз</h2>
+            <p class="answer-detail">${PROVIDERS[provider].label} · ${navigator.onLine
+              ? 'Сервіс не відповідає або обмежив доступ.' : 'Немає з’єднання з інтернетом.'}</p>
+            <button type="button" class="refresh-btn" id="retry-button">Спробувати знову</button>
+          </div>`;
+          document.getElementById('retry-button').addEventListener('click', () => fetchWeather({ manual: true }));
+          showStatus('Оновлення недоступне');
+        }
+        console.warn('Помилка оновлення прогнозу', error);
+      } finally {
+        if (state.request === request) refresh.classList.remove('spinning');
+        await auxiliary;
+        clearTimeout(timeout);
+        if (state.request === request) state.request = null;
+      }
+    }
+
+    function setupPwa() {
+      const button = document.getElementById('install-button');
+      let promptEvent;
+      window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        promptEvent = event;
+        button.hidden = false;
+      });
+      window.addEventListener('appinstalled', () => {
+        promptEvent = null;
+        button.hidden = true;
+      });
+      button.addEventListener('click', async () => {
+        const event = promptEvent;
+        if (!event) return;
+        promptEvent = null;
+        button.hidden = true;
+        try { await event.prompt(); } catch {}
+      });
+
+      if (!/^https?:$/.test(location.protocol)) return;
+      const start = new URL(location.pathname.replace(/index\.html$/, ''), location.origin);
+      const scope = new URL('./', start);
+      const icons = [192, 512].map(size => {
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 192 192">
+          <rect width="192" height="192" rx="32" fill="#1e3c72"/>
+          <circle cx="96" cy="96" r="33" fill="#f6d365"/>
+          <path d="M96 39v14m0 86v14m-57-57h14m86 0h14M56 56l10 10m60 60 10 10m0-80-10 10m-60 60-10 10" stroke="#f6d365" stroke-width="8" stroke-linecap="round"/>
+        </svg>`;
+        return { src: 'data:image/svg+xml,' + encodeURIComponent(svg), sizes: `${size}x${size}`, type: 'image/svg+xml', purpose: 'any' };
+      });
+      const manifest = {
+        id: start.href, start_url: start.href, scope: scope.href,
+        name: 'Погода Івано-Франківськ', short_name: 'Погода ІФ',
+        lang: 'uk', display: 'standalone', background_color: '#1e3c72', theme_color: '#1e3c72', icons
+      };
+      document.getElementById('pwa-manifest').href = 'data:application/manifest+json,' + encodeURIComponent(JSON.stringify(manifest));
+      const appleIcon = document.createElement('link');
+      appleIcon.rel = 'apple-touch-icon';
+      appleIcon.href = icons[0].src;
+      document.head.append(appleIcon);
+
+      (async () => {
+        try {
+          if (window.isSecureContext && 'serviceWorker' in navigator) {
+            await navigator.serviceWorker.register(new URL('sw.js', scope));
+          }
+        } catch {
+          // Кеш прогнозу в localStorage доступний і без розгорнутого воркера.
+        }
+      })();
+    }
+
+    function tick() {
+      document.getElementById('live-time').textContent = clockFormat.format(Date.now());
+      updateSolarMarker();
+    }
+
+    setupThemeToggle();
+    state.solar = readCache('if_solar_v1');
+    showProvider();
+    tick();
+    setInterval(tick, 1000);
+    document.querySelector('.api-switcher').addEventListener('click', event => {
+      const provider = event.target.closest('[data-provider]')?.dataset.provider;
+      if (!provider || provider === state.provider) return;
+      state.provider = provider;
+      writeStorage('if_api_provider', provider);
+      showProvider();
+      fetchWeather({ switching: true });
+    });
+    document.getElementById('refresh-button').addEventListener('click', () => fetchWeather({ manual: true }));
+    window.addEventListener('online', () => fetchWeather());
+    setInterval(() => { if (!document.hidden) fetchWeather(); }, CONFIG.refreshIntervalMs);
+    fetchWeather();
+    setupPwa();
+  </script>
+</body>
+</html>
